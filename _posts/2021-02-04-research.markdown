@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "Research on Accessibility in Gaming"
+date:   2021-02-03 20:00:00 -0500
+---
+Hello all!
+
+This week I set out to learn more about what is already being done to push accessibility in gaming forward. I started by looking for research done on the topic.
+I below I have listed 30 different articles talking about accessibility in gaming.
+
+<ul>
+    <li><a href="https://link.springer.com/article/10.1007/s10209-010-0189-5">Game accessibility: a survey</a></li>
+</ul>
+Game accessibility: a survey: 
+https://link.springer.com/article/10.1007/s10209-010-0189-5
+
+An empirical study of issues and barriers to mainstream video game accessibility
+https://dl.acm.org/doi/abs/10.1145/2513383.2513444?casa_token=uTq5SBAfoT0AAAAA%3AGr5QF0AzBzXN7OnvzRhZ0Hf7hml8g3RAj5XLXvPD8IY5HcvR46QJgT5dyBVXZpSv_5GCFa7GEd3P
