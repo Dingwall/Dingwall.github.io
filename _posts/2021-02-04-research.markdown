@@ -72,6 +72,7 @@ After learning more on what research is being done on accessibility in gaming I 
     <li>Sony, worth around 105 billion. The owner of the Playstation brand, Sony has exclusives like God of War, Uncharted, the new Spiderman games, Last of Us, and many others.</li>
     <li>Microsoft, worth around 1,770 billion. Microsoft owns Xbox, the main competitor to Playstation. Microsoft has recently been acquiring gaming studies, most likely to guarantee exclusives for their platform, as well as getting into the PC market. They own exclusives such as Halo and Gears of War, and recently acquired Bethesda, the studio who makes games like the Elder Scrolls and Fallout series. They have recently made a large push for accessible gaming and released a special controller designed to accommodate all kinds of special tools to make gaming available to everyone.</li>
 </ul>
+
 As far as products in my market segment go it should cover all games! Unfortunately not all games make an effort to be accessible. I have found a few games from 2020 that made serious efforts to improve accessibility.
 
 <ul>
