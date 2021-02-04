@@ -44,23 +44,23 @@ I below I have listed 30 different articles talking about accessibility in gamin
 After reading the abstracts for these articles I chose five to do a deeper dive into. I read through the articles to get a general idea and below have written my major takeaways as a quick summary.
 
 
-<h2>Game Not Over: Accessibility Issues in Video Games </h2>
+<h4>Game Not Over: Accessibility Issues in Video Games </h4>
 
 How games are inaccessible for different people, and what important factors play into these issues, such as story, relying on audio cues, lack of tutorial, and overly complex controls
 
-<h2>More Than Just a Game: Accessibility in Computer Games </h2>
+<h4>More Than Just a Game: Accessibility in Computer Games </h4>
 
 Accessibility is important in gaming to give people access to social outlets, educational tools, and entertainment. Improving accessibility in one of the largest entertainment industries is important to make sure those with disabilities do not feel like they are treated unfairly by society, and giving them equal opportunities.
 
-<h2>Game Accessibility and Advocacy for Participation of the Japanese Disability Community</h2>
+<h4>Game Accessibility and Advocacy for Participation of the Japanese Disability Community</h4>
 
 Japan's treatment of video games is not the same as other forms of entertainment. The lack of political efforts to support accessible gaming. Talk about how the issue is gaining traction, especially around the idea of including an easy mode or something similar to make sure the game is accessible.
 
-<h2>Design of a Curriculum Framework for Raising Awareness of Game Accessibility</h2>
+<h4>Design of a Curriculum Framework for Raising Awareness of Game Accessibility</h4>
 
 There wasn’t a requirement for accessibility in consoles until 2015. Since this is so recent, most developers have not had the consideration of accessibility included in any part of their education or career experience. Discusses importance of accessibility to unskilled and older gamers.
 
-<h2>Using Ants’ Task Division for Better Game Engines – A Contribution to Game Accessibility for Impaired Players</h2>
+<h4>Using Ants’ Task Division for Better Game Engines – A Contribution to Game Accessibility for Impaired Players</h4>
 
 Level problems, or lack of accessibility due to difficulty, are more common than interactive problems. By creating an adaptive game (specifically enemies) based off of player actions/ability, the game becomes more accessible.
 
