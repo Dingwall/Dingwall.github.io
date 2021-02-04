@@ -10,9 +10,34 @@ I below I have listed 30 different articles talking about accessibility in gamin
 
 <ul>
     <li><a href="https://link.springer.com/article/10.1007/s10209-010-0189-5">Game accessibility: a survey</a></li>
+    <li><a href="https://dl.acm.org/doi/abs/10.1145/2513383.2513444?casa_token=uTq5SBAfoT0AAAAA%3AGr5QF0AzBzXN7OnvzRhZ0Hf7hml8g3RAj5XLXvPD8IY5HcvR46QJgT5dyBVXZpSv_5GCFa7GEd3P">An empirical study of issues and barriers to mainstream video game accessibility</a></li>
+    <li><a href="https://www.researchgate.net/profile/Kevin_Bierre/publication/267403944_Game_Not_Over_Accessibility_Issues_in_Video_Games/links/546de0d70cf2a7492c560d87.pdf">Game Not Over: Accessibility Issues in Video Games</a></li>
+    <li><a href="https://www.computer.org/csdl/magazine/co/2013/06/mco2013060014/13rRUwjXZNm"></a>Game Accessibility: Enabling Everyone to Play</li>
+    <li><a href="https://dsq-sds.org/article/view/4513">Video Game Accessibility: A Legal Approach</a></li>
+    <li><a href="https://arxiv.org/abs/1305.4359">Promoting Game Accessibility: Experiencing an Induction on Inclusive Design Practice at the Global Games Jam</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-540-89350-9_18">More Than Just a Game: Accessibility in Computer Games</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-319-58706-6_15">Game Accessibility Evaluation Methods: A Literature Survey</a></li>
+    <li><a href="https://d1wqtxts1xzle7.cloudfront.net/33059548/431450_intro.pdf?1393132256=&response-content-disposition=inline%3B+filename%3DEditorial_of_Mangiron_Orero_and_OHagan_e.pdf&Expires=1612326645&Signature=Fy4j~mE6t-TPCw7OByMmWwTqFpmi8bzuvyMoVDzYzFC5byOjfcDoh40nj9paccdOaXJIGx56DNj7fRDUDMRLMEaf0G27yBFWUU-GMi9RnGN0fy5hCArYd6Hzqk6Uh3ctdCPqR1GcN9r2eKOuW7J9ck1zcqDa8Onro06ZTxLnjqUM2KtiOGJh6Hug1CCCBIh~3Sq-TvXiz3qy~SvlCp6gII4pR1PGhBkhzpKUduvQgKTFiBwxuBwhTCgiKwsrUoAfb2DU9MKlE7QSnr89Wibo8~wIX1yeHlLELlZe1aGPSFwtqdGyxLIRHVIqCxa7N7mJ9Nk8MbhTR3HpMcBO88RAiQ__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA">Fun for all: translation and accessibility practices in video games</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1057/978-1-137-56917-2_5">Game Accessibility for the Blind: Current Overview and the Potential Application of Audio Description as the Way Forward</a></li>
+    <li><a href="https://dl.acm.org/doi/abs/10.1145/2591357.2591364?casa_token=DjqkhEhcw4gAAAAA:9cK-R6NKHm86q3WCtQKw4siGkEUTlMGqPMmulU5du8eHl7FjTUKyIJdc37RzXpgV26PcfxXVk6vg">Understanding and addressing real-world accessibility issues in mainstream video games</a></li>
+    <li><a href="https://www.mdpi.com/2078-2489/11/3/162">Game Accessibility and Advocacy for Participation of the Japanese Disability Community</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-319-41264-1_68">Design of a Curriculum Framework for Raising Awareness of Game Accessibility</a></li>
+    <li><a href="https://ieeexplore.ieee.org/abstract/document/6031883?casa_token=8mLPzKsaHvIAAAAA:qRhzgTyrESIM9yOEqenBAHS1zLBi0Tuieh0ogvkXRDChzFONnTrd-_r0DoOPf8TKdXJcDwszOQ">A console interface for game accessibility to people with motor impairments</a></li>
+    <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S1071581919300801">Future design of accessibility in games: A design vocabulary</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-540-69736-7_55">Towards Generalised Accessibility of Computer Games</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-319-73450-7_52">An Approach to Mobile Serious Games Accessibility Assessment for People with Hearing Impairments</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-319-46100-7_20">Evaluation and Redesign of a Curriculum Framework for Education About Game Accessibility</a></li>
+    <li><a href="https://link.springer.com/article/10.1007/s10209-018-0628-2">Accessibility in video games: a systematic review</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-030-58796-3_25">A Study on Gaze Control - Game Accessibility Among Novice Players and Motor Disabled People</a></li>
+    <li><a href="https://dl.acm.org/doi/abs/10.1145/2468356.2468365?casa_token=TDzAAph6g30AAAAA:tTSeprCh7wfMhAEdBSFi72u7JimVu3WWGjcZC8ZikIAtexI8Zr-a6S7wMMYZGn4nfaL4G-0VGvmP">Button blender: remixing input to improve video game accessibility</a></li>
+    <li><a href="https://ieeexplore.ieee.org/abstract/document/6974015?casa_token=JYZfJ4UURTEAAAAA:dd20wzJ_ByTj0Br1OlUJ7yTgVmX99N3VKU0wkqwY6PIWzeaIbqhaGtHkrOKte3SnKWxss7gOww">EEG headset supporting mobility impaired gamers with game accessibility</a></li>
+    <li><a href="https://journals.sagepub.com/doi/full/10.1177/1555412020971500?casa_token=6TfNU6OMSGIAAAAA%3ASGAiV60zkzH6FHWx-qXbzP8QxSaPjJcifoYM9ieUqTOxBLuEX_Y-MG9TCD737roQSwtrEMMl21c1">Designing for Disability: Evaluating the State of Accessibility Design in Video Games</a></li>
+    <li><a href="https://dl.acm.org/doi/abs/10.1145/2513383.2513416?casa_token=-fxUVhuk8J0AAAAA:mPcdub7LuI1fU8Pzy8etvP69CcW1EDcwWfAlnzrJVQUp2MTVNkTAclUutu3h0WqNUXwSrZQxrfX-">Surveying the accessibility of touchscreen games for persons with motor impairments: a preliminary analysis</a></li>
+    <li><a href="https://dspace.mit.edu/handle/1721.1/46106">The human controller : usability and accessibility in video game interfaces</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-540-87700-4_95">Using Ants’ Task Division for Better Game Engines – A Contribution to Game Accessibility for Impaired Players</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-319-68059-0_41">Inclusive Side-Scrolling Action Game Securing Accessibility for Visually Impaired People</a></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-3-030-63464-3_1">Accessibility and Serious Games: What About Entity-Component-System Software Architecture?</a></li>
+    <li><a href="https://estudogeral.sib.uc.pt/handle/10316/35606">Improving game accessibility by exploring the audio-only game genre</a></li>
+    <li><a href="https://www.diva-portal.org/smash/record.jsf?pid=diva2%3A586643&dswid=2704">Large Scale Game Accessibility: A survey of possible engine independent solutions</a></li>
 </ul>
-Game accessibility: a survey: 
-https://link.springer.com/article/10.1007/s10209-010-0189-5
 
-An empirical study of issues and barriers to mainstream video game accessibility
-https://dl.acm.org/doi/abs/10.1145/2513383.2513444?casa_token=uTq5SBAfoT0AAAAA%3AGr5QF0AzBzXN7OnvzRhZ0Hf7hml8g3RAj5XLXvPD8IY5HcvR46QJgT5dyBVXZpSv_5GCFa7GEd3P
