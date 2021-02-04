@@ -46,25 +46,25 @@ After reading the abstracts for these articles I chose five to do a deeper dive 
 
 <strong>Game Not Over: Accessibility Issues in Video Games </strong>
 
-How games are inaccessible for different people, and what important factors play into these issues, such as story, relying on audio cues, lack of tutorial, and overly complex controls
+How games are inaccessible for different people, and what important factors play into these issues, such as story, relying on audio cues, lack of tutorial, and overly complex controls. The solution lies in options for text to speech, speech to text, menu narration, and clear, simple, repeatable tutorials.
 
 <strong>More Than Just a Game: Accessibility in Computer Games </strong>
 
-Accessibility is important in gaming to give people access to social outlets, educational tools, and entertainment. Improving accessibility in one of the largest entertainment industries is important to make sure those with disabilities do not feel like they are treated unfairly by society, and giving them equal opportunities.
+Accessibility is important in gaming to give people access to social outlets, educational tools, and entertainment. Improving accessibility in one of the largest entertainment industries is important to make sure those with disabilities do not feel like they are treated unfairly by society, and giving them equal opportunities. Addressing why it isn't enough to just say some games are just supposed to be hard, like Dark Souls, and see how the effort to be inclusive is important.
 
 <strong>Game Accessibility and Advocacy for Participation of the Japanese Disability Community</strong>
 
-Japan's treatment of video games is not the same as other forms of entertainment. The lack of political efforts to support accessible gaming. Talk about how the issue is gaining traction, especially around the idea of including an easy mode or something similar to make sure the game is accessible.
+Japan's treatment of video games is not the same as other forms of entertainment. The lack of political efforts to support accessible gaming. Talk about how the issue is gaining traction, especially around the idea of including an easy mode or something similar to make sure the game is accessible. Efforts like these are moving video games towards a more commonly accepted form of entertainment like film, tv, and literature.
 
 <strong>Design of a Curriculum Framework for Raising Awareness of Game Accessibility</strong>
 
-There wasn’t a requirement for accessibility in consoles until 2015. Since this is so recent, most developers have not had the consideration of accessibility included in any part of their education or career experience. Discusses importance of accessibility to unskilled and older gamers.
+There wasn’t a requirement for accessibility in consoles until 2015. Since this is so recent, most developers have not had the consideration of accessibility included in any part of their education or career experience. Discusses importance of accessibility to unskilled and older gamers. This delay is the reason we are missing emphasis of inclusivity in education of game dev because it was being pushed to the side. Now that it is a requirement there should be a big increase in accessibility in new generations of gaming.
 
 <strong>Using Ants’ Task Division for Better Game Engines – A Contribution to Game Accessibility for Impaired Players</strong>
 
-Level problems, or lack of accessibility due to difficulty, are more common than interactive problems. By creating an adaptive game (specifically enemies) based off of player actions/ability, the game becomes more accessible.
+Level problems, or lack of accessibility due to difficulty, are more common than interactive problems. By creating an adaptive game (specifically enemies) based off of player actions/ability, the game becomes more accessible. This is a huge part of accessibility that is not initially considered but makes a massive difference in the accessibility of the game.
 
-<h5>What is the market?</h5>
+<h3>What is the market?</h3>
 
 After learning more on what research is being done on accessibility in gaming I looked towards what market my research would fall under. This would address a global market and would fall under the art, entertainment, and recreation sectors as it is a video game. It could additionally address the educational sector because of the potential for gaming to be used educationally, and lastly fits under the health care and social assistance sector as it is focused on improving quality of life for those with limiting disabilities. These are massive markets, in the US alone these sectors see around $1.4 billion in annual sales. Globally would be even larger. While this project is focused specifically on those looking for accessibility options in gaming, it still fits into the overall gaming spectrum. There are plently of big players in these markets, but ones that fall in line with my research are large gaming companies.
 <ul>
@@ -85,7 +85,7 @@ As far as products in my market segment go it should cover all games! Unfortunat
     <li>Spider Man: Miles Morales developed by Insomniac Games included a number of accessibility settings to make the game easier to see, and included things like chase assistance to make it easier for players to keep up. They also included a character who communicated with Miles exclusively through sign language, which is important because of the lack of representation in gaming for the disabled community.</li>
 </ul>
 
-<h5>Who is the audience?</h5>
+<h3>Who is the audience?</h3>
 Lastly I wanted to consider my audience. The audience for this research is those limited by the lack of accessibility in gaming. The idea of accessibility in gaming is growing as the gaming community as a whole grows, becoming one of the largest entertainment industries in the world. The audience ranges from everyday people who can work anywhere and do anything and have difficulty with their vision or hearing, ranging from older people to people with disabilities. It also focuses on those with mental or physical limitations. The audience ranges massively, from people working 40 hour weeks to those who will never be able to work much more than a few hours at a time. They face a number of challenges due to their limitations, and these challenges are often exasperated by society’s lack of effort to make sure products and services are inclusive and accessible. My customers would value fun, accessible, and inclusive gaming that isn’t just designed for small audiences, but enjoyable for everyone. It is unrealistic to expect that my audience will have any resources beyond your average gamer, so the requirement for expensive equipment or custom software is unfair and unrealistic.
 
 Thanks for reading this week! Check back next Thursday for more information
