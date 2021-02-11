@@ -13,21 +13,19 @@ Create a dev blog entry describing the basic technical work you’ve accomplishe
 
 This week I spent my time testing a very simple dynamic difficulty system I created. I developed a simple game in Unity3D to start, and then began working on the dynamic difficutly.
 Obviously something like this could take years to develop a truly responsive AI, but I started by making a list of some simple factors that I believe affect a games difficulty.
-<ul>
-    Number of enemies
-    Enemies health (resiliance to damage)
-    Enemies reactions to player
-        <ul>
-            How smart they are/what strategy they follow
-            How quick they move and react
-            How they attack (moves and level of aggression)
-            How they defend (moves and healing or escape strategies)
-        </ul>
-    Enemy damage to player
-    Enemy weapons/types
-    Reduce player damage output
-    Reduce quality of items available to player
-</ul>
+
+-Number of enemies
+-Enemies health (resiliance to damage)
+-Enemies reactions to player
+    ~How smart they are/what strategy they follow
+    ~How quick they move and react
+    ~How they attack (moves and level of aggression)
+    ~How they defend (moves and healing or escape strategies)
+-Enemy damage to player
+-Enemy weapons/types
+-Reduce player damage output
+-Reduce quality of items available to player
+
 These things seemed like a good start. I began by focusing on adjusting how many enemies spawned as well as how much health they have. The better the player is doing, more enemies will begin to spawn with more health. As the player does worse less enemies will spawn with less health. The hard parts are balancing so there is a cap of difficulty (the game isn't unbeatable) and making sure the system isn't obviously adjusting to how the player is doing.
 
 ![3 enemies running](/assets/pics/threeenemy.png)
