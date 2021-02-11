@@ -49,4 +49,8 @@ These things seemed like a good start. I began by focusing on adjusting how many
 
 Since I already knew I was facing a difficult task, I am still confident I can find a good subject to focus my efforts on. I enjoyed working on the dynamic difficulty and feel like with more time I can expand it into a much more complex system.
 
+I used Unity3D and C# in my development. My plan for the coming week is to improve the dynamic difficulty system to see how much further I can go with it. I think a simple but effective system for self adjusting could do big things for accessibility in modern gaming. I could also see developing different features which I could enable to improve accessibility of the simple game I have created so far.
+
+Thanks for reading!
+
 -Andrew
