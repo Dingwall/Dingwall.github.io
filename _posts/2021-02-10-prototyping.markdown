@@ -35,9 +35,9 @@ Enemies reactions to the player can be a number of things, but I am focusing on:
 
 These things seemed like a good start. I began by focusing on adjusting how many enemies spawned as well as how much health they have. The better the player is doing, more enemies will begin to spawn with more health. As the player does worse less enemies will spawn with less health. The hard parts are balancing so there is a cap of difficulty (the game isn't unbeatable) and making sure the system isn't obviously adjusting to how the player is doing.
 
-<img href="/assets/pics/threeenemy.png/">
-<img href="/assets/pics/threeenemydead.png/">
-<img href="/assets/pics/fiveenemy.png/">
+<img src="/assets/pics/threeenemy.png/">
+<img src="/assets/pics/threeenemydead.png/">
+<img src="/assets/pics/fiveenemy.png/">
 
 Since I already knew I was facing a difficult task, I am still confident I can find a good subject to focus my efforts on. I enjoyed working on the dynamic difficulty and feel like with more time I can expand it into a much more complex system.
 
