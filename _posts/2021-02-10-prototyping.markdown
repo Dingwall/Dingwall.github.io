@@ -5,11 +5,11 @@ date:   2021-02-10 20:00:00 -0500
 ---
 Hi everyone!
 
-Create a dev blog entry describing the basic technical work you’ve accomplished. Additionally, describe…
+<!-- Create a dev blog entry describing the basic technical work you’ve accomplished. Additionally, describe…
     What this technical experiment proves about your research idea (does this experiment boost your confidence? Reduce your confidence? Why?).
         Data from your results (this may take many forms, from screenshots to spreadsheets, etc).
             The technologies you used in your experiment (Unity, C#, SDL, EC2 Server, TensorFlow, etc).
-                Next steps (possible future experiments, new features to implement, new ideas to pursue, etc).
+                Next steps (possible future experiments, new features to implement, new ideas to pursue, etc). -->
 
 This week I spent my time testing a very simple dynamic difficulty system I created. I developed a simple game in Unity3D to start, and then began working on the dynamic difficutly.
 Obviously something like this could take years to develop a truly responsive AI, but I started by making a list of some simple factors that I believe affect a games difficulty.
@@ -39,13 +39,15 @@ These things seemed like a good start. I began by focusing on adjusting how many
 <img src="/assets/pics/threedeadenemy.png/" alt="Three enemies dead around player" />
 <img src="/assets/pics/fiveenemy.png/" alt="Five enemies chasing player" /> -->
 
-<img src="threeenemy.png" alt="Three enemies chasing player" />
-<img src="threedeadenemy.png" alt="Three enemies dead around player" />
-<img src="fiveenemy.png" alt="Five enemies chasing player" />
+<p>
+    <img src="threeenemy.png" alt="Three enemies chasing player" />
+    <img src="threedeadenemy.png" alt="Three enemies dead around player" />
+    <img src="fiveenemy.png" alt="Five enemies chasing player" />
+</p>
 
-![Three enemies chasing player](threeenemy.png)
+<!-- ![Three enemies chasing player](threeenemy.png)
 ![Three enemies dead around player](threedeadenemy.png)
-![Five enemies chasing player](fiveenemy.png)
+![Five enemies chasing player](fiveenemy.png) -->
 
 Since I already knew I was facing a difficult task, I am still confident I can find a good subject to focus my efforts on. I enjoyed working on the dynamic difficulty and feel like with more time I can expand it into a much more complex system.
 
