@@ -43,6 +43,10 @@ These things seemed like a good start. I began by focusing on adjusting how many
 <img src="threedeadenemy.png" alt="Three enemies dead around player" />
 <img src="fiveenemy.png" alt="Five enemies chasing player" />
 
+![Three enemies chasing player](threeenemy.png)
+![Three enemies dead around player](threedeadenemy.png)
+![Five enemies chasing player](fiveenemy.png)
+
 Since I already knew I was facing a difficult task, I am still confident I can find a good subject to focus my efforts on. I enjoyed working on the dynamic difficulty and feel like with more time I can expand it into a much more complex system.
 
 -Andrew
