@@ -39,11 +39,9 @@ These things seemed like a good start. I began by focusing on adjusting how many
 <img src="/assets/pics/threedeadenemy.png/" alt="Three enemies dead around player" />
 <img src="/assets/pics/fiveenemy.png/" alt="Five enemies chasing player" /> -->
 
-<p>
-    <img src="threeenemy.png" alt="Three enemies chasing player" />
-    <img src="threedeadenemy.png" alt="Three enemies dead around player" />
-    <img src="fiveenemy.png" alt="Five enemies chasing player" />
-</p>
+<!-- <img src="threeenemy.png" alt="Three enemies chasing player" />
+<img src="threedeadenemy.png" alt="Three enemies dead around player" />
+<img src="fiveenemy.png" alt="Five enemies chasing player" /> -->
 
 <!-- ![Three enemies chasing player](threeenemy.png)
 ![Three enemies dead around player](threedeadenemy.png)
