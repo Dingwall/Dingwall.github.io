@@ -30,7 +30,7 @@ Enemies reactions to the player can be a number of things, but I am focusing on:
     <li>How smart they are/what strategy they follow</li>
     <li>How quick they move and react</li>
     <li>How they attack (moves and level of aggression)</li>
-    </li>How they defend (moves and healing or escape strategies)</li>
+    <li>How they defend (moves and healing or escape strategies)</li>
 </ul>
 
 These things seemed like a good start. I began by focusing on adjusting how many enemies spawned as well as how much health they have. The better the player is doing, more enemies will begin to spawn with more health. As the player does worse less enemies will spawn with less health. The hard parts are balancing so there is a cap of difficulty (the game isn't unbeatable) and making sure the system isn't obviously adjusting to how the player is doing.
