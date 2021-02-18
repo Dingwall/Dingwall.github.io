@@ -11,25 +11,17 @@ Tools and implementations like these are all very cool, but still leave out peop
 
 In addition to my interest in VR accessibility this week I spent some time expanding on the dynamic difficulty technical expirements I did last week. I have created a fairly solid self balancing enemy system. It is based around how well the player has done in their past lives/attempts at the game. 
 
-On the first island when a player starts the game they will fight 5 enemies.
+On the first island when a player starts the game they will fight 5 enemies.<image src="{{site.url}}/assets/gifs217/normalguys.gif" alt="standard enemies"/>
+<br>
 
-<image src="{{site.url}}/assets/gifs217/normalguys.gif" alt="standard enemies"/>
+For some players this will be too easy, and they will quickly progress to the final island where there are 15 enemies to fight with the same attack speed, health, and movement speed of the first 5 enemies.<image src="{{site.url}}/assets/gifs217/bigarmy.gif" alt="tons of enemies"/>
+<br>
 
+Upon defeating all of the enemies in the first round of the game, it will restart, but this time we can see there is an additional enemy on the first island. They enemies also have increased movement speed and health.<image src="{{site.url}}/assets/gifs217/hardguys.gif" alt="hard enemies"/>
+<br>
 
-For some players this will be too easy, and they will quickly progress to the final island where there are 15 enemies to fight with the same attack speed, health, and movement speed of the first 5 enemies.
-
-<image src="{{site.url}}/assets/gifs217/bigarmy.gif" alt="tons of enemies"/>
-
-
-Upon defeating all of the enemies in the first round of the game, it will restart, but this time we can see there is an additional enemy on the first island. They enemies also have increased movement speed and health.
-
-<image src="{{site.url}}/assets/gifs217/hardguys.gif" alt="hard enemies"/>
-
-
-If the player instead lost multiple times in a row, we would see a decrease in the number of starting enemies. For this example I was defeated by enemies 5 times, and now only 3 enemies spawn on the first island.
-
-<image src="{{site.url}}/assets/gifs217/easyguys.gif" alt="easy enemies"/>
-
+If the player instead lost multiple times in a row, we would see a decrease in the number of starting enemies. For this example I was defeated by enemies 5 times, and now only 3 enemies spawn on the first island.<image src="{{site.url}}/assets/gifs217/easyguys.gif" alt="easy enemies"/>
+<br>
 
 A simple system like this could greatly increase the accessibility of many games. While dynamic difficulty is specific to a game (FPS vs a puzzle game) the idea is not too hard to implement. The hard part is making it subtle, which my version is not.
 
