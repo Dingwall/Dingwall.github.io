@@ -1,0 +1,24 @@
+---
+layout: post
+title:  "Researching VR and Expanding on Dynamic Difficulty"
+date:   2021-02-17 20:00:00 -0500
+---
+Hello!
+
+This week while looking for alternate research topics I began considering the limitations of Virtual Reality to people with different disabilities. VR is designed the transport the player to a different world and immerse them in a different experience. For someone with a disability something like this would be a fantastic way to experience things they don't have the ability to in real life, but most VR controls are based around physical movement. Some games such as <a href="https://www.youtube.com/watch?v=fpPhz35c2qc&feature=youtu.be">Island 359</a> have made impressive strides to improve their accessibility, but still rely on the use of a controller. Another example is <a href="https://store.steampowered.com/app/1248360/WalkinVR/">WalkinVR</a> which is a steam product that can be used with Steam VR games to give the player a number of options to improve accessibility. Some examples are alternate controls for movement and rotation for people in wheelchairs, allowing another person to control some parts of the game with a different controller, hand tracking using the Kinect instead of controllers, and controller position adjustment for people who cannot move the controller to required positions on their own.
+
+Tools and implementations like these are all very cool, but still leave out people with extremely limited range of motion, specifically quadriplegics. Combined with some of these ideas above, I believe a sip-n-puff controller could be used to immerse people with a limited range of motion in VR games and worlds. With some tweaks to controls, a joystick could be used to both move the player and their vision. The sip-n-puff would give enough input to add variability into the game, and with additional assistance these simplified controls could make many VR games extremely accessible.
+
+In addition to my interest in VR accessibility this week I spent some time expanding on the dynamic difficulty technical expirements I did last week. I have created a fairly solid self balancing enemy system. It is based around how well the player has done in their past lives/attempts at the game. 
+
+On the first island when a player starts the game they will fight 5 enemies.
+<image src="/assets/gifs217/normalguys.gif" alt="standard enemies"/>
+
+For some players this will be too easy, and they will quickly progress to the final island where there are 15 enemies to fight with the same attack speed, health, and movement speed of the first 5 enemies.
+<image src="/assets/gifs217/bigarmy.gif" alt="tons of enemies"/>
+
+Upon defeating all of the enemies in the first round of the game, it will restart, but this time we can see there is an additional enemy on the first island. They enemies also have increased movement speed and health.
+<image src="/assets/gifs217/hardguys.gif" alt="hard enemies"/>
+
+If the player instead lost multiple times in a row, we would see a decrease in the number of starting enemies. For this example I was defeated by enemies 5 times, and now only 3 enemies spawn on the first island.
+<image src="/assets/gifs217/easyguys.gif" alt="easy enemies"/>
