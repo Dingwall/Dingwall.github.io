@@ -1,0 +1,26 @@
+---
+layout: post
+title:  "Telekinesis with Gaze Controls and Teleportation Failure"
+date:   2021-03-17 20:00:00 -0500
+---
+Another week means another new downloadable verion of Project Wyvern! You can download the zip file <a href="https://drive.google.com/file/d/1qIP_O8VQ7EUq9w8oxKKPQiu2q8mDnBbw/view?usp=sharing">here</a>. Continuing where I left off last week it still just has a simple menu and some different spots to interact with mugs. Another big improvement is the reticle I added to the build, a small red sphere that shows exactly where the player is looking. In the videos below it seems that I am only recording the left eye view of the game, so everything looks sightly skewed and the reticle is not centered in the view, I'll make sure to record properly next week.
+
+This week I worked for a long time on trying to create a gaze controlled teleportation system. I spent my time trying to take the Unity developed teleportation system and tweak it to my needs. The issue I ran into is that the way the events are triggered for teleportation (releasing the thumb stick after pushing it forward) is somehow built in to multiple different files. So, when trying to add an additional way to call the QueueTeleportation function I ended up with multiple errors of functions not agreeing between files. After spending a few days working on this system I decided to save it for next week and try something else.
+
+The new telekinesis system works much better than my teleportation attempts. The sphere reticle shows where a raycast that is cast from the players eyes is hitting colliders in the scene. So, when the player enables telekinesis mode and looks at a movable object, it will show a red sphere on the object and the object will begin to move closer to the player. Currently the object only remains in telekinesis for 2 seconds since the player last looked at it, so by constantly looking at it they can extend this time.
+
+<image src="{{site.url}}/assets/3_17/pull.mp4" alt="Example of how Tracting/Pull mode is used" type="video/mp4"/>
+
+In addition to a tracting mode, I created the opposite, a push mode. When the player gazes at the middle panel (between the 2 snap turn panels) the reticle will change to green. This means that the player has switched to push telekinesis, and when they look at an object it will instead push it away. The system is essentially just a reversed version of tracting, where the object will move as long as you look at it and has a risidual 2 second time where it continues on its own.
+
+<image src="{{site.url}}/assets/3_17/push.mp4" alt="Example of how Push mode is used" type="video/mp4"/>
+
+Some of the settings are adjustable for telekinesis mode, like how long the object remains in telekinesis and how far it stops from the players face in tracting mode. You can see here how when combined, pushing and tracting mode can be used to move an object around the space.
+
+<image src="{{site.url}}/assets/3_17/pushAndPull.mp4" alt="Example of how modes can be combined" type="video/mp4"/>
+
+My next step with telekinesis will be working on a hold mode, where the player can look at an object and move it around the space by moving their line of sight. I also want to adjust push mode so that it will curve towards where the player is looking. There is also a bug with the telekinesis gaze panel that is stopping its highlight early that I did not have time to address before delivering this build.
+
+My next week of development is hopefully going to be diving into a way to get a teleportation system working. With my failures from this week I have learned a lot and will hopefully be able to write my own system for moving the player around the game area. I also want to spend time fine tuning the telekinesis so that it is more useful, right now it gives the player the power to move objects but lacks fine tuned control over where they move. I am still considering using the controller as a chin controller for the player, but feel like that isn't as genuine of an effort to change how the game is accessible, it is just a repurposing of existing tools that didn't consider accessibility when created.
+
+-Andrew
