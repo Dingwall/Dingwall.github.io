@@ -15,7 +15,7 @@ date:   2021-03-24 20:00:00 -0500
 
 <p>You can watch the video of me messing around with the different powers below. There are a few bugs throughout, but it does show the potential for the telekinesis system with more time. It also made me feel like Luke Skywalker learning to use the force.</p>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CDqOwXwCp8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CDqOwXwCp8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <p>Overall I am very proud of this weeks development, I think the hold feature and improved reticle are a huge upgrade to the system that are intuative and accessible to all gamers. With no controller required I still enjoyed expirementing with the tools and think there is a potential for a cool puzzle game which wouldn't require the player to stand, spin, or use a controller.</p>
 
