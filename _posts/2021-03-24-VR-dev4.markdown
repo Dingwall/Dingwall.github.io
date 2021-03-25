@@ -13,15 +13,15 @@ I added a new telekinesis power that allows the player to "hold" objects and mov
 
 While develeping hold I found it annoying that the reticle would not stay in the air where I wanted to move the object, so I adjusted it so that while hold is active, the reticle will constantly follow the players view at the distance the hold object is set to stay from the player. This made it much easier to use and greatly improved my ability to move things around the scene. I also found that it was harder to lift objects starting from the ground vs starting on top of something. I adjusted it so that it would be easier to get an object to the height of the player.
 
-You can watch the videos of me messing around with the different powers below. There are a few bugs throughout, but it does show the potential for the telekinesis system with more time. It also made me feel like Luke Skywalker learning to use the force.
-<video width="600" height="auto" controls muted>
+You can watch the video of me messing around with the different powers below. There are a few bugs throughout, but it does show the potential for the telekinesis system with more time. It also made me feel like Luke Skywalker learning to use the force.
+<!-- <video width="600" height="auto" controls muted>
     <source src="{{site.url}}/assets/3_24/VRtelekinesisV3_1.mp4" alt="Demonstation of hold, push, and pull telekinesis" type="video/mp4"/>
 </video>
 <video width="600" height="auto" controls muted>
     <source src="{{site.url}}/assets/3_24/VRtelekinesisV3_2.mp4" alt="Demonstation of hold, push, and pull telekinesis" type="video/mp4"/>
-</video>
+</video> -->
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CDqOwXwCp8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="600" height="auto" src="https://www.youtube.com/embed/CDqOwXwCp8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 Overall I am very proud of this weeks development, I think the hold feature and improved reticle are a huge upgrade to the system that are intuative and accessible to all gamers. With no controller required I still enjoyed expirementing with the tools and think there is a potential for a cool puzzle game which wouldn't require the player to stand, spin, or use a controller.
 
