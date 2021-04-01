@@ -1,0 +1,40 @@
+---
+layout: post
+title:  "Telekinesis Adjustements, Simple Puzzles, and Bowling??"
+date:   2021-03-31 20:00:00 -0500
+---
+<p>Welcome to an exciting week of Project Wyvern. You can download the zip file <a href="https://drive.google.com/file/d/1Yd1NeKicGPzuitNU7smh_ZRDMuRQYBh6/view?usp=sharing">here</a>. I began the week with some adjustments to the telekinesis system as well as working on getting sounds working on movable objects. The rest of the week was spent developing some simple puzzles and games to test out the telekinesis powers. I am hoping to expand upon the game development next week to make some more interesting and compelling puzzles.</p>
+
+<h4>Telekinesis Changes</h4>
+<p>Instead of using a system where a power you stay active only if you were constantly looking at the object, I changed the telekinesis powers to stay active until the player stared at the object long enough to refill the bar. This was initially confusing because the bar has to fill for the player to activate the power, but by putting a small delay on it I was able to get it working. Now, to activate a telekinesis power a player must stare at an object until the bar fills. To deactivate the power, the player must also stare directly at the object until the bar fills. It makes the telekinesis easier to use and lets the player be much more precise.</p>
+
+<h4>Adding Sounds</h4>
+<p>With some help from the Unity VR tutorial I was able to add some sounds to objects. You'll notice in the demo below that movable objects make sounds on contact with different surfaces or objects. It is only a small change in sound, but worth noting since it makes the objects feel like they have more weight.</p>
+
+<h4>Simple Puzzles</h4>
+<p>Currently the game consists of three different puzzles. I started by making something simple so the player could understand the telekinesis on their own. As the puzzles progress the player needs to be more precise with their powers to succeed.</p>
+
+<p>The first puzzle simply requires the player to drop the red ball into the glass case. This is just an easy introduction to how the telekinesis power works. To activate and deactivate them, the player needs direct eye contact with the object. I am planning on changing this to a maze to better represent this for next week.</p>
+<video width="600" height="auto" >
+    <source src="{{site.url}}/assets/3_31/3_1p1.mp4" alt="Intro puzzle!" type="video/mp4"/>
+</video>
+
+<p>The next puzzle is similar to a childs matching toy. The player has to pick up the smaller objects and match them with the proper pedestal. To move on they need to match all 3 correctly.</p>
+
+<video width="600" height="auto" >
+    <source src="{{site.url}}/assets/3_31/3_1p2.mp4" alt="Correct shape puzzle" type="video/mp4"/>
+</video>
+
+<p>The final puzzle isn't so much of a puzzle as a game. When trying to think of a good use for the current "push" implementation I realized it would be great for bowling. So, I made myself a little bowling alley to test out my telekinesis! The player has to be much more precise with their object placement to knock down the pins, and also has to use a second telekinesis power to succeed.</p>
+<video width="600" height="auto" >
+    <source src="{{site.url}}/assets/3_31/3_1p3.mp4" alt="Bowling!" type="video/mp4"/>
+</video>
+
+<h4>Coming soon!</h4>
+<p>In this next week I am hoping to add more juice to my game like sounds for different powers, color changing for different powers, more in game sounds, and prettier environments. I also am hoping to improve the reticle, like making it so it does not disappear when looking at the sky. I also recently saw a VR reticle in Star Wars: Squadrons that works similar to mind but remains the same relative size anywhere you look. I'd like to work on scaling up my reticle when it is farther from the player so that it is easier to see.</p>
+
+<p>I also spent some time this week working on improvements to the "hold" telekinesis power that would allow you to move the object closer and further from you by nodding and shaking your head. I didn't have much success and am planning on returning to that this week.</p>
+
+<p>Lastly I'd like to adjust the push power to be more of an actual push, and initial shove of power instead of contantly acting on the object, like fus ro dah from Skyrim.</p>
+
+<p>-Andrew</p>
