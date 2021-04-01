@@ -16,18 +16,18 @@ date:   2021-03-31 20:00:00 -0500
 
 <p>The first puzzle simply requires the player to drop the red ball into the glass case. This is just an easy introduction to how the telekinesis power works. To activate and deactivate them, the player needs direct eye contact with the object. I am planning on changing this to a maze to better represent this for next week.</p>
 <video width="600" height="auto" >
-    <source src="{{site.url}}/assets/3_31/3_1p1.mp4" alt="Intro puzzle!" type="video/mp4"/>
+    <source src="{{site.url}}/assets/4_1/3_1p1.mp4" alt="Intro puzzle!" type="video/mp4"/>
 </video>
 
 <p>The next puzzle is similar to a childs matching toy. The player has to pick up the smaller objects and match them with the proper pedestal. To move on they need to match all 3 correctly.</p>
 
 <video width="600" height="auto" >
-    <source src="{{site.url}}/assets/3_31/3_1p2.mp4" alt="Correct shape puzzle" type="video/mp4"/>
+    <source src="{{site.url}}/assets/4_1/3_1p2.mp4" alt="Correct shape puzzle" type="video/mp4"/>
 </video>
 
 <p>The final puzzle isn't so much of a puzzle as a game. When trying to think of a good use for the current "push" implementation I realized it would be great for bowling. So, I made myself a little bowling alley to test out my telekinesis! The player has to be much more precise with their object placement to knock down the pins, and also has to use a second telekinesis power to succeed.</p>
 <video width="600" height="auto" >
-    <source src="{{site.url}}/assets/3_31/3_1p3.mp4" alt="Bowling!" type="video/mp4"/>
+    <source src="{{site.url}}/assets/4_1/3_1p3.mp4" alt="Bowling!" type="video/mp4"/>
 </video>
 
 <h4>Coming soon!</h4>
