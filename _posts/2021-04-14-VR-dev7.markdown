@@ -9,7 +9,7 @@ date:   2021-04-14 20:00:00 -0500
 <p>While this puzzle is a very simple version of what could be implemented to work with Project Wyvern, it still helps represent the diversity of my research this semester. I created a simple maze that requires the player to lift a small ball (using telekinesis) and navigate the ball to the end. They can't complete the maze without opening 3 gates that are blocking their progress. It currently lacks a lot in juice but sounds and effects will be easy enough to add over the next week.</p>
 
 <video width="600" height="auto" controls>
-    <source src="{{site.url}}/assets/4_14/maze.mp4" alt="Example of a maze the player completes using telekinesis" type="video/mp4"/>
+    <source src="{{site.url}}/assets/4_14/maze.mkv" alt="Example of a maze the player completes using telekinesis" type="video/mkv"/>
 </video>
 
 <h4>Puzzle 5: Pirate Battle</h4>
