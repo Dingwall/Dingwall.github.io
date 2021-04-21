@@ -21,10 +21,7 @@
 title: Project Wyvern
 email: arding@umich.edu
 description: >- # this means to ignore newlines until "baseurl:"
-    While video games are one of the largest entertainment industries in the world,
-     they are still largely unaccessible. Project Wyvern based on creating more
-     accessible gaming for those with limited bodily function, focused around those
-     with exclusive control of their head.
+    A research project focused on accessibility in gaming, specifically Virtual Reality!
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
