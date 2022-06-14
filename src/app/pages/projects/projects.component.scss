@@ -1,0 +1,32 @@
+.card-container {
+  width: 25%;
+  padding: 2%;
+  display: inline-block;
+
+  @media (max-width:1000px) {
+    width: 33.33%;
+  }
+
+  @media (max-width:700px) {
+    width: 50%;
+  }
+
+  @media (max-width:400px) {
+    width: 100%
+  }
+}
+
+.project-card {
+
+  .game-header-image {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Video-Game-Controller-Icon.svg/2048px-Video-Game-Controller-Icon.svg.png');
+    background-size: cover;
+  }
+
+  .code-header-image {
+    background-image: url('https://freeiconshop.com/wp-content/uploads/edd/code-flat.png');
+    background-size: cover;
+    
+  }
+}
+

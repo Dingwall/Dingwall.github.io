@@ -1,0 +1,20 @@
+.background-photo {
+  background-color: #00144a;
+  color: #ffffff;
+  background-image: linear-gradient(rgba(0, 20, 74, 0.5), rgba(0, 20, 74, 0.5)), url(../../assets/images/bartondam.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 65% 27%;
+  background-attachment: fixed;
+  clip-path: polygon(0 0, 100% 0px, 100% calc(100% - 100px), 0 100%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% calc(100% - 100px), 0 100%);
+  z-index: 98;
+  width: 100%;
+  height: 60%;
+}
+
+.header-text {
+  padding: 25vh 60px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
