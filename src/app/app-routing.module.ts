@@ -6,8 +6,8 @@ import { RunningComponent } from './pages/running/running.component';
 import { SkumpComponent } from './pages/skump/skump.component';
 
 const routes: Routes = [
-  { path : '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
+  { path : 'home', redirectTo: '', pathMatch: 'full' },
+  { path: '', component: HomeComponent },
   { path: 'skump', component: SkumpComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'running', component: RunningComponent },
