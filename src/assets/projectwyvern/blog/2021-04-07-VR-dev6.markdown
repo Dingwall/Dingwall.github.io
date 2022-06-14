@@ -1,0 +1,42 @@
+---
+layout: post
+title:  "Refining Telekinesis and Beginning Full Game Dev"
+date:   2021-04-07 20:00:00 -0500
+---
+<p>Welcome to an exciting week of Project Wyvern. You can download the zip file <a href="https://drive.google.com/file/d/1PRMk9uwcoNwPtlWEC3YU9rmW_ZjfHRnX/view?usp=sharing">here</a>. This week was largely spent trying to develop system to register head shaking and nodding. I also improved the reticle functionality in a few ways, improved the UI appearance, adjusted some telekinesis movements, fixed a number of bugs, and improved the sound in game.</p>
+
+<h4>Shaking and Nodding</h4>
+<p>My goal and reason for wanting to develop a way to register head shaking and head nodding is that it offers and additional form of input for the player in game. Since the current system is based exclusivly on looking around and staring at objects, more input could dramatically change the game. My first plans with it were to make it so that when nodding your head an object being held in telekinesis would be moved towards you and shaking would move the object away from you. This would have removed the need for the current pull telekinesis power and dramatically increased the amount of control the player has over objects in the scene. Unfortunately I failed to find a way to effectively register head nods and shakes. While what I developed could register them, it is no consistant and sometimes takes 20+ shakes of the head to recognize what the player is trying to do. My big takeaway from this week is that in a game where head movement is the only input players have, requiring a specific form of head movement is difficult to implement and somewhat confusing as a user. You can see my most successful implementation below. I struggled to properly register when the player changes direction of their head movement.</p>
+
+<image src="{{site.url}}/assets/4_7/nodCode.PNG" alt="Failed nod and shake code"/>
+
+<image src="{{site.url}}/assets/4_7/nodeCode2.PNG" alt="Failed nod and shake codes"/>
+
+<h4>Improved Reticle</h4>
+<p>The major change to the reticle this week was the new scaling. Based off of how far the reticle is from the player it's scale increases so that it is easier to see. The trade off is that it covers up more of the environment, but since it is transparent this didn't seem to be too much of an issue. The increase in scale also makes it so that the player can see which power is currently active based off of the icon on the reticle. The icon for the "hold" telekinesis power has also changed to an open hand, and when the power is activated it changes to a closed hand to indicate what mode it is in. This provides the player with a big more feedback about power they currently have active and what is happening in relation to that power. A major bug with the current reticle is that it is clipping into surfaces, making appear less as a UI element and more like a game object. Another large change was the loading bar no longer decreases, it only increases. So as it hits its full capacity it resets to empty and then will begin filling again. This is meant to make the interactions less confusing for the player and make the telekinesis powers easier to use.</p>
+
+<video width="600" height="auto" controls>
+    <source src="{{site.url}}/assets/4_7/reticle.mp4" alt="Show reticle scaling, new hand, and loading bar!" type="video/mp4"/>
+</video>
+
+<h4>Adding Sounds</h4>
+<p>I added sounds to the telekinesis powers to better indicate when they are active and give more feedback to the player when they use them. You can hear them throughout all of the videos, but the clip below UI shows them off well.</p>
+
+<h4>UI Changes</h4>
+<p>UI in VR is fairly minimal, so in this case I am refering to the snap rotation panels and the power switching panel. Instead of a 3D object I changed the panels to be icons outlined by a black square, with the insides of the square transparent. This helps them appear as a UI element and less like part of the game environment. Additionally, when hold or pull telekinesis are activated, the panels fade so that they are almost completely transparent. This gives the player an indication that they cannot use the panels until they deactivate their current power as well as allows them a better view of the environment if they are trying to move an object behind the panels. You can see an example of this transition in the video. Please excuse me discovering a bug with my colliders staying active on my panels, that will be fixed next week.</p>
+
+<video width="600" height="auto" controls>
+    <source src="{{site.url}}/assets/4_7/soundAndUI.mp4" alt="Show off UI change and sound" type="video/mp4"/>
+</video>
+
+<h4>Telekinesis Adjustments</h4>
+<p>The push power has been changed to single powerful push instead of a constant pushing action. This gives the player the feeling that it is more of a powerful and uncontrollable form of telekinesis and less of something that is supposed to be used for refined movement like the hold or pull powers. You can see some examples of it being used in the video below.</p>
+
+<video width="600" height="auto" controls>
+    <source src="{{site.url}}/assets/4_7/push.mp4" alt="Showing new push" type="video/mp4"/>
+</video>
+
+<h4>Coming soon!</h4>
+<p>The next week will be exclusively focused on game development and bug fixes. I am done creating new features and planning on strictly focusing on creating some fun and interesting levels for the player. My plan is to start by storyboarding some ideas and drawing them on paper, and from there I will implement them in editor. I am also hoping to get around the issues I have been having when importing Unity Store Assets where they lose their material properties and all turn pink.</p>
+
+<p>-Andrew</p>

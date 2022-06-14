@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "An introduction of Project Wyvern"
+date:   2021-01-27 20:20:00 -0500
+---
+While video games are one of the largest entertainment industries in the world, they are still largely unaccessible. Project Wyvern based on creating more accessible gaming for those with limited bodily function, focused around those with exclusive control of their head. 
+
+The idea is that with a simply sip-and-puff controller, those limited to head and neck movement would be able to game! While there exists controllers like this, they are complicated and expensive. This project will focus on developing a game that is based around a simple device that is essentially a single analogue stick with a tube attached. Players use this tube to position the stick, and can suck (sip) or blow (puff) the tub to also give input.
+
+Thanks for reading! More to come soon
+-Andrew

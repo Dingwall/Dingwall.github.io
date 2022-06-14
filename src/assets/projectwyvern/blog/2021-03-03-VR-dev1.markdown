@@ -1,0 +1,28 @@
+---
+layout: post
+title:  "First Week of Development in VR!"
+date:   2021-03-03 20:00:00 -0500
+---
+This was an exciting week because I finally feel like I am on track for my final project! The university has let me borrow a Oculus Rift CV1 headset to work with for my research, so this weekend I did a bit of research by playing a few VR games. There seems to be 4 types of movement systems in the games I played.
+<ul>
+    <li><b>Teleportation:</b> This is common as a way to move around the world where you need to complete tasks where you will stay in a generally small area before moving to another location to complete some task. This is common in puzzle games, but can be seen in Valves <a href="https://www.youtube.com/watch?v=u9Nj1lYyQmI">Half-Life Alyx</a>.</li>
+    <li><b>On rails or stationary:</b> Many games build the VR world so that either you are "on rails" meaining you do not control the player movement through the world, instead you travel a predetermined path. Other games take a similar approach where the player is expected to remain in place for the game, generally staying in the same small area. A good example of stationary is <a href="https://www.youtube.com/watch?v=4lqsq4InjHk">the Vader Immortal dojo level</a> where you stand on a pad and fight waves of enemies. Arguably the most popular VR game is <a href="https://www.youtube.com/watch?v=5V7ZUZVo0wg">Beat Saber</a> which is an on rails game. Both of these allow for fast paced action but make the game feel limited because of your lack of control</li>
+    <li><b>Analog stick:</b> Similar to many standard games, your body is moved using the analogue sticks on the controllers. There are also games where you are operating a vehicle that allow you to move your body around. The games were fun but could sometimes be disorienting because of the visual appearance of moving forward, but you can feel that your body is actually standing still. One of them actually make me feel motion sick for a while. While the primary form of movement is probably expected to be swinging from webs, <a href="https://www.oculus.com/experiences/rift/2190323657748572/">Spider-Man: Far from Home Virtual Reality</a> does use a analogue stick movement system when you are on the ground.</li>
+    <li><b>Lock and swing:</b> This was a very unique control system which required the player to reach forward and press and hold a button, and when you swing your arm backwards you essentially pull your body with your hand staying locked in place. This can be chained together to create something like a running motion, which is how they are used in <a href="https://store.steampowered.com/app/578620/GORN/">Gorn</a>. These control systems are very cool and unique to VR, but not always easy to control and inaccessible.</li>
+</ul>
+
+Since the movement system is the first thing I wanted to address I spent some time experimenting with each on. After this I started by completing <a href="https://learn.unity.com/project/vr-beginner-the-escape-room">this project</a> provided by Unity as a tutorial for how to work with VR in Unity.
+
+I started by working on a seated mode for VR. As I've mentioned before, since VR positions your head where your VR headset is, if you are seated you are below the expected height for a user.
+
+For example, here is me raising the headset from my feet to above my head, then lowering it back down.
+<image src="{{site.url}}/assets/gifs3_3/standard.gif" alt="head moving gif"/>
+
+Now this is me doing the same motion with seated mode enabled.
+<image src="{{site.url}}/assets/gifs3_3/seated.gif" alt="head moving gif"/>
+
+As you can see the view of the player stays at a locked height so that they can still see over the obstacle in front of them. This is great for people who will not have their head positioned at the expected height of a player while playing.
+
+At this point I am midway through a system for rotating the player in game. Currently you can push the analogue sticks left or right to rotate the player a few degrees in that direction, but I am expirementing with a way where the user can just rotate their head to the side and the in game player will begin to rotate that direction. Right now it will only work for a second and then freeze because of an issue with understanding where the player is centered, but with more time that should be correctable! After that my goal will be to develop a simple system to let the player freely move around the area without physically moving, specifically where it could be operated exclusively by a users head.
+
+-Andrew
