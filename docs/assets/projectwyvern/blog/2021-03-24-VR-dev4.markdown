@@ -1,0 +1,29 @@
+---
+layout: post
+title:  "Telekinesis and Reticle Upgrades"
+date:   2021-03-24 20:00:00 -0500
+---
+<p>Welcome to an exciting week of Project Wyvern. You can download the zip file <a href="https://drive.google.com/file/d/14D0I7a1aImaNN_86gw6GXL3eaHBUzaFr/view?usp=sharing">here</a>. This week I began by focusing on changing the reticle to include more information for the player. The reticle is no longer just a colored sphere, it is a 2D sprite that shows an image of what telekinesis power the player currently has active. In addition to these icons (which I got from <a href ="https://thenounproject.com/">https://thenounproject.com/</a>) I am planning on adding color changes as well as unique sounds when different powers are active. This way there are multiple indicators to what power the player has active. I also added what I have been calling the "gaze bar", a radial loading bar to show the progress of the players actions.</p>
+
+<h4>The Gaze Bar</h4>
+<p>The gaze bar gives the players feedback on how close they are to an action triggering. When they stare at the snap turn panels it begins to fill up, surrounding the reticle sprite with a black bar. Once it is full, the action is triggered, turning the player. The same system is used to switching between telekinesis powers and triggering telekinesis powers.</p>
+
+<h4>New Power: Hold</h4>
+<p>I added a new telekinesis power that allows the player to "hold" objects and move them around the game. This means that they don't push the object away or suck them closer, but can move the object vertically and horizontally. The object is set to maintain the same distance from the player as when the power began, so the distance the object is from the player slightly changes as it gets close to the same height as the players head. I found that this gave the player a bit more control over how the object moved, but also could be annoying.</p>
+
+<p>While develeping hold I found it annoying that the reticle would not stay in the air where I wanted to move the object, so I adjusted it so that while hold is active, the reticle will constantly follow the players view at the distance the hold object is set to stay from the player. This made it much easier to use and greatly improved my ability to move things around the scene. I also found that it was harder to lift objects starting from the ground vs starting on top of something. I adjusted it so that it would be easier to get an object to the height of the player.</p>
+
+<p>You can watch the video of me messing around with the different powers below. There are a few bugs throughout, but it does show the potential for the telekinesis system with more time. It also made me feel like Luke Skywalker learning to use the force.</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CDqOwXwCp8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<p>Overall I am very proud of this weeks development, I think the hold feature and improved reticle are a huge upgrade to the system that are intuative and accessible to all gamers. With no controller required I still enjoyed expirementing with the tools and think there is a potential for a cool puzzle game which wouldn't require the player to stand, spin, or use a controller.</p>
+
+<h4>Coming soon!</h4>
+<p>For next week I am planning on adjusting the controls. For the pull, I am planning on changing it so once the gaze bar is full, pull will trigger, and a second bar will fill. However long the player maintains focus as this second bar is filling is how long the item will remain in pull. The same can be down for push. An alternative option is that the player needs to constantly look at the object for pull or push to continue, and when they look away the object will freeze until the gaze bar runs out, then be released from telekinesis.</p>
+
+<p>Another major adjustment I plan on making is the width of the raycast which can trigger telekinesis. My plan it to point raycast all around the edges of the reticle sprite, so that anything highlighted by the sprite will begin to fill the gaze bar, not just the very center.</p>
+
+<p>Lastly, I am planning on adjusting how the reticle disappears when looking away from any surface. My current play is to have it remain at the distance from the player it was until they look at another surface, similar when hold telekinesis is active.</p>
+
+<p>-Andrew</p>

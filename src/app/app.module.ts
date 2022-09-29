@@ -13,6 +13,10 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MarkdownModule } from 'ngx-markdown';
+import { HttpClientModule } from '@angular/common/http';
+import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +27,7 @@ import { MatButtonModule } from '@angular/material/button';
     SkumpComponent,
     RunningComponent,
     ProjectsComponent,
+    ProjectwyvernComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,6 +36,9 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     MatCardModule,
     MatButtonModule,
+    HttpClientModule,
+    FlexLayoutModule,
+    MarkdownModule.forRoot({ loader: HttpClientModule }),
   ],
   providers: [],
   bootstrap: [AppComponent]

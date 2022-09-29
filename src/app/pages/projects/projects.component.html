@@ -1,20 +1,46 @@
-<div class="card-container" *ngFor="let p of projects">
-  <mat-card class="project-card">
-    <mat-card-header>
-      <div *ngIf="p.type == 'game'" mat-card-avatar class="game-header-image"></div>
-      <div *ngIf="p.type == 'code'" mat-card-avatar class="code-header-image"></div>
-      <mat-card-title>{{p.title}}</mat-card-title>
-      <mat-card-subtitle>{{p.subtitle}}</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src={{p.img}} alt={{p.imgAlt}}>
-    <mat-card-content>
-      <p>
-        {{p.description}}
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button [routerLink]="[p.link]" (click)=gotToLink(p.link)>VIEW</button>
-      <!-- <button mat-button>SHARE</button> -->
-    </mat-card-actions>
-  </mat-card>
+<!-- <div class="container">
+  <div class="card-container" *ngFor="let p of projects">
+    <mat-card class="project-card">
+      <mat-card-header>
+        <div *ngIf="p.type == 'game'" mat-card-avatar class="game-header-image"></div>
+        <div *ngIf="p.type == 'code'" mat-card-avatar class="code-header-image"></div>
+        <mat-card-title>{{p.title}}</mat-card-title>
+        <mat-card-subtitle>{{p.subtitle}}</mat-card-subtitle>
+      </mat-card-header>
+      <img mat-card-image src={{p.img}} alt={{p.imgAlt}}>
+      <mat-card-content>
+        <p>
+          {{p.description}}
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button [routerLink]="[p.link]" (click)=gotToLink(p.link)>VIEW</button>
+        <!-- <button mat-button>SHARE</button> 
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div> -->
+
+<div fxLayout="row wrap" fxLayoutAlign="start stretch">
+  <div fxFlex="22%" fxFlex.md="30.33%" fxFlex.sm="47%" fxFlex.xs="97%" 
+  *ngFor="let p of projects" class="card-container">
+    <mat-card class="project-card">
+      <mat-card-header>
+        <div *ngIf="p.type == 'game'" mat-card-avatar class="game-header-image"></div>
+        <div *ngIf="p.type == 'code'" mat-card-avatar class="code-header-image"></div>
+        <mat-card-title>{{p.title}}</mat-card-title>
+        <mat-card-subtitle>{{p.subtitle}}</mat-card-subtitle>
+      </mat-card-header>
+      <img mat-card-image src={{p.img}} alt={{p.imgAlt}}>
+      <mat-card-content flex>
+        <p>
+          {{p.description}}
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button [routerLink]="[p.link]" (click)=gotToLink(p.link)>VIEW</button>
+        <!-- <button mat-button>SHARE</button> -->
+      </mat-card-actions>
+    </mat-card>
+  </div>
 </div>

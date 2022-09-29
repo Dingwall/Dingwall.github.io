@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "Snap Turning without Controllers"
+date:   2021-03-10 20:00:00 -0500
+---
+This week I have a first version of Project Wyvern available for download! You can download the zip file <a href="https://drive.google.com/file/d/1151ff8jbSnSSvkDtAK8aLNKowPrcEflL/view?usp=sharing">here</a>. It has a simple menu and the option to enable seated mode before loading in. The level is a simple prototype with some teleportation pads and 2 interactable mugs.
+
+The level has 2 interactable mugs and 3 teleport pads which the player can move between. The player can walk around their space in real life and also move within the game. They can sit down or stand to raise or lower their perspective.
+
+<image src="{{site.url}}/assets/gifs3_10/standardMode.gif" alt="looking around the level"/>
+
+When seated mode is enabled, the height and position of the player perspective is locked. The way it is currently implemented does not actually make the player taller, it just locks the perspective. This next week I'll be working on instead making the player taller while maintaining there ability to move within the game space. Additionally in seated mode there are 2 floating panels slight above and to the sides of the player. If the player looks directly at them long enough they will turn red and then rotate the player in that direction. This gives a seated player the ability to rotate without using their hands or moving in the real world. My intial attempts to design these controls were based strictly on how far to the side the player looked, but it turned out to be much easier to instead have a specific point the player should look at so that rotating is an active choice like pressing a button on a controller. Using a raycast out of the front of the player camera so when you look straight at the floating panel it registers that the player is looking at the panel and wants to turn.
+
+<image src="{{site.url}}/assets/gifs3_10/seatedMode.gif" alt="looking around using seated mode"/>
+
+My next week of development is going to be focused on improving my seated mode perspective lock as well as developing a teleportation system for seated players. I have a few ideas on what kind of ways the player can control the game, so I may try to implement a few so that there are multiple options. Right now I am planning on developing a way there a chin mounted analogue stick could be used to teleport the player as well a similar system to the snap turning where you look at an object in game to move yourself. My current issue with both of these implementations have been making an easy way for the player to direct where they want to teleport to, not just placing them at the nearest pad. Since the player will need to move their head to push the analogue stick, it changes where they are looking which could throw off which pad they teleport to. The issue with the "gaze" technique for controls is that it is slow and difficult at range, since small movements of the head cause much larger variation in where a raycast is hitting as the point of contact gets farther from the player. I am hoping to develop a system where the player can quickly and easily lock in where they want to move to before executing the teleport.
+
+-Andrew
