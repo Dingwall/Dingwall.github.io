@@ -28,6 +28,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Deployment Reminders
 
+Change custom URL in page settings
+
 ng build and push changes
 
 cp docs/index.html docs/404.html to fix routing issues
