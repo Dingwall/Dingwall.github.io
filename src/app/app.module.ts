@@ -17,6 +17,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MarkdownModule } from 'ngx-markdown';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.component';
+import { GroceryComponent } from './pages/grocery/grocery.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.comp
     RunningComponent,
     ProjectsComponent,
     ProjectwyvernComponent,
+    GroceryComponent,
   ],
   imports: [
     BrowserModule,
