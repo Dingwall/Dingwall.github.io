@@ -17,7 +17,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MarkdownModule } from 'ngx-markdown';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.component';
-import { GroceryComponent } from './pages/grocery/grocery.component';
+import { ProjectCardComponent } from './pages/projects/project-card/project-card.component';
+import { WoodworkingComponent } from './pages/woodworking/woodworking.component'
+import { WoodProjectCardComponent } from './pages/woodworking/wood-project-card/wood-project-card.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { GroceryComponent } from './pages/grocery/grocery.component';
     RunningComponent,
     ProjectsComponent,
     ProjectwyvernComponent,
-    GroceryComponent,
+    ProjectCardComponent,
+    WoodworkingComponent,
+    WoodProjectCardComponent,
   ],
   imports: [
     BrowserModule,

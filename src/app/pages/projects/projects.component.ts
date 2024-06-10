@@ -33,10 +33,9 @@ export class ProjectsComponent implements OnInit {
       type: "game", // game, code
       img: "./assets/images/maze.gif",
       imgAlt: "Gif showing user leading ball around using VR accessiblity tools",
-      description: "A 4 month project focused on accessibility in video games and specifically accessibility for gamers in VR.",
+      description: "A four month research project focused on accessibility in video games and specifically accessibility for gamers in VR.",
       link: "https://dingwall.itch.io/projectwyvern",
     },
-    
   ]
 
   constructor() { }
@@ -44,8 +43,5 @@ export class ProjectsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  gotToLink(link: string) {
-    window.open(link, "_blank");
-  }
 
 }

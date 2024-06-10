@@ -1,6 +1,14 @@
 @import "/src/assets/styles/variables.scss";
 
-.card-container {
+.upper-container {
+  display: flex;
+}
+
+.carousel {
+
+}
+
+.lower-container {
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
