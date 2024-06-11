@@ -46,7 +46,11 @@ export class WoodworkingComponent implements OnInit {
     source: ""
   }
 
-  carouselIndex = 0
+  llcarousel = 3;
+  lcarousel = 4;
+  carouselIndex = 0;
+  rcarousel = 1;
+  rrcarousel = 2;
 
   projects = [
     {
@@ -209,24 +213,46 @@ export class WoodworkingComponent implements OnInit {
     },
   ]
 
-  constructor() { }
+  constructor() {
+    this.llcarousel = this.projects.length - 2;
+    this.lcarousel = this.projects.length - 1;
+    this.carouselIndex = 0;
+    this.rcarousel = 1;
+    this.rrcarousel = 2;
+  }
 
   ngOnInit(): void {
   }
 
   incrementCarousel() {
-    if (this.carouselIndex == this.projects.length - 1) {
-      this.carouselIndex = 0;
-    } else {
-      this.carouselIndex++;
-    }
+    this.llcarousel = this.incrementCarouselValue(this.llcarousel);
+    this.lcarousel = this.incrementCarouselValue(this.lcarousel);
+    this.carouselIndex = this.incrementCarouselValue(this.carouselIndex);
+    this.rcarousel = this.incrementCarouselValue(this.rcarousel);
+    this.rrcarousel = this.incrementCarouselValue(this.rrcarousel);
   }
 
   decrementCarousel() {
-    if (this.carouselIndex == 0) {
-      this.carouselIndex = this.projects.length - 1;
+    this.llcarousel = this.decrementCarouselValue(this.llcarousel);
+    this.lcarousel = this.decrementCarouselValue(this.lcarousel);
+    this.carouselIndex = this.decrementCarouselValue(this.carouselIndex);
+    this.rcarousel = this.decrementCarouselValue(this.rcarousel);
+    this.rrcarousel = this.decrementCarouselValue(this.rrcarousel);
+  }
+
+  incrementCarouselValue(value: any) {
+    if (value == this.projects.length - 1) {
+      return 0;
     } else {
-      this.carouselIndex--;
+      return value + 1;
+    }
+  }
+
+  decrementCarouselValue(value: any) {
+    if (value == 0) {
+      return this.projects.length - 1;
+    } else {
+      return value - 1;
     }
   }
 

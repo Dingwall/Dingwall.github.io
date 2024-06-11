@@ -2,26 +2,85 @@
 
 .upper-container {
   display: flex;
+  flex-direction: column;
+  padding: 3% 0 0 0;
 }
 
 .carousel {
+  position: relative;
   display: flex;
-  width: 100%;
   justify-content: center;
   align-items: center;
+  width: 85%;
+  margin: 0 auto;
 
-  .p-card {
-    width: 30vw;
+  .pic-parent {
+    aspect-ratio: 1 / 1;
+  }
 
-    .pic-parent {
-      aspect-ratio: 1 / 1;
-    }
-    .picture {
-      object-fit: cover;
-      width: 100%;
-      height: 100%;
-      border-radius: 4px 4px 0 0;
-    }
+  .picture {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .main-card {
+    width: 30%;
+    z-index: 10;
+  }
+
+  .ll-card {
+    width: 20%;
+    z-index: 8;
+    margin-right: -10%;
+  }
+  .l-card {
+    width: 25%;
+    z-index: 9;
+    margin-right: -10%;
+  }
+  .r-card {
+    width: 25%;
+    z-index: 9;
+    margin-left: -10%;
+  }
+  .rr-card {
+    width: 20%;
+    z-index: 8;
+    margin-left: -10%;
+  }
+
+  .left-arrow {
+    margin: 1%;
+    z-index: 11;
+    width: 2%;
+  }
+
+  .right-arrow {
+    margin: 1%;
+    z-index: 11;
+    width: 2%;
+  }
+}
+
+.project-info {
+  width: 80%;
+  margin: 0 auto;
+  padding: 3% 0;
+  font-family: $standard-font, sans-serif;
+
+  .name {
+    font-size: large;
+    font-weight: 700;
+  }
+
+  .woodtype {
+    padding: 1% 0;
+  }
+
+  .description {
+    
   }
 }
 
@@ -43,30 +102,113 @@
   .project-card {
     width: 23%;
   }
+
+  .carousel {
+    width: 87%;
+
+    .left-arrow {
+      width: 2%;
+    }
+  
+    .right-arrow {
+      width: 2%;
+    }
+  }
 }
 
 @media (max-width: $medium-width) {
   .project-card {
     width: 31%;
   }
+
+  .carousel {
+    width: 91%;
+
+    .left-arrow {
+      width: 2.5%;
+    }
+  
+    .right-arrow {
+      width: 2.5%;
+    }
+  }
 }
 
 @media (max-width: $small-width) {
-  
+  .carousel {
+    width: 93%;
+  }
 }
 
 @media (max-width: $xsmall-width) {
   .project-card {
-    width: 48%;
+    margin: 0;
+    width: 33.33%;
+  }
+  .lower-container {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .carousel {
+    width: 92%;
+
+    .main-card {
+      width: 70%;
+      z-index: 10;
+    }
+  
+    .ll-card {
+      width: 0%;
+      margin-right: 0%;
+    }
+    .l-card {
+      width: 0%;
+      margin-right: 0%;
+    }
+    .r-card {
+      width: 0%;
+      margin-left: 0%;
+    }
+    .rr-card {
+      width: 0%;
+      margin-left: 0%;
+    }
+
+    .left-arrow {
+      width: 4%;
+    }
+  
+    .right-arrow {
+      width: 4%;
+    }
   }
 }
 
 @media (max-width: $xxsmall-width) {
-  .project-card {
-    width: 98%;
+  .carousel {
+    .left-arrow {
+      width: 6%;
+    }
+  
+    .right-arrow {
+      width: 6%;
+    }
   }
 }
 
 @media (max-width: $mobile-width) {
-
+  .carousel {
+    .left-arrow {
+      width: 7%;
+    }
+  
+    .right-arrow {
+      width: 7%;
+    }
+  }
 }

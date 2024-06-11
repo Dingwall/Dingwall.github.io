@@ -9,6 +9,7 @@
 .pic-parent {
   aspect-ratio: 1 / 1;
 }
+
 .picture {
   object-fit: cover;
   width: 100%;
@@ -19,4 +20,34 @@
 .title {
   font-family: $standard-font, sans-serif;
   padding: 3% 5%;
+}
+
+@media (max-width: $large-width) {
+  
+}
+
+@media (max-width: $medium-width) {
+  
+}
+
+@media (max-width: $small-width) {
+  
+}
+
+@media (max-width: $xsmall-width) {
+  .p-card {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .picture {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: $xxsmall-width) {
+  
+}
+
+@media (max-width: $mobile-width) {
+
 }
