@@ -1,6 +1,13 @@
 <div class="upper-container">
   <div class="carousel">
-
+    <div (click)="decrementCarousel()">left</div>
+    <div class="p-card">
+      <div class="pic-parent">
+        <img class="picture" src={{projects[carouselIndex].image}}>
+      </div>
+      <div class="title">{{ projects[carouselIndex].name }}</div>
+    </div>
+    <div (click)="incrementCarousel()">right</div>
   </div>
 </div>
 <div class="lower-container">

@@ -39,12 +39,14 @@ export class WoodworkingComponent implements OnInit {
   projectTemplate = {
     name: "",
     tools: [],
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-    images: [],
+    description: "",
+    image: "",
     woodtype: "",
     finish: [],
     source: ""
   }
+
+  carouselIndex = 0
 
   projects = [
     {
@@ -57,7 +59,7 @@ export class WoodworkingComponent implements OnInit {
         "V-Gouge"
       ],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis.",
-      images: [],
+      image: "./assets/woodworking/1.jfif",
       woodtype: "Basswood",
       finish: ["Acrylic Paint", "Walnut Oil", "Half & Half"],
       source: "Maplewood Park"
@@ -71,7 +73,7 @@ export class WoodworkingComponent implements OnInit {
         "Coping Saw",
       ],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/2.jfif",
       woodtype: "Basswood",
       finish: ["Half & Half Dark"],
       source: "Cedar Grove"
@@ -82,7 +84,7 @@ export class WoodworkingComponent implements OnInit {
         "Hook Knife",
       ],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/3.jfif",
       woodtype: "Unknown",
       finish: ["Milk Paint", "Town Talk Wax"],
       source: "Oak Ridge"
@@ -91,7 +93,7 @@ export class WoodworkingComponent implements OnInit {
       name: "testing no tools",
       tools: [],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/4.jfif",
       woodtype: "Basswood",
       finish: ["Acrylic Paint", "Half & Half Dark"],
       source: ""
@@ -104,7 +106,7 @@ export class WoodworkingComponent implements OnInit {
         "Chisel",
       ],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/5.jfif",
       woodtype: "Basswood",
       finish:   ["None", "Half & Half Dark", "Milk Paint"],
       source: "Pine Valley"
@@ -113,88 +115,70 @@ export class WoodworkingComponent implements OnInit {
       name: "", // no name test
       tools: ["Gouge"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/6.jfif",
       woodtype: "Pine",
       finish: ["Town Talk Wax", "Half & Half Dark", "Walnut Oil"],
       source: "Birchwood Forest"
     },
     {
       name: "testing long description",
-      tools: [],
+      tools: ["Ryoba", "Detail Knife", "Sloyd Knife", "Sandpaper"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis. Aliquam convallis lectus id felis cursus, a congue lacus malesuada. Integer eget ligula fermentum, consequat lorem eget, ultrices felis. Donec nec nisi ut elit laoreet blandit. Sed at convallis dolor, non tincidunt quam. Vestibulum at lacus ac dolor vestibulum lobortis. Donec luctus vel nisi at fringilla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis. Aliquam convallis lectus id felis cursus, a congue lacus malesuada. Integer eget ligula fermentum, consequat lorem eget, ultrices felis. Donec nec nisi ut elit laoreet blandit. Sed at convallis dolor, non tincidunt quam. Vestibulum at lacus ac dolor vestibulum lobortis. Donec luctus vel nisi at fringilla.",
-      images: [],
+      image: "./assets/woodworking/7.jfif",
       woodtype: "Spruce",
       finish: ["Acrylic Paint"],
       source: ""
     },
     {
       name: "testing no description",
-      tools: [],
+      tools: ["Axe", "Gouge", "Drill", "Pocket Knife"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/8.jfif",
       woodtype: "Green",
       finish: ["None", "Milk Paint"],
       source: "Elmwood Park"
     },
     {
       name: "testing no images",
-      tools: [],
+      tools: ["Gouge", "Hook Knife", "Kanna"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "",
       woodtype: "Cinnamon",
       finish: ["Walnut Oil", "Town Talk Wax"],
       source: "Willow Creek"
     },
     {
-      name: "testing 2 images",
-      tools: [],
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
-      woodtype: "Unknown",
-      finish: ["Milk Paint", "None", "Acrylic Paint"],
-      source: "Sycamore Grove"
-    },
-    {
-      name: "testing 3+ images",
-      tools: [],
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
-      woodtype: "Green",
-      finish: ["Half & Half Dark", "Acrylic Paint"],
-      source: "Redwood Heights"
-    },
-    {
       name: "testing no woodtype",
-      tools: [],
+      tools: ["Ryoba", "Pocket Knife", "Drill", "Detail Knife", "V-Gouge", "Sloyd Knife"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/10.jfif",
       woodtype: "Purple",
       finish: ["Town Talk Wax", "None", "Half & Half Dark"],
       source: "Aspen Hollow"
     },
     {
       name: "testing no source",
-      tools: [],
+      tools: ["Coping Saw", "Sloyd Knife", "Drill"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/11.jfif",
       woodtype: "White",
       finish: ["Acrylic Paint", "Half & Half Dark", "Town Talk Wax"],
       source: ""
     },
     {
       name: "testing no finish",
-      tools: [],
+      tools: ["Chisel", "V-Gouge", "Hook Knife", "Sandpaper", "Axe"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/5.jfif",
       woodtype: "White",
       finish: [],
       source: "Magnolia Gardens"
     },
     {
       name: "testing 1 finish",
-      tools: [],
+      tools: ["Kanna", "Drill", "Chisel"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/9.jfif",
       woodtype: "White",
       finish: ["Walnut Oil",
       "Half & Half",
@@ -207,18 +191,18 @@ export class WoodworkingComponent implements OnInit {
     },
     {
       name: "testing long source",
-      tools: [],
+      tools: ["Hook Knife", "Detail Knife", "Sloyd Knife", "Axe", "Pocket Knife", "Coping Saw"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/6.jfif",
       woodtype: "White",
       finish: ["Acrylic Paint", "Half & Half Dark", "Town Talk Wax"],
       source: "Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree "
     },
     {
       name: "testing long wood type",
-      tools: [],
+      tools: ["Drill", "Sandpaper", "Sloyd Knife"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      images: [],
+      image: "./assets/woodworking/9.jfif",
       woodtype: "Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree ",
       finish: ["Acrylic Paint", "Half & Half Dark", "Town Talk Wax"],
       source: "Folkstone Dr"
@@ -228,6 +212,22 @@ export class WoodworkingComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  incrementCarousel() {
+    if (this.carouselIndex == this.projects.length - 1) {
+      this.carouselIndex = 0;
+    } else {
+      this.carouselIndex++;
+    }
+  }
+
+  decrementCarousel() {
+    if (this.carouselIndex == 0) {
+      this.carouselIndex = this.projects.length - 1;
+    } else {
+      this.carouselIndex--;
+    }
   }
 
 }
