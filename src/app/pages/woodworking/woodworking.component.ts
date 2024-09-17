@@ -6,44 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./woodworking.component.scss']
 })
 export class WoodworkingComponent implements OnInit {
-
-  toolList = [
-    "Auger",
-    "Axe",
-    "Chisel",
-    "Coping Saw",
-    "Detail Knife",
-    "Drill",
-    "Gouge",
-    "Hook Knife",
-    "Kanna",
-    "Pocket Knife",
-    "Ryoba",
-    "Sandpaper",
-    "Sloyd Knife",
-    "V-Gouge"
-  ]
-
-  finishList = [
-    "Walnut Oil",
-    "Half & Half",
-    "Half & Half Dark",
-    "None",
-    "Milk Paint",
-    "Acrylic Paint",
-    "Town Talk Wax"
-  ]
-  // fill from what is used in projects
-  woodtype = [] 
-
+  
   projectTemplate = {
     name: "",
-    tools: [],
     description: "",
     image: "",
-    woodtype: "",
-    finish: [],
-    source: ""
+    woodtype: ""
   }
 
   llcarousel = 3;
@@ -52,164 +20,110 @@ export class WoodworkingComponent implements OnInit {
   rcarousel = 1;
   rrcarousel = 2;
 
+  // What is a better datatype for this? Something would make it faster
+
   projects = [
     {
-      name: "testing 1",
-      tools: [
-        "Pocket Knife",
-        "Ryoba",
-        "Sandpaper",
-        "Sloyd Knife",
-        "V-Gouge"
-      ],
+      name: "Bee Spoon",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis.",
-      image: "./assets/woodworking/1.jfif",
+      image: "./assets/woodworking/beespoon.png",
       woodtype: "Basswood",
-      finish: ["Acrylic Paint", "Walnut Oil", "Half & Half"],
-      source: "Maplewood Park"
     },
     {
-      name: "testing 2",
-      tools: [
-        "Auger",
-        "Axe",
-        "Chisel",
-        "Coping Saw",
-      ],
+      name: "Low Roman Workbench",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/2.jfif",
-      woodtype: "Basswood",
-      finish: ["Half & Half Dark"],
-      source: "Cedar Grove"
+      image: "./assets/woodworking/bench.png",
+      woodtype: "Basswood"
     },
     {
-      name: "testing 3",
-      tools: [
-        "Hook Knife",
-      ],
+      name: "Comfort Bird 1",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/3.jfif",
-      woodtype: "Unknown",
-      finish: ["Milk Paint", "Town Talk Wax"],
-      source: "Oak Ridge"
+      image: "./assets/woodworking/bird1.png",
+      woodtype: "Unknown"
     },
     {
-      name: "testing no tools",
-      tools: [],
+      name: "Comfort Bird 3",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/4.jfif",
-      woodtype: "Basswood",
-      finish: ["Acrylic Paint", "Half & Half Dark"],
-      source: ""
+      image: "./assets/woodworking/bird2.png",
+      woodtype: "Basswood"
     },
     {
-      name: "testing overlap tools",
-      tools: [
-        "Auger",
-        "Axe",
-        "Chisel",
-      ],
+      name: "Crooked Spoon",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/5.jfif",
-      woodtype: "Basswood",
-      finish:   ["None", "Half & Half Dark", "Milk Paint"],
-      source: "Pine Valley"
+      image: "./assets/woodworking/crookedspoon.png",
+      woodtype: "Basswood"
     },
     {
-      name: "", // no name test
-      tools: ["Gouge"],
+      name: "Eagle", // no name test
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/6.jfif",
-      woodtype: "Pine",
-      finish: ["Town Talk Wax", "Half & Half Dark", "Walnut Oil"],
-      source: "Birchwood Forest"
+      image: "./assets/woodworking/eagle.png",
+      woodtype: "Pine"
     },
     {
-      name: "testing long description",
-      tools: ["Ryoba", "Detail Knife", "Sloyd Knife", "Sandpaper"],
+      name: "Espresso Spoon",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis. Aliquam convallis lectus id felis cursus, a congue lacus malesuada. Integer eget ligula fermentum, consequat lorem eget, ultrices felis. Donec nec nisi ut elit laoreet blandit. Sed at convallis dolor, non tincidunt quam. Vestibulum at lacus ac dolor vestibulum lobortis. Donec luctus vel nisi at fringilla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis. Aliquam convallis lectus id felis cursus, a congue lacus malesuada. Integer eget ligula fermentum, consequat lorem eget, ultrices felis. Donec nec nisi ut elit laoreet blandit. Sed at convallis dolor, non tincidunt quam. Vestibulum at lacus ac dolor vestibulum lobortis. Donec luctus vel nisi at fringilla.",
-      image: "./assets/woodworking/7.jfif",
-      woodtype: "Spruce",
-      finish: ["Acrylic Paint"],
-      source: ""
+      image: "./assets/woodworking/espressospoon.JPG",
+      woodtype: "Spruce"
     },
     {
-      name: "testing no description",
-      tools: ["Axe", "Gouge", "Drill", "Pocket Knife"],
+      name: "Rose",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/8.jfif",
-      woodtype: "Green",
-      finish: ["None", "Milk Paint"],
-      source: "Elmwood Park"
+      image: "./assets/woodworking/flower.png",
+      woodtype: "Green"
     },
     {
       name: "testing no images",
-      tools: ["Gouge", "Hook Knife", "Kanna"],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
       image: "",
-      woodtype: "Cinnamon",
-      finish: ["Walnut Oil", "Town Talk Wax"],
-      source: "Willow Creek"
+      woodtype: "Cinnamon"
     },
     {
-      name: "testing no woodtype",
-      tools: ["Ryoba", "Pocket Knife", "Drill", "Detail Knife", "V-Gouge", "Sloyd Knife"],
+      name: "Lovers Knot",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/10.jfif",
-      woodtype: "Purple",
-      finish: ["Town Talk Wax", "None", "Half & Half Dark"],
-      source: "Aspen Hollow"
+      image: "./assets/woodworking/loversknot.png",
+      woodtype: "Purple"
     },
     {
-      name: "testing no source",
-      tools: ["Coping Saw", "Sloyd Knife", "Drill"],
+      name: "Mallet",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/11.jfif",
-      woodtype: "White",
-      finish: ["Acrylic Paint", "Half & Half Dark", "Town Talk Wax"],
-      source: ""
+      image: "./assets/woodworking/mallet.png",
+      woodtype: "White"
     },
     {
-      name: "testing no finish",
-      tools: ["Chisel", "V-Gouge", "Hook Knife", "Sandpaper", "Axe"],
+      name: "Mug 1",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/5.jfif",
-      woodtype: "White",
-      finish: [],
-      source: "Magnolia Gardens"
+      image: "./assets/woodworking/mug1.png",
+      woodtype: "White"
     },
     {
-      name: "testing 1 finish",
-      tools: ["Kanna", "Drill", "Chisel"],
+      name: "Pointy Santa",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/9.jfif",
-      woodtype: "White",
-      finish: ["Walnut Oil",
-      "Half & Half",
-      "Half & Half Dark",
-      "None",
-      "Milk Paint",
-      "Acrylic Paint",
-      "Town Talk Wax"],
-      source: "Chestnut Hill"
+      image: "./assets/woodworking/pointysanta.png",
+      woodtype: "White"
     },
     {
-      name: "testing long source",
-      tools: ["Hook Knife", "Detail Knife", "Sloyd Knife", "Axe", "Pocket Knife", "Coping Saw"],
+      name: "Round Santa",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/6.jfif",
-      woodtype: "White",
-      finish: ["Acrylic Paint", "Half & Half Dark", "Town Talk Wax"],
-      source: "Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree "
+      image: "./assets/woodworking/santa1.png",
+      woodtype: "White"
     },
     {
-      name: "testing long wood type",
-      tools: ["Drill", "Sandpaper", "Sloyd Knife"],
+      name: "Jormungandr",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/9.jfif",
+      image: "./assets/woodworking/snake.png",
       woodtype: "Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree ",
-      finish: ["Acrylic Paint", "Half & Half Dark", "Town Talk Wax"],
-      source: "Folkstone Dr"
+    },
+    {
+      name: "Wood Spirit",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
+      image: "./assets/woodworking/treeman.png",
+      woodtype: "White"
+    },
+    {
+      name: "Mug of Endless Draught",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
+      image: "./assets/woodworking/worldmug.png",
+      woodtype: "White"
     },
   ]
 

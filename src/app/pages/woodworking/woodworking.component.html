@@ -32,10 +32,11 @@
   </div>
   <div class="project-info">
     <div class="name">{{ projects[carouselIndex].name }}</div>
-    <div class="woodtype">Made with {{ projects[carouselIndex].woodtype }} from {{ projects[carouselIndex].source }}</div>
+    <div class="woodtype">Made with {{ projects[carouselIndex].woodtype }}</div>
     <div class="description">{{ projects[carouselIndex].description }}</div>
   </div>
 </div>
 <div class="lower-container">
+  <!-- Add filters or search -->
   <app-wood-project-card class="project-card" [project] = p *ngFor="let p of projects"></app-wood-project-card>
 </div>
