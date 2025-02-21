@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -39,6 +40,7 @@ import { WoodProjectCardComponent } from './pages/woodworking/wood-project-card/
     BrowserModule,
     AppRoutingModule,
     NgbModule,
+    FormsModule,
     BrowserAnimationsModule,
     MatCardModule,
     MatButtonModule,

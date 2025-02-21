@@ -7,9 +7,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SkumpComponent implements OnInit {
 
+    url = "";
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  openLink() {
+    const index = this.url.indexOf('?');
+    this.url = index === -1 ? this.url : this.url.substring(0, index);
+    if (this.url) {
+        window.open(this.url, '_blank');
+    }
   }
 
 }
