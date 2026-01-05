@@ -6,6 +6,7 @@ import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.comp
 import { RunningComponent } from './pages/running/running.component';
 import { WoodworkingComponent } from './pages/woodworking/woodworking.component';
 import { SkumpComponent } from './pages/skump/skump.component';
+import { LegoComponent } from './pages/lego/lego.component';
 
 const routes: Routes = [
   { path : '', redirectTo: '/home', pathMatch: 'full' },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'running', component: RunningComponent },
   { path: 'woodworking', component: WoodworkingComponent },
   { path: 'projectwyvern', component: ProjectwyvernComponent },
+  { path: 'lego', component: LegoComponent },
 ];
 
 @NgModule({
