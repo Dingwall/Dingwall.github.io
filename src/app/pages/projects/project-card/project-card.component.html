@@ -5,14 +5,20 @@
     <mat-card-title>{{ project.title }}</mat-card-title>
     <mat-card-subtitle>{{ project.subtitle }}</mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image src={{project.img}} alt={{project.imgAlt}}>
-  <mat-card-content flex>
-    <p>
-      {{ project.description }}
+  
+  
+  <mat-card-content class="card-content">
+    <img mat-card-image src={{project.img}} alt={{project.imgAlt}} class="card-image">
+    <p class="card-text">
+      <span *ngFor="let paragraph of project.description">
+        {{ paragraph }}
+        <br><br>
+      </span>
+      <mat-card-actions>
+        <button mat-button [routerLink]="[project.link]" (click)=gotToLink(project.link)>VIEW</button>
+        <!-- <button mat-button>SHARE</button> -->
+      </mat-card-actions>
     </p>
+    
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-button [routerLink]="[project.link]" (click)=gotToLink(project.link)>VIEW</button>
-    <!-- <button mat-button>SHARE</button> -->
-  </mat-card-actions>
 </mat-card>

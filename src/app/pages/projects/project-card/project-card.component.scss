@@ -3,6 +3,21 @@
 
   display: flex;
   flex-direction: column;
+
+  .card-content {
+    display: flex;
+  }
+
+  .card-image {
+    width: 40%;
+    margin-right: 20px;
+  }
+
+  .card-text {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+  }
   
   .game-header-image {
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Video-Game-Controller-Icon.svg/2048px-Video-Game-Controller-Icon.svg.png');

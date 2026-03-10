@@ -23,108 +23,22 @@ export class WoodworkingComponent implements OnInit {
   // What is a better datatype for this? Something would make it faster
 
   projects = [
-    {
-      name: "Bee Spoon",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis.",
-      image: "./assets/woodworking/beespoon.png",
-      woodtype: "Basswood",
-    },
-    {
-      name: "Low Roman Workbench",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/bench.png",
-      woodtype: "Basswood"
-    },
-    {
-      name: "Comfort Bird 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/bird1.png",
-      woodtype: "Unknown"
-    },
-    {
-      name: "Comfort Bird 3",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/bird2.png",
-      woodtype: "Basswood"
-    },
-    {
-      name: "Crooked Spoon",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/crookedspoon.png",
-      woodtype: "Basswood"
-    },
-    {
-      name: "Eagle", // no name test
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/eagle.png",
-      woodtype: "Pine"
-    },
-    {
-      name: "Espresso Spoon",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis. Aliquam convallis lectus id felis cursus, a congue lacus malesuada. Integer eget ligula fermentum, consequat lorem eget, ultrices felis. Donec nec nisi ut elit laoreet blandit. Sed at convallis dolor, non tincidunt quam. Vestibulum at lacus ac dolor vestibulum lobortis. Donec luctus vel nisi at fringilla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue. Nulla facilisi. Mauris eu magna tincidunt, laoreet nulla nec, hendrerit nisl. Nullam at semper turpis. Aliquam convallis lectus id felis cursus, a congue lacus malesuada. Integer eget ligula fermentum, consequat lorem eget, ultrices felis. Donec nec nisi ut elit laoreet blandit. Sed at convallis dolor, non tincidunt quam. Vestibulum at lacus ac dolor vestibulum lobortis. Donec luctus vel nisi at fringilla.",
-      image: "./assets/woodworking/espressospoon.JPG",
-      woodtype: "Spruce"
-    },
-    {
-      name: "Rose",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/flower.png",
-      woodtype: "Green"
-    },
-    {
-      name: "testing no images",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "",
-      woodtype: "Cinnamon"
-    },
-    {
-      name: "Lovers Knot",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/loversknot.png",
-      woodtype: "Purple"
-    },
-    {
-      name: "Mallet",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/mallet.png",
-      woodtype: "White"
-    },
-    {
-      name: "Mug 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/mug1.png",
-      woodtype: "White"
-    },
-    {
-      name: "Pointy Santa",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/pointysanta.png",
-      woodtype: "White"
-    },
-    {
-      name: "Round Santa",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/santa1.png",
-      woodtype: "White"
-    },
-    {
-      name: "Jormungandr",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/snake.png",
-      woodtype: "Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree Sure, here are 15 random place names where you might find a tree ",
-    },
-    {
-      name: "Wood Spirit",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/treeman.png",
-      woodtype: "White"
-    },
-    {
-      name: "Mug of Endless Draught",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec justo vel felis suscipit ultricies. Phasellus vitae turpis eu tellus rhoncus congue.",
-      image: "./assets/woodworking/worldmug.png",
-      woodtype: "White"
-    },
+    "beespoon.png",
+    "treeman.png",
+    "worldmug.png",
+    "bench.png",
+    "bird2.png",
+    "pointysanta.png",
+    "santa1.png",
+    "eagle.png",
+    "espressospoon.JPG",
+    "flower.png",
+    "loversknot.png",
+    "mallet.png",
+    "mug1.png",
+    "snake.png",
+    "bird1.png",
+    "crookedspoon.png",
   ]
 
   constructor() {

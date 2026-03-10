@@ -10,38 +10,38 @@
 }
 
 .project-card {
-  width: 18%;
+  width: 98%;
   margin: 2% 1%;
 }
 
-@media (max-width: $large-width) {
-  .project-card {
-    width: 23%;
-  }
-}
+// @media (max-width: $large-width) {
+//   .project-card {
+//     width: 23%;
+//   }
+// }
 
-@media (max-width: $medium-width) {
-  .project-card {
-    width: 31%;
-  }
-}
+// @media (max-width: $medium-width) {
+//   .project-card {
+//     width: 31%;
+//   }
+// }
 
-@media (max-width: $small-width) {
+// @media (max-width: $small-width) {
   
-}
+// }
 
-@media (max-width: $xsmall-width) {
-  .project-card {
-    width: 48%;
-  }
-}
+// @media (max-width: $xsmall-width) {
+//   .project-card {
+//     width: 48%;
+//   }
+// }
 
-@media (max-width: $xxsmall-width) {
-  .project-card {
-    width: 98%;
-  }
-}
+// @media (max-width: $xxsmall-width) {
+//   .project-card {
+//     width: 98%;
+//   }
+// }
 
-@media (max-width: $mobile-width) {
+// @media (max-width: $mobile-width) {
 
-}
+// }
