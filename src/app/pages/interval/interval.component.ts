@@ -200,6 +200,30 @@ export class IntervalComponent implements OnInit, OnDestroy {
     return splitMs - startMs;
   }
 
+  /**
+   * Get both the split delta time (time since last lap) and total time from event start
+   * Returns { deltaMs: number, totalMs: number }
+   */
+  getSplitInfo(athleteId: string, splitIndex: number): { deltaMs: number; totalMs: number } {
+    const state = this.athleteStates.get(athleteId);
+    if (!state || !state.splits[splitIndex] || !this.dbStartTime) {
+      return { deltaMs: 0, totalMs: 0 };
+    }
+
+    const startMs = new Date(this.dbStartTime).getTime();
+    const currentSplitMs = new Date(state.splits[splitIndex]).getTime();
+    const totalMs = currentSplitMs - startMs;
+
+    // Calculate delta from previous split or from start if first split
+    let deltaMs = totalMs;
+    if (splitIndex > 0 && state.splits[splitIndex - 1]) {
+      const previousSplitMs = new Date(state.splits[splitIndex - 1]).getTime();
+      deltaMs = currentSplitMs - previousSplitMs;
+    }
+
+    return { deltaMs, totalMs };
+  }
+
   ngOnDestroy() {
     this.stopLocalTimer();
     

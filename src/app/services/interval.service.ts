@@ -125,12 +125,16 @@ export class IntervalService {
       const eventData = await this.getEventByCode(eventCode);
       if (!eventData) throw new Error('Event not found');
 
-      const athletes = eventData.athletes || [];
-      if (!athletes.includes(athleteId)) {
-        athletes.push(athleteId);
+      // Extract athlete IDs - handle both string IDs (raw DB) and full athlete objects (enriched)
+      const athleteIds = (eventData.athletes || []).map((athlete: any) => {
+        return typeof athlete === 'string' ? athlete : athlete.id;
+      });
+      
+      if (!athleteIds.includes(athleteId)) {
+        athleteIds.push(athleteId);
         const { data, error } = await this.supabase
           .from("Events")
-          .update({ athletes })
+          .update({ athletes: athleteIds })
           .eq('event_code', eventCode);
         if (error) throw error;
         return data;

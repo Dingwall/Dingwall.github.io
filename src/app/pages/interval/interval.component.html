@@ -55,8 +55,13 @@
         </button>
     </div>
     <div>
-        <div *ngFor="let splitTime of athleteStates.get(athlete.id)?.splits | slice:-3">
-            <span>{{ getSplitDisplayTime(splitTime) | date: 'mm:ss.SS' }}</span>
+        <div *ngFor="let split of athleteStates.get(athlete.id)?.splits; let i = index">
+            <ng-container *ngIf="i >= ((athleteStates.get(athlete.id)?.splits?.length) || 0) - 3">
+                <span>
+                    {{ getSplitInfo(athlete.id, i).deltaMs | date: 'mm:ss.SS' }}
+                    ({{ getSplitInfo(athlete.id, i).totalMs | date: 'mm:ss.SS' }})
+                </span>
+            </ng-container>
         </div>
     </div>
 </ng-template>
