@@ -21,6 +21,7 @@ import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.comp
 import { ProjectCardComponent } from './pages/projects/project-card/project-card.component';
 import { WoodworkingComponent } from './pages/woodworking/woodworking.component'
 import { WoodProjectCardComponent } from './pages/woodworking/wood-project-card/wood-project-card.component';
+import { IntervalComponent } from './pages/interval/interval.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { WoodProjectCardComponent } from './pages/woodworking/wood-project-card/
     ProjectCardComponent,
     WoodworkingComponent,
     WoodProjectCardComponent,
+    IntervalComponent,
   ],
   imports: [
     BrowserModule,

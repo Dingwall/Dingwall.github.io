@@ -6,6 +6,8 @@ import { ProjectwyvernComponent } from './pages/projectwyvern/projectwyvern.comp
 import { RunningComponent } from './pages/running/running.component';
 import { WoodworkingComponent } from './pages/woodworking/woodworking.component';
 import { SkumpComponent } from './pages/skump/skump.component';
+import { IntervalComponent } from './pages/interval/interval.component';
+
 
 const routes: Routes = [
   { path : '', redirectTo: '/woodworking', pathMatch: 'full' },
@@ -13,7 +15,8 @@ const routes: Routes = [
   { path: 'projects', component: ProjectsComponent },
   { path: 'running', component: RunningComponent },
   { path: 'woodworking', component: WoodworkingComponent },
-  { path: 'projectwyvern', component: ProjectwyvernComponent }
+  { path: 'projectwyvern', component: ProjectwyvernComponent },
+  { path: 'interval', component: IntervalComponent },
 ];
 
 @NgModule({

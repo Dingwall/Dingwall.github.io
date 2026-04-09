@@ -21,7 +21,17 @@
     "lib": [
       "es2020",
       "dom"
-    ]
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@supabase/supabase-js": [
+        "node_modules/@supabase/supabase-js/dist/module/index.d.ts"
+      ]
+    },
+    // "include": [
+    //   "src/**/*.ts"
+    // ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

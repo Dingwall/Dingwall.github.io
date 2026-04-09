@@ -1,0 +1,62 @@
+<!-- Landing Page View -->
+<div *ngIf="!eventData">
+    <div>
+        <!-- <button (click)="createNewEvent()">Create New Event</button> -->
+    </div>
+    <div>
+        <input type="text" placeholder="Event Code" [(ngModel)]="eventCodeToSearch">
+        <button (click)="joinEvent()">Join Event</button>
+    </div>
+</div>
+
+<!-- Event View -->
+<div *ngIf="eventData">
+    <div>
+        <h2>{{ eventData?.event_name }}</h2>
+        <h4>{{ eventData?.event_code }}</h4>
+        <p>{{ eventData?.description }}</p>
+    </div>
+    <div>
+        <!-- Big timer counting hours:minutes:seconds:milliseconds from startTime -->
+        {{ totalTime | date: 'mm:ss.SS' }}
+        <button *ngIf="!hasStarted" (click)="startTimer()">Start</button>
+        <button *ngIf="active" (click)="stopTimer()">Stop</button>
+        <button *ngIf="isStopped" (click)="resetTimer()">Reset</button>
+    </div>
+    <!-- <div>
+        <div *ngFor="let athlete of eventData?.athletes" class="athlete-card">
+            <ng-container *ngTemplateOutlet="athleteCard; context: { athlete: athlete }"></ng-container>
+        </div>
+        <div>
+            <input type="text" placeholder="Athlete Name" [(ngModel)]="searchAthleteName">
+            <button (click)="addAthlete()">Add Athlete</button>
+        </div>
+    </div> -->
+
+</div>
+
+<!-- An athlete card contains their name, a display of their total time -->
+<!-- A display of their last 3 splits, and a LAP and STOP button -->
+<!-- <ng-template #athleteCard let-athlete="athlete">
+    <div>
+        <div>
+            {{ athlete.name }}
+        </div>
+        <button 
+            (click)="lapAthlete(athlete.id)" 
+            [disabled]="!started || athleteStates.get(athlete.id)?.isFinished">
+            LAP
+        </button>
+        <button 
+            (click)="stopAthlete(athlete.id)" 
+            [disabled]="!started || athleteStates.get(athlete.id)?.isFinished">
+            STOP
+        </button>
+    </div>
+    <div>
+        <div *ngFor="let split of athleteStates.get(athlete.id)?.splits | slice:-3">
+            <span>{{ formatElapsedTime(getSplitElapsedTime(split.split_time)) }}</span>
+            <span *ngIf="split.finish">(FINISHED)</span>
+        </div>
+    </div>
+</ng-template> -->
