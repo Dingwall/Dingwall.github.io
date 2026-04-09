@@ -18,11 +18,13 @@ export class IntervalComponent implements OnInit, OnDestroy {
   items: any[] = [];
   eventCodeToSearch: string = '';
   eventData: any = null;
+  publicEvents: any[] = [];
   totalTime = 0;
   searchAthleteName: string = '';
   eventSubscription: any;
   splitsSubscriptions: Map<string, any> = new Map();  // Map to track subscriptions per athlete
   timerInterval: any;
+  eventNameUpdateTimeout: any = null;  // Debounce timeout for event name updates
   active = false;
   hasStarted = false;
   isStopped = false;  // Tracks if timer has been stopped (separate from active)
@@ -33,10 +35,25 @@ export class IntervalComponent implements OnInit, OnDestroy {
   constructor(private _supabase: IntervalService, private cdr: ChangeDetectorRef) { }
 
   async ngOnInit(): Promise<void> {
+    // Load public events on landing page
+    this.loadPublicEvents();
+    
     // If event already has a start_time (e.g. page refresh), start timer immediately
     if (this.eventData?.event_code) {
       this.checkIfActive();
       this.subscribeToEventUpdates();
+    }
+  }
+
+  /**
+   * Load and display public events on the landing page
+   */
+  async loadPublicEvents() {
+    try {
+      this.publicEvents = await this._supabase.getPublicEvents();
+      console.log('Public events loaded:', this.publicEvents);
+    } catch (error) {
+      console.error('Error loading public events:', error);
     }
   }
 
@@ -227,6 +244,11 @@ export class IntervalComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.stopLocalTimer();
     
+    // Clear any pending event name update
+    if (this.eventNameUpdateTimeout) {
+      clearTimeout(this.eventNameUpdateTimeout);
+    }
+    
     // Unsubscribe from all athlete split subscriptions
     this.splitsSubscriptions.forEach((subscription) => {
       subscription.unsubscribe();
@@ -259,6 +281,64 @@ export class IntervalComponent implements OnInit, OnDestroy {
     }).catch(error => {
       console.error('Error fetching event data:', error);
     });
+  }
+
+  /**
+   * Join a public event from the public events list
+   */
+  joinPublicEvent(eventCode: string) {
+    console.log('Joining public event:', eventCode);
+    this.eventCodeToSearch = eventCode;
+    this.joinEvent();
+  }
+
+  /**
+   * Toggle the public status of the current event
+   */
+  toggleEventPublic() {
+    if (!this.eventData) {
+      console.error('No event selected');
+      return;
+    }
+
+    const newPublicStatus = !this.eventData.public;
+    this._supabase.setEventPublic(this.eventData.event_code, newPublicStatus)
+      .then((updatedEvent) => {
+        this.eventData.public = updatedEvent.public;
+        console.log('Event public status updated:', newPublicStatus);
+        // Refresh public events list
+        this.loadPublicEvents();
+      })
+      .catch(error => {
+        console.error('Error updating event public status:', error);
+      });
+  }
+
+  /**
+   * Handle event name changes with debouncing (updates DB after 2 seconds of inactivity)
+   */
+  onEventNameChange(newName: string) {
+    this.eventData.event_name = newName;
+    
+    // Clear any pending update
+    if (this.eventNameUpdateTimeout) {
+      clearTimeout(this.eventNameUpdateTimeout);
+    }
+
+    // Set a new timeout to update the DB after 2 seconds
+    this.eventNameUpdateTimeout = setTimeout(() => {
+      if (!this.eventData) return;
+      
+      console.log('Updating event name to:', newName);
+      this._supabase.updateEventName(this.eventData.event_code, newName)
+        .then((updatedEvent) => {
+          this.eventData.event_name = updatedEvent.event_name;
+          console.log('Event name updated in DB');
+        })
+        .catch(error => {
+          console.error('Error updating event name:', error);
+        });
+    }, 2000);
   }
 
   /**
@@ -305,13 +385,78 @@ export class IntervalComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Leave the current event and return to the landing page
+   */
+  leaveEvent() {
+    console.log('Leaving event');
+    // Save the event code to the search field before clearing
+    this.eventCodeToSearch = this.eventData?.event_code || '';
+    this.eventData = null;
+    this.active = false;
+    this.hasStarted = false;
+    this.isStopped = false;
+    this.totalTime = 0;
+    this.dbStartTime = null;
+    this.dbStopTime = null;
+    this.athleteStates.clear();
+    this.splitsSubscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+    this.splitsSubscriptions.clear();
+    if (this.eventSubscription) {
+      this.eventSubscription.unsubscribe();
+      this.eventSubscription = null;
+    }
+    this.stopLocalTimer();
+  }
+
+  /**
    * Creates a new event. Generates a unique 6 digit event code and saves the event to the DB.
    * Default event name to "Event " + event code.
    * The event code is used to join the event and to identify the event in the DB.
    */
   createNewEvent() {
     console.log('Creating a new event');
-    // Implement logic to create a new event
+    
+    // Generate a random 6-character alphanumeric code
+    const generateCode = (): string => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    };
+
+    // Keep generating codes until we find one that doesn't exist
+    const findAvailableCode = async (): Promise<string> => {
+      let attempts = 0;
+      const maxAttempts = 100;
+      
+      while (attempts < maxAttempts) {
+        const code = generateCode();
+        const isAvailable = await this._supabase.isEventCodeAvailable(code);
+        if (isAvailable) {
+          return code;
+        }
+        attempts++;
+      }
+      
+      throw new Error('Could not generate unique event code after 100 attempts');
+    };
+
+    // Find available code and create the event
+    findAvailableCode().then(eventCode => {
+      return this._supabase.createNewEvent(eventCode);
+    }).then(createdEvent => {
+      // Set the event data and automatically join it
+      this.eventData = createdEvent;
+      console.log('Event created successfully:', createdEvent);
+      this.checkIfActive();
+      this.subscribeToEventUpdates();
+    }).catch(error => {
+      console.error('Error creating new event:', error);
+    });
   }
 
   /**

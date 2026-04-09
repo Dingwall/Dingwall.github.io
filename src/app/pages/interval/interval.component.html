@@ -1,20 +1,40 @@
 <!-- Landing Page View -->
 <div *ngIf="!eventData">
     <div>
-        <!-- <button (click)="createNewEvent()">Create New Event</button> -->
+        <button (click)="createNewEvent()">Create New Event</button>
     </div>
     <div>
         <input type="text" placeholder="Event Code" [(ngModel)]="eventCodeToSearch">
         <button (click)="joinEvent()">Join Event</button>
     </div>
+    <!-- Public Events List -->
+    <div *ngIf="publicEvents && publicEvents.length > 0">
+        <h3>Public Events</h3>
+        <div *ngFor="let event of publicEvents" class="public-event-item">
+            <button (click)="joinPublicEvent(event.event_code)">
+                {{ event.event_name }} ({{ event.event_code }})
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- Event View -->
 <div *ngIf="eventData">
+    <button (click)="leaveEvent()">← Back</button>
     <div>
-        <h2>{{ eventData?.event_name }}</h2>
-        <h4>{{ eventData?.event_code }}</h4>
-        <p>{{ eventData?.description }}</p>
+        <input 
+            type="text" 
+            [(ngModel)]="eventData.event_name"
+            (input)="onEventNameChange(eventData.event_name)"
+            style="font-size: 1.5em; font-weight: bold;"
+            placeholder="Event Name">
+        <div>{{ eventData?.event_code }} 
+            <label>
+                <input type="checkbox" [checked]="eventData?.public" (change)="toggleEventPublic()">
+                Public
+            </label>
+        </div>
+        <div>{{ eventData?.description }}</div>
     </div>
     <div>
         <!-- Big timer counting hours:minutes:seconds:milliseconds from startTime -->

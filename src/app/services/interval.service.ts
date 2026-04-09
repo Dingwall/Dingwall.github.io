@@ -211,6 +211,83 @@ export class IntervalService {
   }
 
   /**
+   * Check if an event code is available (not used by any existing event)
+   */
+  async isEventCodeAvailable(eventCode: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from("Events")
+      .select('event_code')
+      .eq('event_code', eventCode)
+      .maybeSingle();
+    
+    if (error) throw error;
+    return !data; // Returns true if no event found with this code
+  }
+
+  /**
+   * Get all public events
+   */
+  async getPublicEvents() {
+    const { data, error } = await this.supabase
+      .from("Events")
+      .select('*')
+      .eq('public', true);
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Update the name of an event
+   */
+  async updateEventName(eventCode: string, eventName: string) {
+    const { data, error } = await this.supabase
+      .from("Events")
+      .update({ event_name: eventName })
+      .eq('event_code', eventCode)
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Update the public status of an event
+   */
+  async setEventPublic(eventCode: string, isPublic: boolean) {
+    const { data, error } = await this.supabase
+      .from("Events")
+      .update({ public: isPublic })
+      .eq('event_code', eventCode)
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Create a new event with the given event code
+   */
+  async createNewEvent(eventCode: string, eventName?: string): Promise<any> {
+    const { data, error } = await this.supabase
+      .from("Events")
+      .insert({
+        event_code: eventCode,
+        event_name: eventName || `Event ${eventCode}`,
+        athletes: [],
+        start_time: null,
+        stop_time: null
+      })
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
    * Get or create a split record for an athlete in an event.
    * Returns the split record with split_time array and finish status.
    */
