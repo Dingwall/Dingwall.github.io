@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { IntervalService } from '../../services/interval.service';
 
 interface AthleteState {
@@ -21,7 +21,7 @@ export class IntervalComponent implements OnInit, OnDestroy {
   totalTime = 0;
   searchAthleteName: string = '';
   eventSubscription: any;
-  splitsSubscription: any;
+  splitsSubscriptions: Map<string, any> = new Map();  // Map to track subscriptions per athlete
   timerInterval: any;
   active = false;
   hasStarted = false;
@@ -30,7 +30,7 @@ export class IntervalComponent implements OnInit, OnDestroy {
   dbStopTime: string | null = null;   // Store DB stop time for consistent calculations
   athleteStates: Map<string, AthleteState> = new Map();
 
-  constructor(private _supabase: IntervalService) { }
+  constructor(private _supabase: IntervalService, private cdr: ChangeDetectorRef) { }
 
   async ngOnInit(): Promise<void> {
     // If event already has a start_time (e.g. page refresh), start timer immediately
@@ -75,11 +75,77 @@ export class IntervalComponent implements OnInit, OnDestroy {
         this.totalTime = 0;
       }
       
-      // Initialize athlete states
-      // this.initializeAthleteStates(event);
+      // Initialize athlete states with their splits data
+      this.initializeAthleteStates(event);
     }).catch(error => {
       console.error('Error checking if event is active:', error);
     });
+  }
+
+  /**
+   * Initialize athlete states by fetching their splits data from DB
+   */
+  async initializeAthleteStates(event: any) {
+    if (!event.athletes || event.athletes.length === 0) {
+      return;
+    }
+
+    for (const athlete of event.athletes) {
+      try {
+        const splitRecord = await this._supabase.getOrCreateAthleteRecord(event.event_code, athlete.id);
+        
+        // Initialize athlete state if not already present
+        if (!this.athleteStates.has(athlete.id)) {
+          this.athleteStates.set(athlete.id, {
+            id: athlete.id,
+            name: athlete.name,
+            isFinished: splitRecord.finish || false,
+            splits: splitRecord.split_time || []
+          });
+        } else {
+          // Update existing state with fresh data
+          const state = this.athleteStates.get(athlete.id)!;
+          state.isFinished = splitRecord.finish || false;
+          state.splits = splitRecord.split_time || [];
+        }
+
+        // Subscribe to realtime split updates for this athlete
+        this.subscribeToAthleteUpdates(event.event_code, athlete);
+      } catch (error) {
+        console.error(`Error initializing splits for athlete ${athlete.id}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Subscribe to realtime split updates for an athlete
+   */
+  subscribeToAthleteUpdates(eventCode: string, athlete: any) {
+    // Avoid duplicate subscriptions
+    if (this.splitsSubscriptions.has(athlete.id)) {
+      console.log(`Already subscribed to athlete ${athlete.id}`);
+      return;
+    }
+
+    console.log(`Subscribing to athlete: ${athlete.name} (${athlete.id})`);
+    
+    const subscription = this._supabase.subscribeTAthleteSpits(
+      eventCode,
+      athlete.id,
+      (updatedSplitRecord: any) => {
+        console.log(`Callback fired for athlete ${athlete.id}:`, updatedSplitRecord);
+        const state = this.athleteStates.get(athlete.id);
+        if (state) {
+          state.splits = updatedSplitRecord.split_time || [];
+          state.isFinished = updatedSplitRecord.finish || false;
+          console.log(`Updated state for athlete ${athlete.id}:`, state);
+          // Manually trigger change detection since realtime callbacks happen outside Angular's zone
+          this.cdr.markForCheck();
+        }
+      }
+    );
+
+    this.splitsSubscriptions.set(athlete.id, subscription);
   }
 
 
@@ -117,15 +183,36 @@ export class IntervalComponent implements OnInit, OnDestroy {
     this.hasStarted = false;
     this.isStopped = false;
     
-    // Reset all athlete states
+    // Reset all athlete states (their split data will sync via realtime subscriptions)
     this.athleteStates.forEach((state) => {
       state.isFinished = false;
       state.splits = [];
     });
   }
 
+  /**
+   * Calculate elapsed time from a split timestamp relative to event start
+   */
+  getSplitDisplayTime(splitTime: string): number {
+    if (!this.dbStartTime || !splitTime) return 0;
+    const startMs = new Date(this.dbStartTime).getTime();
+    const splitMs = new Date(splitTime).getTime();
+    return splitMs - startMs;
+  }
+
   ngOnDestroy() {
     this.stopLocalTimer();
+    
+    // Unsubscribe from all athlete split subscriptions
+    this.splitsSubscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+    this.splitsSubscriptions.clear();
+
+    // Unsubscribe from event subscription
+    if (this.eventSubscription) {
+      this.eventSubscription.unsubscribe();
+    }
   }
 
   /**
@@ -252,9 +339,12 @@ export class IntervalComponent implements OnInit, OnDestroy {
     this.resetLocalTimer();
     
     this._supabase.resetTimer(this.eventData.event_code).then(() => {
-      console.log('Event timer reset in DB');
+      // Also reset all athlete splits when event timer is reset
+      return this._supabase.resetAllAthleteRecords(this.eventData.event_code);
+    }).then(() => {
+      console.log('Event timer and athlete splits reset in DB');
     }).catch(error => {
-      console.error('Error resetting event timer in DB:', error);
+      console.error('Error resetting event timer or athlete splits in DB:', error);
     });
   }
 
@@ -265,7 +355,27 @@ export class IntervalComponent implements OnInit, OnDestroy {
    */
   lapAthlete(athleteId: any) {
     console.log('Lapping athlete with ID:', athleteId);
-    // insert code here
+    
+    if (!this.eventData) {
+      console.error('No event data available');
+      return;
+    }
+
+    // Get current time as timestamp
+    const currentTime = new Date().toISOString();
+
+    this._supabase.recordLap(this.eventData.event_code, athleteId, currentTime)
+      .then((updatedRecord) => {
+        console.log('Lap recorded successfully:', updatedRecord);
+        // Update athlete state with new splits
+        const state = this.athleteStates.get(athleteId);
+        if (state) {
+          state.splits = updatedRecord.split_time || [];
+        }
+      })
+      .catch(error => {
+        console.error('Error recording lap:', error);
+      });
   }
 
   /**
@@ -273,7 +383,28 @@ export class IntervalComponent implements OnInit, OnDestroy {
    */
   stopAthlete(athleteId: any) {
     console.log('Stopping athlete with ID:', athleteId);
-    // insert code here
+
+    if (!this.eventData) {
+      console.error('No event data available');
+      return;
+    }
+
+    // Get current time as timestamp
+    const currentTime = new Date().toISOString();
+
+    this._supabase.finishAthlete(this.eventData.event_code, athleteId, currentTime)
+      .then((updatedRecord) => {
+        console.log('Athlete finished successfully:', updatedRecord);
+        // Update athlete state with finish status and final splits
+        const state = this.athleteStates.get(athleteId);
+        if (state) {
+          state.splits = updatedRecord.split_time || [];
+          state.isFinished = true;
+        }
+      })
+      .catch(error => {
+        console.error('Error finishing athlete:', error);
+      });
   }
 
   /**
@@ -292,31 +423,40 @@ export class IntervalComponent implements OnInit, OnDestroy {
       console.error('No athlete name provided. Cannot add athlete.');
       return;
     }
-    this._supabase.findAthlete(this.eventData.event_code, this.searchAthleteName);
-  }
-
-  /**
-   * Format elapsed milliseconds as mm:ss.SS (minutes:seconds.centiseconds)
-   */
-  // formatElapsedTime(ms: number): string {
-  //   if (!ms || ms < 0) return '00:00.00';
-    
-  //   const totalSeconds = Math.floor(ms / 1000);
-  //   const minutes = Math.floor(totalSeconds / 60);
-  //   const seconds = totalSeconds % 60;
-  //   const centiseconds = Math.floor((ms % 1000) / 10);
-    
-  //   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(centiseconds).padStart(2, '0')}`;
-  // }
-
-  /**
-   * Calculate elapsed time from event start to a split timestamp
-   */
-  getSplitElapsedTime(splitTimestamp: string): number {
-    if (!this.eventData?.start_time) return 0;
-    const startMs = new Date(this.eventData.start_time).getTime();
-    const splitMs = new Date(splitTimestamp).getTime();
-    return Math.max(0, splitMs - startMs);
+    this._supabase.findAthlete(this.eventData.event_code, this.searchAthleteName).then(() => {
+      // Fetch updated event data to get the newly added athlete
+      this._supabase.getEventByCode(this.eventData.event_code).then(updatedEvent => {
+        this.eventData = updatedEvent;
+        this.cdr.markForCheck();
+        
+        // Initialize splits for any new athletes
+        const newAthletes = updatedEvent.athletes.filter((athlete: any) => !this.athleteStates.has(athlete.id));
+        for (const athlete of newAthletes) {
+          this._supabase.getOrCreateAthleteRecord(updatedEvent.event_code, athlete.id).then(splitRecord => {
+            // Initialize athlete state
+            this.athleteStates.set(athlete.id, {
+              id: athlete.id,
+              name: athlete.name,
+              isFinished: splitRecord.finish || false,
+              splits: splitRecord.split_time || []
+            });
+            this.cdr.markForCheck();
+            
+            // Subscribe to updates for this athlete
+            this.subscribeToAthleteUpdates(updatedEvent.event_code, athlete);
+          }).catch(error => {
+            console.error(`Error initializing splits for new athlete ${athlete.id}:`, error);
+          });
+        }
+        
+        // Clear the search input
+        this.searchAthleteName = '';
+      }).catch(error => {
+        console.error('Error fetching updated event:', error);
+      });
+    }).catch(error => {
+      console.error('Error adding athlete:', error);
+    });
   }
 
 }

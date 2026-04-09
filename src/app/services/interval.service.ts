@@ -205,5 +205,132 @@ export class IntervalService {
       )
       .subscribe();
   }
+
+  /**
+   * Get or create a split record for an athlete in an event.
+   * Returns the split record with split_time array and finish status.
+   */
+  async getOrCreateAthleteRecord(eventCode: string, athleteId: string) {
+    const { data, error } = await this.supabase
+      .from("Splits")
+      .select('*')
+      .eq('event_code', eventCode)
+      .eq('athlete_id', athleteId)
+      .maybeSingle();
+    
+    if (error) throw error;
+    
+    // If record doesn't exist, create it with empty split_time array
+    if (!data) {
+      const { data: newRecord, error: insertError } = await this.supabase
+        .from("Splits")
+        .insert({
+          event_code: eventCode,
+          athlete_id: athleteId,
+          split_time: [],
+          finish: false
+        })
+        .select('*')
+        .single();
+      
+      if (insertError) throw insertError;
+      return newRecord;
+    }
+    
+    return data;
+  }
+
+  /**
+   * Record a lap for an athlete by appending the current time to their split_time array.
+   */
+  async recordLap(eventCode: string, athleteId: string, splitTime: string) {
+    // Get current record to append to split_time array
+    const record = await this.getOrCreateAthleteRecord(eventCode, athleteId);
+    const updatedSplitTimes = record.split_time ? [...record.split_time, splitTime] : [splitTime];
+    
+    const { data, error } = await this.supabase
+      .from("Splits")
+      .update({ split_time: updatedSplitTimes })
+      .eq('event_code', eventCode)
+      .eq('athlete_id', athleteId)
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Stop an athlete by appending the final time to split_time array and setting finish to true.
+   */
+  async finishAthlete(eventCode: string, athleteId: string, finalSplitTime: string) {
+    // Get current record to append final time
+    const record = await this.getOrCreateAthleteRecord(eventCode, athleteId);
+    const updatedSplitTimes = record.split_time ? [...record.split_time, finalSplitTime] : [finalSplitTime];
+    
+    const { data, error } = await this.supabase
+      .from("Splits")
+      .update({ 
+        split_time: updatedSplitTimes,
+        finish: true
+      })
+      .eq('event_code', eventCode)
+      .eq('athlete_id', athleteId)
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Reset all athlete splits for an event (clears split_time array and finish flag for all athletes)
+   */
+  async resetAllAthleteRecords(eventCode: string) {
+    const { data, error } = await this.supabase
+      .from("Splits")
+      .update({
+        split_time: [],
+        finish: false
+      })
+      .eq('event_code', eventCode);
+    
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Subscribe to real-time updates for an athlete's splits
+   */
+  subscribeTAthleteSpits(
+    eventCode: string,
+    athleteId: string,
+    onSplitUpdate: (splits: any) => void
+  ) {
+    console.log(`Setting up subscription for event: ${eventCode}, athlete: ${athleteId}`);
+    
+    const channel = this.supabase
+      .channel(`splits-${eventCode}-${athleteId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'TimingApp',
+          table: 'Splits'
+        },
+        (payload: { new: Record<string, any> }) => {
+          // Filter in the callback instead of relying on the filter parameter
+          if (payload.new['event_code'] === eventCode && payload.new['athlete_id'] === athleteId) {
+            console.log(`Splits update received for athlete ${athleteId}:`, payload);
+            onSplitUpdate(payload.new);
+          }
+        }
+      )
+      .subscribe((status:any) => {
+        console.log(`Subscription status for athlete ${athleteId}:`, status);
+      });
+    
+    return channel;
+  }
   
 }

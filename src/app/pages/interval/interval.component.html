@@ -23,7 +23,7 @@
         <button *ngIf="active" (click)="stopTimer()">Stop</button>
         <button *ngIf="isStopped" (click)="resetTimer()">Reset</button>
     </div>
-    <!-- <div>
+    <div>
         <div *ngFor="let athlete of eventData?.athletes" class="athlete-card">
             <ng-container *ngTemplateOutlet="athleteCard; context: { athlete: athlete }"></ng-container>
         </div>
@@ -31,32 +31,32 @@
             <input type="text" placeholder="Athlete Name" [(ngModel)]="searchAthleteName">
             <button (click)="addAthlete()">Add Athlete</button>
         </div>
-    </div> -->
+    </div>
 
 </div>
 
 <!-- An athlete card contains their name, a display of their total time -->
 <!-- A display of their last 3 splits, and a LAP and STOP button -->
-<!-- <ng-template #athleteCard let-athlete="athlete">
+<ng-template #athleteCard let-athlete="athlete">
     <div>
         <div>
             {{ athlete.name }}
+            <!-- Athlete total time here, should stop for all users when as user clicks stop on this athlete -->
         </div>
         <button 
-            (click)="lapAthlete(athlete.id)" 
-            [disabled]="!started || athleteStates.get(athlete.id)?.isFinished">
+            (click)="lapAthlete(athlete.id)"
+            [disabled]="athleteStates.get(athlete.id)?.isFinished">
             LAP
         </button>
         <button 
-            (click)="stopAthlete(athlete.id)" 
-            [disabled]="!started || athleteStates.get(athlete.id)?.isFinished">
+            (click)="stopAthlete(athlete.id)"
+            [disabled]="athleteStates.get(athlete.id)?.isFinished">
             STOP
         </button>
     </div>
     <div>
-        <div *ngFor="let split of athleteStates.get(athlete.id)?.splits | slice:-3">
-            <span>{{ formatElapsedTime(getSplitElapsedTime(split.split_time)) }}</span>
-            <span *ngIf="split.finish">(FINISHED)</span>
+        <div *ngFor="let splitTime of athleteStates.get(athlete.id)?.splits | slice:-3">
+            <span>{{ getSplitDisplayTime(splitTime) | date: 'mm:ss.SS' }}</span>
         </div>
     </div>
-</ng-template> -->
+</ng-template>
