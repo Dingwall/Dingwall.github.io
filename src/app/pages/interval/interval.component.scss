@@ -1,4 +1,768 @@
-.athlete-card {
+// ============================================
+// COLOR PALETTE
+// ============================================
+$color-white: #ffffff;
+$color-light-gray: #f5f5f5;
+$color-medium-gray: #e0e0e0;
+$color-dark-gray: #707070;
+$color-charcoal: #2a2a2a;
+$color-black: #000000;
+$color-primary-blue: #0066cc;
+$color-accent-red: #e63946;
+$color-success-gradient-start: #06d6a0;
+$color-success-gradient-end: #0066cc;
+
+// 50-color palette for lap cycling
+$lap-colors: (
+  #0000FF,  #0033FF,  #0066FF,  #0099FF,  #00CCFF,
+  #00FFFF,  #00FFCC,  #00FF99,  #00FF66,  #00FF33,
+  #00FF00,  #33FF00,  #66FF00,  #99FF00,  #CCFF00,
+  #FFFF00,  #FFCC00,  #FFB700,  #FFA700,  #FF8800,
+  #FF7700,  #FF6600,  #FF5500,  #FF4400,  #FF3300,
+  #FF2200,  #FF1100,  #FF0000,  #FF0033,  #FF0066,
+  #FF0099,  #FF00CC,  #FF00FF,  #CC00FF,  #9900FF,
+  #6600FF,  #3300FF,  #0000FF,  #0033FF,  #0066FF,
+  #0099FF,  #00CCFF,  #00FFFF,  #CCFFFF,  #99FFFF,
+  #66FFFF,  #33FFFF,  #00FFFF,  #00FFFF,  #0000FF
+);
+
+// ============================================
+// SPACING & SIZING
+// ============================================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// ============================================
+// FONTS
+// ============================================
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-2xl: 32px;
+$font-size-3xl: 48px;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// ============================================
+// SHADOWS & EFFECTS
+// ============================================
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+// ============================================
+// GLOBAL STYLES
+// ============================================
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  background-color: $color-white;
+  color: $color-charcoal;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+// ============================================
+// LANDING PAGE STYLES
+// ============================================
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: $spacing-lg;
+  padding-top: $spacing-xl;
+  background: linear-gradient(135deg, $color-light-gray 0%, $color-white 100%);
+}
+
+.landing-header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+
+  h1 {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $color-black;
+    margin: 0 0 $spacing-md 0;
+  }
+
+  p {
+    font-size: $font-size-lg;
+    color: $color-dark-gray;
+    margin: 0;
+  }
+}
+
+.landing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: $spacing-xl;
+  align-items: center;
+
+  button {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: $shadow-md;
+    width: 100%;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .or-divider {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $color-dark-gray;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, $color-primary-blue 0%, #0052a3 100%);
+  color: $color-white;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+
+  &:active {
+    background: #004080;
+  }
+}
+
+.join-section {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: $spacing-xl;
+
+  input {
+    width: 100%;
+    padding: $spacing-md;
+    font-size: $font-size-base;
+    border: 2px solid $color-medium-gray;
+    border-radius: $border-radius-md;
+    background-color: $color-white;
+    color: $color-charcoal;
+    margin-bottom: $spacing-md;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary-blue;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    &::placeholder {
+      color: $color-dark-gray;
+    }
+  }
+
+  button {
+    width: 100%;
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    background: linear-gradient(135deg, $color-primary-blue 0%, #0052a3 100%);
+    color: $color-white;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: $shadow-md;
+
+    &:hover {
+      box-shadow: $shadow-lg;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      background: #004080;
+    }
+  }
+}
+
+.public-events-section {
+  width: 100%;
+  max-width: 320px;
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-charcoal;
+    margin-bottom: $spacing-md;
+    text-align: center;
+  }
+
+  .public-event-item {
+    margin-bottom: $spacing-sm;
+
+    button {
+      width: 100%;
+      padding: $spacing-md;
+      font-size: $font-size-base;
+      background-color: $color-light-gray;
+      color: $color-charcoal;
+      border: 2px solid $color-medium-gray;
+      border-radius: $border-radius-md;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: $font-weight-medium;
+
+      &:hover {
+        background-color: $color-medium-gray;
+        border-color: $color-primary-blue;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+// ============================================
+// LOADING SPINNER STYLES
+// ============================================
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $color-light-gray 0%, $color-white 100%);
+  gap: $spacing-lg;
+}
+
+.stopwatch-spinner {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stopwatch-icon {
+  width: 100%;
+  height: 100%;
+  
+  .spinning-hand {
+    animation: spin 2s linear infinite;
+    transform-origin: 50px 60px;
+  }
+}
+
+.loading-text {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-charcoal;
+  margin: 0;
+}
+
+// ============================================
+// EVENT VIEW STYLES
+// ============================================
+.event-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: $color-white;
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-bottom: 1px solid $color-medium-gray;
+  background-color: $color-white;
+
+  .btn-back {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-lg;
+    background-color: transparent;
+    color: $color-charcoal;
+    border: none;
+    cursor: pointer;
+    font-weight: $font-weight-semibold;
+    transition: color 0.3s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $color-primary-blue;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .event-name-input {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    border: 2px solid transparent;
+    border-radius: $border-radius-md;
+    background-color: transparent;
+    color: $color-charcoal;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary-blue;
+      background-color: $color-light-gray;
+    }
+
+    &::placeholder {
+      color: $color-dark-gray;
+    }
+  }
+}
+
+.event-info {
+  padding: $spacing-md;
+  background-color: $color-light-gray;
+  border-bottom: 1px solid $color-medium-gray;
+
+  .event-meta {
     display: flex;
-    outline: 1px solid red;
+    justify-content: space-between;
+    align-items: center;
+    font-size: $font-size-sm;
+    color: $color-dark-gray;
+    margin-bottom: $spacing-sm;
+
+    .event-code {
+      font-family: 'Courier New', monospace;
+      font-weight: $font-weight-bold;
+      color: $color-charcoal;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      cursor: pointer;
+      font-weight: $font-weight-medium;
+
+      input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .event-description {
+    font-size: $font-size-sm;
+    color: $color-dark-gray;
+    font-style: italic;
+  }
+}
+
+// ============================================
+// TIMER STYLES (STICKY HEADER)
+// ============================================
+.timer-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: $color-white;
+  color: $color-charcoal;
+  padding: $spacing-md;
+  box-shadow: $shadow-md;
+  border-bottom: 2px solid $color-primary-blue;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  .timer-display {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    flex: 1;
+    color: $color-charcoal;
+  }
+
+  button {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .btn-start {
+    background-color: $color-success-gradient-start;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      box-shadow: $shadow-md;
+      background-color: darken($color-success-gradient-start, 10%);
+    }
+  }
+
+  .btn-stop {
+    background-color: $color-accent-red;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      box-shadow: $shadow-md;
+    }
+  }
+
+  .btn-reset {
+    background-color: $color-medium-gray;
+    color: $color-charcoal;
+
+    &:hover:not(:disabled) {
+      background-color: $color-dark-gray;
+      color: $color-white;
+    }
+  }
+}
+
+// ============================================
+// ATHLETES SECTION
+// ============================================
+.athletes-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  max-width: 100%;
+
+  // Allow for pinch-zoom on mobile but prevent accidental selection
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.athletes-list {
+  display: grid;
+  gap: $spacing-md;
+  grid-template-columns: 1fr;
+}
+
+// ============================================
+// ATHLETE CARD STYLES
+// ============================================
+.athlete-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-white;
+  border-left: 6px solid $color-medium-gray;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+  padding: $spacing-md;
+  transition: all 0.3s ease;
+  user-select: none;
+
+  // Lap progress indicators
+  &.lap-0 {
+    opacity: 0.7;
+  }
+
+  &.lap-1 {
+    background: linear-gradient(to right, rgba(0, 102, 204, 0.05), transparent);
+  }
+
+  &.lap-2 {
+    background: linear-gradient(to right, rgba(230, 57, 70, 0.05), transparent);
+  }
+
+  &.lap-3-plus {
+    background: linear-gradient(to right, rgba(6, 214, 160, 0.05), transparent);
+  }
+
+  &.finished {
+    opacity: 0.6;
+  }
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+}
+
+.athlete-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.athlete-name-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  flex: 1;
+}
+
+.athlete-name {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-charcoal;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.athlete-time {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-charcoal;
+  font-family: 'Courier New', monospace;
+}
+
+.athlete-lap-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+  transition: background-color 0.2s ease;
+
+  &.lap-0 {
+    background-color: $color-medium-gray;
+    color: $color-charcoal;
+  }
+
+  &.lap-active {
+    color: $color-white;
+  }
+}
+
+.athlete-splits-container {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 150px;
+}
+
+.split-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background-color: transparent;
+  border-left: 4px solid;
+  border-radius: $border-radius-sm;
+  font-family: 'Courier New', monospace;
+
+  .split-label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: $color-charcoal;
+    min-width: 50px;
+  }
+
+  .split-times {
+    display: flex;
+    gap: $spacing-md;
+    flex: 1;
+    align-items: baseline;
+
+    .split-delta {
+      font-weight: $font-weight-bold;
+      color: $color-charcoal;
+    }
+
+    .split-total {
+      color: $color-dark-gray;
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+.athlete-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-medium-gray;
+  margin-top: auto;
+
+  button {
+    padding: $spacing-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+  }
+
+  .btn-stop {
+    order: 1;
+    background-color: $color-accent-red;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      box-shadow: $shadow-md;
+      background-color: #d63041;
+    }
+  }
+
+  .btn-lap {
+    order: 2;
+    background-color: $color-primary-blue;
+    color: $color-white;
+    font-size: $font-size-lg;
+
+    &:hover:not(:disabled) {
+      box-shadow: $shadow-md;
+      background-color: darken($color-primary-blue, 10%);
+    }
+  }
+}
+
+// ============================================
+// ADD ATHLETE SECTION
+// ============================================
+.add-athlete-section {
+  padding: $spacing-sm $spacing-md;
+  border-top: 1px solid $color-medium-gray;
+  background-color: $color-light-gray;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: $spacing-sm;
+  align-items: stretch;
+
+  input {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+    border: 2px solid $color-medium-gray;
+    border-radius: $border-radius-sm;
+    background-color: $color-white;
+    color: $color-charcoal;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary-blue;
+    }
+
+    &::placeholder {
+      color: $color-dark-gray;
+    }
+  }
+
+  button {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    background-color: $color-primary-blue;
+    color: $color-white;
+    border: none;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: darken($color-primary-blue, 10%);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE DESIGN (Mobile First)
+// ============================================
+@media (max-width: 480px) {
+  .timer-display {
+    font-size: $font-size-2xl;
+  }
+
+  .athlete-card {
+    padding: $spacing-sm;
+  }
+
+  .athlete-controls {
+    gap: $spacing-sm;
+
+    button {
+      padding: $spacing-sm $spacing-md;
+      font-size: $font-size-base;
+    }
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .athletes-list {
+    gap: $spacing-lg;
+  }
 }

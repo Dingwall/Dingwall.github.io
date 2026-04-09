@@ -18,6 +18,7 @@ export class IntervalComponent implements OnInit, OnDestroy {
   items: any[] = [];
   eventCodeToSearch: string = '';
   eventData: any = null;
+  isLoading: boolean = false;
   publicEvents: any[] = [];
   totalTime = 0;
   searchAthleteName: string = '';
@@ -102,7 +103,7 @@ export class IntervalComponent implements OnInit, OnDestroy {
   /**
    * Initialize athlete states by fetching their splits data from DB
    */
-  async initializeAthleteStates(event: any) {
+  async initializeAthleteStates(event: any): Promise<void> {
     if (!event.athletes || event.athletes.length === 0) {
       return;
     }
@@ -266,9 +267,11 @@ export class IntervalComponent implements OnInit, OnDestroy {
    */
   joinEvent() {
     console.log('Joining event with code:', this.eventCodeToSearch);
+    this.isLoading = true;
     // Implement logic to join the event using the event code
     this._supabase.getEventByCode(this.eventCodeToSearch).then(eventData => {
       if (!eventData) {
+        this.isLoading = false;
         console.error('Event not found with code:', this.eventCodeToSearch);
         return;
       }
@@ -278,7 +281,13 @@ export class IntervalComponent implements OnInit, OnDestroy {
       
       // Set up realtime subscription for this event
       this.subscribeToEventUpdates();
+      
+      // Initialize athletes and then turn off loading
+      this.initializeAthleteStates(eventData).then(() => {
+        this.isLoading = false;
+      });
     }).catch(error => {
+      this.isLoading = false;
       console.error('Error fetching event data:', error);
     });
   }
@@ -417,6 +426,7 @@ export class IntervalComponent implements OnInit, OnDestroy {
    */
   createNewEvent() {
     console.log('Creating a new event');
+    this.isLoading = true;
     
     // Generate a random 6-character alphanumeric code
     const generateCode = (): string => {
@@ -453,8 +463,16 @@ export class IntervalComponent implements OnInit, OnDestroy {
       this.eventData = createdEvent;
       console.log('Event created successfully:', createdEvent);
       this.checkIfActive();
+      
+      // Set up realtime subscription for this event
       this.subscribeToEventUpdates();
+      
+      // Initialize athletes and then turn off loading
+      return this.initializeAthleteStates(createdEvent);
+    }).then(() => {
+      this.isLoading = false;
     }).catch(error => {
+      this.isLoading = false;
       console.error('Error creating new event:', error);
     });
   }
@@ -626,6 +644,159 @@ export class IntervalComponent implements OnInit, OnDestroy {
     }).catch(error => {
       console.error('Error adding athlete:', error);
     });
+  }
+
+  // ============================================
+  // HELPER METHODS FOR UI
+  // ============================================
+
+  /**
+   * 50-color palette for lap cycling
+   */
+  private lapColors = [
+    '#0000FF', '#0033FF', '#0066FF', '#0099FF', '#00CCFF',
+    '#00FFFF', '#00FFCC', '#00FF99', '#00FF66', '#00FF33',
+    '#00FF00', '#33FF00', '#66FF00', '#99FF00', '#CCFF00',
+    '#FFFF00', '#FFCC00', '#FFB700', '#FFA700', '#FF8800',
+    '#FF7700', '#FF6600', '#FF5500', '#FF4400', '#FF3300',
+    '#FF2200', '#FF1100', '#FF0000', '#FF0033', '#FF0066',
+    '#FF0099', '#FF00CC', '#FF00FF', '#CC00FF', '#9900FF',
+    '#6600FF', '#3300FF', '#0000FF', '#0033FF', '#0066FF',
+    '#0099FF', '#00CCFF', '#00FFFF', '#CCFFFF', '#99FFFF',
+    '#66FFFF', '#33FFFF', '#00FFFF', '#00FFFF', '#0000FF'
+  ];
+
+  /**
+   * Get the color for a specific lap number (cycles through 50 colors)
+   */
+  getLapColor(lapNumber: number): string {
+    if (lapNumber <= 0) {
+      return '#e0e0e0'; // gray for lap 0
+    }
+    return this.lapColors[(lapNumber - 1) % this.lapColors.length];
+  }
+
+  /**
+   * Get the CSS class for lap progress indicator
+   * Shows visual progression through laps: gray -> blue -> red -> green
+   */
+  getLapProgressClass(athleteId: string): string {
+    const state = this.athleteStates.get(athleteId);
+    
+    if (!state) {
+      return 'lap-0';
+    }
+
+    if (state.isFinished) {
+      return 'finished';
+    }
+
+    const lapCount = state.splits?.length || 0;
+    
+    if (lapCount === 0) {
+      return 'lap-0';
+    } else if (lapCount === 1) {
+      return 'lap-1';
+    } else if (lapCount === 2) {
+      return 'lap-2';
+    } else {
+      return 'lap-3-plus';
+    }
+  }
+
+  /**
+   * Get the lap count (number of splits) for an athlete
+   */
+  getLapCount(athleteId: string): number {
+    const state = this.athleteStates.get(athleteId);
+    return state?.splits?.length || 0;
+  }
+
+  /**
+   * Get the current elapsed time for an athlete
+   * Returns total milliseconds if timer is running, or the finish time if athlete is finished
+   */
+  getAthleteCurrentTime(athleteId: string): number {
+    const state = this.athleteStates.get(athleteId);
+    
+    if (!state || !this.dbStartTime) {
+      return 0;
+    }
+
+    // If athlete is finished, return the time of their last split
+    if (state.isFinished && state.splits && state.splits.length > 0) {
+      const lastSplitMs = new Date(state.splits[state.splits.length - 1]).getTime();
+      const startMs = new Date(this.dbStartTime).getTime();
+      return lastSplitMs - startMs;
+    }
+
+    // If timer is running, return time from start to now
+    if (this.active && this.hasStarted) {
+      return this.totalTime;
+    }
+
+    // If timer is stopped, return time from start to stop
+    if (this.isStopped && this.dbStopTime) {
+      const startMs = new Date(this.dbStartTime).getTime();
+      const stopMs = new Date(this.dbStopTime).getTime();
+      return stopMs - startMs;
+    }
+
+    // Timer hasn't started
+    return 0;
+  }
+
+  /**
+   * Get all splits for an athlete with lap numbers
+   * Returns splits sorted with most recent first
+   */
+  getAllSplitsWithLapNumbers(athleteId: string): Array<{ 
+    lapNumber: number; 
+    deltaMs: number; 
+    totalMs: number 
+  }> {
+    const state = this.athleteStates.get(athleteId);
+    
+    if (!state || !state.splits || state.splits.length === 0) {
+      return [];
+    }
+
+    const splits = state.splits;
+    const result = [];
+    
+    // Get all splits in reverse order (most recent first) with their lap numbers
+    for (let i = splits.length - 1; i >= 0; i--) {
+      const lapNumber = i + 1; // Lap numbers are 1-indexed
+      const splitInfo = this.getSplitInfo(athleteId, i);
+      result.push({
+        lapNumber,
+        deltaMs: splitInfo.deltaMs,
+        totalMs: splitInfo.totalMs
+      });
+    }
+
+    return result;
+  }
+
+  /**
+   * Get the last 3 splits for an athlete in the format expected by the template
+   */
+  getLastThreeSplits(athleteId: string): Array<{ deltaMs: number; totalMs: number }> {
+    const state = this.athleteStates.get(athleteId);
+    
+    if (!state || !state.splits || state.splits.length === 0) {
+      return [];
+    }
+
+    const splits = state.splits;
+    const lastThreeIndices = [];
+    
+    // Get indices of last 3 splits (or fewer if less than 3 exist)
+    for (let i = Math.max(0, splits.length - 3); i < splits.length; i++) {
+      lastThreeIndices.push(i);
+    }
+
+    return lastThreeIndices.map(index => this.getSplitInfo(athleteId, index));
   }
 
 }

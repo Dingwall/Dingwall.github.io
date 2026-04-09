@@ -1,87 +1,163 @@
 <!-- Landing Page View -->
-<div *ngIf="!eventData">
-    <div>
-        <button (click)="createNewEvent()">Create New Event</button>
+<div *ngIf="!eventData" class="landing-container">
+    <div class="landing-header">
+        <h1>Interval</h1>
+        <p>Track athlete splits with precision</p>
     </div>
-    <div>
-        <input type="text" placeholder="Event Code" [(ngModel)]="eventCodeToSearch">
-        <button (click)="joinEvent()">Join Event</button>
+
+    <div class="landing-actions">
+        <button class="btn-primary" (click)="createNewEvent()">Create New Event</button>
+        <div class="or-divider">OR</div>
     </div>
+
+    <div class="join-section">
+        <input 
+            type="text" 
+            placeholder="Enter Event Code" 
+            [(ngModel)]="eventCodeToSearch"
+            (keyup.enter)="joinEvent()">
+        <button class="btn-primary" 
+                (click)="joinEvent()"
+                [style.display]="eventCodeToSearch.length >= 6 ? 'block' : 'none'">
+            Join Event
+        </button>
+    </div>
+
     <!-- Public Events List -->
-    <div *ngIf="publicEvents && publicEvents.length > 0">
-        <h3>Public Events</h3>
+    <div *ngIf="publicEvents && publicEvents.length > 0" class="public-events-section">
+        <h3>Available Public Events</h3>
         <div *ngFor="let event of publicEvents" class="public-event-item">
             <button (click)="joinPublicEvent(event.event_code)">
-                {{ event.event_name }} ({{ event.event_code }})
+                {{ event.event_name }}
+                <strong>({{ event.event_code }})</strong>
             </button>
         </div>
     </div>
 </div>
 
-<!-- Event View -->
-<div *ngIf="eventData">
-    <button (click)="leaveEvent()">← Back</button>
-    <div>
-        <input 
-            type="text" 
-            [(ngModel)]="eventData.event_name"
-            (input)="onEventNameChange(eventData.event_name)"
-            style="font-size: 1.5em; font-weight: bold;"
-            placeholder="Event Name">
-        <div>{{ eventData?.event_code }} 
-            <label>
-                <input type="checkbox" [checked]="eventData?.public" (change)="toggleEventPublic()">
-                Public
-            </label>
-        </div>
-        <div>{{ eventData?.description }}</div>
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+    <div class="stopwatch-spinner">
+        <svg class="stopwatch-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Stopwatch body -->
+            <circle cx="50" cy="60" r="35" fill="none" stroke="#0066cc" stroke-width="2"/>
+            <!-- Display area -->
+            <rect x="35" y="50" width="30" height="15" fill="none" stroke="#0066cc" stroke-width="1" rx="2"/>
+            <!-- Top button -->
+            <circle cx="42" cy="35" r="4" fill="#0066cc"/>
+            <!-- Top button connector -->
+            <line x1="42" y1="39" x2="42" y2="48" stroke="#0066cc" stroke-width="1.5"/>
+            <!-- Right button -->
+            <circle cx="58" cy="35" r="4" fill="#0066cc"/>
+            <!-- Right button connector -->
+            <line x1="58" y1="39" x2="58" y2="48" stroke="#0066cc" stroke-width="1.5"/>
+            <!-- Spinning hand -->
+            <g class="spinning-hand">
+                <line x1="50" y1="60" x2="50" y2="35" stroke="#0066cc" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="50" cy="60" r="2" fill="#0066cc"/>
+            </g>
+        </svg>
     </div>
-    <div>
-        <!-- Big timer counting hours:minutes:seconds:milliseconds from startTime -->
-        {{ totalTime | date: 'mm:ss.SS' }}
-        <button *ngIf="!hasStarted" (click)="startTimer()">Start</button>
-        <button *ngIf="active" (click)="stopTimer()">Stop</button>
-        <button *ngIf="isStopped" (click)="resetTimer()">Reset</button>
-    </div>
-    <div>
-        <div *ngFor="let athlete of eventData?.athletes" class="athlete-card">
-            <ng-container *ngTemplateOutlet="athleteCard; context: { athlete: athlete }"></ng-container>
-        </div>
-        <div>
-            <input type="text" placeholder="Athlete Name" [(ngModel)]="searchAthleteName">
-            <button (click)="addAthlete()">Add Athlete</button>
-        </div>
-    </div>
-
+    <p class="loading-text">Loading event...</p>
 </div>
 
-<!-- An athlete card contains their name, a display of their total time -->
-<!-- A display of their last 3 splits, and a LAP and STOP button -->
-<ng-template #athleteCard let-athlete="athlete">
-    <div>
-        <div>
-            {{ athlete.name }}
-            <!-- Athlete total time here, should stop for all users when as user clicks stop on this athlete -->
+<!-- Event View -->
+<div *ngIf="eventData && !isLoading" class="event-container">
+    <!-- Header with Back Button and Title -->
+    <div class="event-header">
+        <button class="btn-back" (click)="leaveEvent()">←</button>
+        <input 
+            type="text" 
+            class="event-name-input"
+            [(ngModel)]="eventData.event_name"
+            (input)="onEventNameChange(eventData.event_name)"
+            placeholder="Event Name">
+    </div>
+
+    <!-- Event Info Section -->
+    <div class="event-info">
+        <div class="event-meta">
+            <span class="event-code">Event Code: {{ eventData?.event_code }}</span>
+            <label>
+                <input type="checkbox" [checked]="eventData?.public" (change)="toggleEventPublic()">
+                Public Event
+            </label>
         </div>
+        <div class="event-description" *ngIf="eventData?.description">
+            {{ eventData.description }}
+        </div>
+    </div>
+
+    <!-- Timer Header (Sticky) -->
+    <div class="timer-header">
+        <div class="timer-display">{{ totalTime | date: 'mm:ss.SS' }}</div>
+        <button class="btn-start" *ngIf="!hasStarted" (click)="startTimer()">Start</button>
+        <button class="btn-stop" *ngIf="active" (click)="stopTimer()">Stop</button>
+        <button class="btn-reset" *ngIf="isStopped" (click)="resetTimer()">Reset</button>
+    </div>
+
+    <!-- Athletes List (Main Content) -->
+    <div class="athletes-container">
+        <div class="athletes-list">
+            <div *ngFor="let athlete of eventData?.athletes" 
+                 [ngClass]="'athlete-card ' + getLapProgressClass(athlete.id)"
+                 [style.borderLeftColor]="getLapColor(getLapCount(athlete.id))">
+                <ng-container *ngTemplateOutlet="athleteCard; context: { athlete: athlete }"></ng-container>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Athlete Section (Sticky Bottom) -->
+    <div class="add-athlete-section">
+        <input 
+            type="text" 
+            placeholder="Athlete to add" 
+            [(ngModel)]="searchAthleteName"
+            (keyup.enter)="addAthlete()">
+        <button (click)="addAthlete()">+</button>
+    </div>
+</div>
+
+<!-- Athlete Card Template -->
+<ng-template #athleteCard let-athlete="athlete">
+    <div class="athlete-header">
+        <div class="athlete-name-section">
+            <div class="athlete-name">{{ athlete.name }}</div>
+            <div class="athlete-time">
+                {{ getAthleteCurrentTime(athlete.id) | date: 'mm:ss.SS' }}
+            </div>
+        </div>
+        <div class="athlete-lap-indicator" 
+             [style.backgroundColor]="getLapColor(getLapCount(athlete.id))"
+             [ngClass]="getLapCount(athlete.id) === 0 ? 'lap-0' : 'lap-active'">
+            {{ getLapCount(athlete.id) }}
+        </div>
+    </div>
+
+    <div class="athlete-splits-container" *ngIf="(athleteStates.get(athlete.id)?.splits?.length || 0) > 0">
+        <div *ngFor="let splitWithLap of getAllSplitsWithLapNumbers(athlete.id)" 
+             class="split-item"
+             [style.borderLeftColor]="getLapColor(splitWithLap.lapNumber)">
+            <div class="split-label">Lap {{ splitWithLap.lapNumber }}</div>
+            <div class="split-times">
+                <span class="split-delta">{{ splitWithLap.deltaMs | date: 'mm:ss.SS' }}</span>
+                <span class="split-total">({{ splitWithLap.totalMs | date: 'mm:ss.SS' }})</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="athlete-controls">
         <button 
-            (click)="lapAthlete(athlete.id)"
-            [disabled]="athleteStates.get(athlete.id)?.isFinished">
-            LAP
-        </button>
-        <button 
+            class="btn-stop"
             (click)="stopAthlete(athlete.id)"
             [disabled]="athleteStates.get(athlete.id)?.isFinished">
             STOP
         </button>
-    </div>
-    <div>
-        <div *ngFor="let split of athleteStates.get(athlete.id)?.splits; let i = index">
-            <ng-container *ngIf="i >= ((athleteStates.get(athlete.id)?.splits?.length) || 0) - 3">
-                <span>
-                    {{ getSplitInfo(athlete.id, i).deltaMs | date: 'mm:ss.SS' }}
-                    ({{ getSplitInfo(athlete.id, i).totalMs | date: 'mm:ss.SS' }})
-                </span>
-            </ng-container>
-        </div>
+        <button 
+            class="btn-lap"
+            (click)="lapAthlete(athlete.id)"
+            [disabled]="athleteStates.get(athlete.id)?.isFinished">
+            LAP
+        </button>
     </div>
 </ng-template>
