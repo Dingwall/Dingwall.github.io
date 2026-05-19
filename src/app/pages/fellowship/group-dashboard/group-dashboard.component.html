@@ -1,0 +1,518 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-top">
+      <button class="btn-back" (click)="goBack()">← Back</button>
+      <h2 *ngIf="group">{{ group.name }}</h2>
+      <p class="description" *ngIf="group?.description">{{ group?.description }}</p>
+    </div>
+
+    <div class="messages">
+      <div class="success-message" *ngIf="success">✓ {{ success }}</div>
+      <div class="error-message" *ngIf="error">✗ {{ error }}</div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="dashboard-tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === 'dashboard'"
+      (click)="setTab('dashboard')">
+      Dashboard
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === 'items'"
+      (click)="setTab('items')">
+      Items
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === 'members'"
+      (click)="setTab('members')">
+      Members
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === 'settings'"
+      (click)="setTab('settings')"
+      *ngIf="isGroupOwner()">
+      Settings
+    </button>
+  </div>
+
+  <!-- TAB: DASHBOARD -->
+  <div class="tab-content" *ngIf="currentTab === 'dashboard' && !loading">
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h3>Your Tasks</h3>
+        <button class="btn btn-primary btn-sm" (click)="openShippingPlanner()">
+          Schedule Shipping
+        </button>
+      </div>
+
+      <!-- Items to Ship -->
+      <div class="task-section" *ngIf="getTasksForType('ship').length > 0">
+        <h4 class="task-category">📦 Items to Ship</h4>
+        <div class="task-card" *ngFor="let task of getTasksForType('ship')">
+          <div class="task-item-info">
+            <div class="item-image" *ngIf="task.itemImage">
+              <img [src]="task.itemImage" alt="{{ task.itemName }}">
+            </div>
+            <div class="item-image placeholder" *ngIf="!task.itemImage">
+              {{ task.itemName.charAt(0) }}
+            </div>
+            <div class="task-details">
+              <h4>{{ task.itemName }}</h4>
+              <p class="recipient">Send to: <strong>{{ task.otherUserName }}</strong></p>
+              <p class="contact-info" *ngIf="task.otherUserAddress">
+                📍 {{ task.otherUserAddress }}
+              </p>
+              <p class="contact-info" *ngIf="task.otherUserPhone">
+                📞 {{ task.otherUserPhone }}
+              </p>
+            </div>
+          </div>
+          <div class="task-actions">
+            <input 
+              type="text" 
+              placeholder="Tracking #" 
+              class="input-small"
+              #trackingInput>
+            <button 
+              class="btn btn-primary btn-sm"
+              (click)="confirmShipped(task, trackingInput.value)"
+              [disabled]="loading">
+              Confirm Shipped
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Received -->
+      <div class="task-section" *ngIf="getTasksForType('receive').length > 0">
+        <h4 class="task-category">📬 Items to Receive</h4>
+        <div class="task-card" *ngFor="let task of getTasksForType('receive')">
+          <div class="task-item-info">
+            <div class="item-image" *ngIf="task.itemImage">
+              <img [src]="task.itemImage" alt="{{ task.itemName }}">
+            </div>
+            <div class="item-image placeholder" *ngIf="!task.itemImage">
+              {{ task.itemName.charAt(0) }}
+            </div>
+            <div class="task-details">
+              <h4>{{ task.itemName }}</h4>
+              <p class="recipient">Receiving from: <strong>{{ task.otherUserName }}</strong></p>
+              <p class="contact-info" *ngIf="task.trackingNumber">
+                🔗 Tracking: {{ task.trackingNumber }}
+              </p>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button 
+              class="btn btn-success btn-sm"
+              (click)="confirmReceived(task)"
+              [disabled]="loading">
+              Confirm Received
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Tasks -->
+      <div class="empty-state" *ngIf="getTasksForType('ship').length === 0 && getTasksForType('receive').length === 0">
+        <p>No active tasks. Schedule a shipping round to get started!</p>
+      </div>
+    </div>
+
+    <!-- Recent History -->
+    <div class="dashboard-section" *ngIf="dashboard?.recentHistory && dashboard?.recentHistory.length > 0">
+      <h3>Recent Activity</h3>
+      <div class="history-list">
+        <div class="history-item" *ngFor="let entry of dashboard?.recentHistory">
+          <span class="action" [class.shipped]="entry.action === 'shipped'" [class.received]="entry.action === 'received'">
+            {{ entry.action === 'shipped' ? '📤' : '📥' }}
+          </span>
+          <div class="history-details">
+            <p><strong>{{ entry.itemName }}</strong> {{ entry.action }} {{ entry.action === 'shipped' ? 'to' : 'from' }} <strong>{{ entry.otherUserName }}</strong></p>
+            <p class="timestamp">{{ entry.completedAt | date:'short' }}</p>
+            <p class="tracking" *ngIf="entry.trackingNumber">Tracking: {{ entry.trackingNumber }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ITEMS -->
+  <div class="tab-content" *ngIf="currentTab === 'items'">
+    <div class="section-header">
+      <h3>Group Items ({{ items.length }})</h3>
+      <button class="btn btn-primary btn-sm" (click)="openAddItemModal()">+ Add Item</button>
+    </div>
+
+    <div class="items-grid" *ngIf="items.length > 0">
+      <div class="item-card" *ngFor="let item of items" [class.in-storage]="item.status === 'storage'">
+        <div class="item-header">
+          <div class="item-image" *ngIf="item.item_image_base64">
+            <img [src]="item.item_image_base64" alt="{{ item.name }}">
+          </div>
+          <div class="item-image placeholder" *ngIf="!item.item_image_base64">
+            {{ item.name.charAt(0) }}
+          </div>
+          <div class="item-status" [class.active]="item.status === 'active'" [class.storage]="item.status === 'storage'">
+            {{ item.status }}
+          </div>
+        </div>
+
+        <div class="item-info">
+          <h4>{{ item.name }}</h4>
+          <p class="description" *ngIf="item.description">{{ item.description }}</p>
+
+          <div class="item-specs">
+            <p *ngIf="item.dimensions"><span class="label">Dimensions:</span> {{ item.dimensions }}</p>
+            <p *ngIf="item.weight"><span class="label">Weight:</span> {{ item.weight }}</p>
+            <p *ngIf="item.value"><span class="label">Value:</span> {{ item.value }}</p>
+          </div>
+
+          <div class="item-holder">
+            <p *ngIf="item.current_holder_id">
+              <span class="label">Currently with: </span> 
+              <span class="holder-name">{{ ((members | getNameFromId:(item.current_holder_id || ''))?.user)?.name || 'Unknown' }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="item-actions">
+          <button 
+            class="btn btn-sm" 
+            [class.btn-primary]="item.status === 'active'"
+            [class.btn-secondary]="item.status === 'storage'"
+            (click)="toggleItemStatus(item)"
+            [disabled]="loading">
+            {{ item.status === 'active' ? 'Move to Storage' : 'Activate' }}
+          </button>
+          <button class="btn btn-sm btn-secondary" (click)="openEditItemModal(item)" [disabled]="loading">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-secondary" (click)="openItemDetail(item)" [disabled]="loading">
+            View History
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="items.length === 0">
+      <p>No items in this group yet. Add one to get started!</p>
+    </div>
+  </div>
+
+  <!-- TAB: ITEM DETAIL -->
+  <div class="tab-content" *ngIf="currentTab === 'item-detail' && selectedItem">
+    <div class="item-detail-container">
+      <div class="item-detail-header">
+        <button class="btn-back" (click)="closeItemDetail()">← Back to Items</button>
+      </div>
+
+      <div class="item-detail-content">
+        <!-- Left: Item Info -->
+        <div class="item-detail-info">
+          <div class="item-image-large" *ngIf="selectedItem.item_image_base64">
+            <img [src]="selectedItem.item_image_base64" alt="{{ selectedItem.name }}">
+          </div>
+          <div class="item-image-large placeholder" *ngIf="!selectedItem.item_image_base64">
+            {{ selectedItem.name.charAt(0) }}
+          </div>
+
+          <div class="item-details">
+            <h2>{{ selectedItem.name }}</h2>
+            <p class="description" *ngIf="selectedItem.description">{{ selectedItem.description }}</p>
+
+            <div class="info-section">
+              <h4>Item Details</h4>
+              <p *ngIf="selectedItem.dimensions"><strong>Dimensions:</strong> {{ selectedItem.dimensions }}</p>
+              <p *ngIf="selectedItem.weight"><strong>Weight:</strong> {{ selectedItem.weight }}</p>
+              <p *ngIf="selectedItem.value"><strong>Value:</strong> {{ selectedItem.value }}</p>
+            </div>
+
+            <div class="info-section">
+              <h4>Ownership & Status</h4>
+              <p><strong>Owner:</strong> {{ ((members | getNameFromId:(selectedItem.owner_id || ''))?.user)?.name || 'Unknown' }}</p>
+              <p><strong>Currently with:</strong> {{ ((members | getNameFromId:(selectedItem.current_holder_id || ''))?.user)?.name || 'Unknown' }}</p>
+              <p><strong>Status:</strong> <span class="status-badge" [class.active]="selectedItem.status === 'active'" [class.storage]="selectedItem.status === 'storage'">{{ selectedItem.status }}</span></p>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="openEditItemModal(selectedItem)" [disabled]="loading">
+                Edit Item
+              </button>
+              <button 
+                class="btn btn-secondary" 
+                (click)="toggleItemStatus(selectedItem)"
+                [disabled]="loading">
+                {{ selectedItem.status === 'active' ? 'Move to Storage' : 'Activate' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: History Timeline -->
+        <div class="item-detail-history">
+          <h3>Item History</h3>
+          <div class="history-timeline" *ngIf="itemHistory.length > 0">
+            <div class="timeline-item" *ngFor="let entry of itemHistory; let last = last" [class.last]="last">
+              <div class="timeline-marker"></div>
+              <div class="timeline-content">
+                <p class="timeline-from" *ngIf="entry.from_user_id">
+                  From: <strong>{{ ((members | getNameFromId:(entry.from_user_id || ''))?.user)?.name || 'Unknown' }}</strong>
+                </p>
+                <p class="timeline-to" *ngIf="entry.to_user_id">
+                  To: <strong>{{ ((members | getNameFromId:(entry.to_user_id || ''))?.user)?.name || 'Unknown' }}</strong>
+                </p>
+                <p class="timeline-date" *ngIf="entry.sent_at">
+                  Sent: {{ entry.sent_at | date:'short' }}
+                </p>
+                <p class="timeline-date" *ngIf="entry.received_at">
+                  Received: {{ entry.received_at | date:'short' }}
+                </p>
+                <p class="timeline-tracking" *ngIf="entry.tracking_number">
+                  🔗 Tracking: {{ entry.tracking_number }}
+                </p>
+                <p class="timeline-status" [class]="entry.status">
+                  {{ entry.status | titlecase }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="itemHistory.length === 0">
+            <p>No history recorded for this item.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: MEMBERS -->
+  <div class="tab-content" *ngIf="currentTab === 'members'">
+    <h3>Group Members ({{ members.length }})</h3>
+    
+    <div class="members-list">
+      <div class="member-card" *ngFor="let member of members" [class.inactive]="!member.is_active">
+        <div class="member-info">
+          <h4>{{ (member.user)?.name || 'Unknown' }}</h4>
+          <p class="email">{{ (member.user)?.email }}</p>
+          <p class="phone" *ngIf="(member.user)?.phone">{{ (member.user)?.phone }}</p>
+          <p class="address" *ngIf="(member.user)?.address">📍 {{ (member.user)?.address }}</p>
+        </div>
+
+        <div class="member-meta">
+          <span class="role" [class.owner]="member.role === 'owner'" [class.member]="member.role === 'member'">
+            {{ member.role }}
+          </span>
+          <span class="status" [class.active]="member.is_active" [class.inactive]="!member.is_active">
+            {{ member.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <div class="member-actions" *ngIf="isGroupOwner()">
+          <button 
+            class="btn btn-sm"
+            [class.btn-primary]="!member.is_active"
+            [class.btn-secondary]="member.is_active"
+            (click)="toggleMemberActive(member)"
+            [disabled]="loading">
+            {{ member.is_active ? 'Deactivate' : 'Activate' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SETTINGS (Owner only) -->
+  <div class="tab-content" *ngIf="currentTab === 'settings' && isGroupOwner()">
+    <app-group-settings [groupId]="groupId" (groupUpdated)="loadData()"></app-group-settings>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div class="modal" *ngIf="showAddItemModal">
+    <div class="modal-overlay" (click)="closeAddItemModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Item to Group</h2>
+        <button class="close-btn" (click)="closeAddItemModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Item Name *</label>
+          <input type="text" [(ngModel)]="itemFormData.name" placeholder="e.g., The Hobbit">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="itemFormData.description" placeholder="(optional)" rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dimensions</label>
+            <input type="text" [(ngModel)]="itemFormData.dimensions" placeholder="e.g., 8x5x1 inches">
+          </div>
+
+          <div class="form-group">
+            <label>Weight</label>
+            <input type="text" [(ngModel)]="itemFormData.weight" placeholder="e.g., 2.5 lbs">
+          </div>
+
+          <div class="form-group">
+            <label>Value</label>
+            <input type="text" [(ngModel)]="itemFormData.value" placeholder="e.g., $25">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Item Image</label>
+          <input type="file" accept="image/*" (change)="onItemImageSelect($event)">
+          <div class="image-preview" *ngIf="itemFormData.imagePreview">
+            <img [src]="itemFormData.imagePreview" alt="Preview">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeAddItemModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="createItem()" [disabled]="loading">
+          {{ loading ? 'Adding...' : 'Add Item' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal" *ngIf="showEditItemModal">
+    <div class="modal-overlay" (click)="closeEditItemModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Item</h2>
+        <button class="close-btn" (click)="closeEditItemModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Item Name *</label>
+          <input type="text" [(ngModel)]="itemFormData.name" placeholder="e.g., The Hobbit">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="itemFormData.description" placeholder="(optional)" rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dimensions</label>
+            <input type="text" [(ngModel)]="itemFormData.dimensions" placeholder="e.g., 8x5x1 inches">
+          </div>
+
+          <div class="form-group">
+            <label>Weight</label>
+            <input type="text" [(ngModel)]="itemFormData.weight" placeholder="e.g., 2.5 lbs">
+          </div>
+
+          <div class="form-group">
+            <label>Value</label>
+            <input type="text" [(ngModel)]="itemFormData.value" placeholder="e.g., $25">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Item Image</label>
+          <input type="file" accept="image/*" (change)="onEditItemImageSelect($event)">
+          <div class="image-preview" *ngIf="itemFormData.imagePreview">
+            <img [src]="itemFormData.imagePreview" alt="Preview">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeEditItemModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="saveItemEdit()" [disabled]="loading">
+          {{ loading ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shipping Planner Modal -->
+  <div class="modal" *ngIf="showShippingPlanner">
+    <div class="modal-overlay" (click)="closeShippingPlanner()"></div>
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2>Schedule Shipping Round</h2>
+        <button class="close-btn" (click)="closeShippingPlanner()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Shipping Date</label>
+          <input type="date" [(ngModel)]="shippingDate" (change)="generateSuggestions()">
+        </div>
+
+        <div class="shipping-options">
+          <label class="checkbox">
+            <input type="checkbox" [(ngModel)]="shippingOptions.allowRepeats" (change)="generateSuggestions()">
+            Allow Repeats (send item to someone who's had it before)
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" [(ngModel)]="shippingOptions.optimizeRoute" (change)="generateSuggestions()">
+            Optimize Route (shortest distance)
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" [(ngModel)]="shippingOptions.sendToOwner" (change)="generateSuggestions()">
+            Send to Owner (when no new recipients available)
+          </label>
+        </div>
+
+        <!-- Warnings -->
+        <div class="warnings" *ngIf="shippingSuggestions?.warnings && shippingSuggestions.warnings.length > 0">
+          <div class="warning-item" *ngFor="let warning of shippingSuggestions.warnings" [class]="warning.severity">
+            ⚠ {{ warning.message }}
+          </div>
+        </div>
+
+        <!-- Suggestions Preview -->
+        <div class="suggestions" *ngIf="shippingSuggestions?.suggestions">
+          <h4>Shipping Plan</h4>
+          <div class="suggestion-item" *ngFor="let suggestion of shippingSuggestions.suggestions">
+            <div class="from">
+              <strong>{{ suggestion.fromUserName }}</strong><br>
+              <small>has {{ suggestion.itemName }}</small>
+            </div>
+            <div class="arrow">→</div>
+            <div class="to">
+              <strong>{{ suggestion.toUserName }}</strong><br>
+              <small>receives item</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeShippingPlanner()">Cancel</button>
+        <button 
+          class="btn btn-primary" 
+          (click)="confirmShippingRound()"
+          [disabled]="loading || !shippingSuggestions?.suggestions || shippingSuggestions.suggestions.length === 0">
+          {{ loading ? 'Creating...' : 'Confirm Shipping' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

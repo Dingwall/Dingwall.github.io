@@ -22,6 +22,14 @@ import { ProjectCardComponent } from './pages/projects/project-card/project-card
 import { WoodworkingComponent } from './pages/woodworking/woodworking.component'
 import { WoodProjectCardComponent } from './pages/woodworking/wood-project-card/wood-project-card.component';
 import { IntervalComponent } from './pages/interval/interval.component';
+import { FellowshipComponent } from './pages/fellowship/fellowship.component';
+import { GroupListComponent } from './pages/fellowship/group-list/group-list.component';
+import { GroupDashboardComponent } from './pages/fellowship/group-dashboard/group-dashboard.component';
+import { AuthLoginComponent } from './pages/fellowship/auth/auth-login.component';
+import { AuthSignupComponent } from './pages/fellowship/auth/auth-signup.component';
+import { AccountEditComponent } from './pages/fellowship/account/account-edit.component';
+import { GroupSettingsComponent } from './pages/fellowship/group-settings/group-settings.component';
+import { GetNameFromIdPipe } from './pipes/get-name-from-id.pipe';
 
 @NgModule({
   declarations: [
@@ -37,6 +45,14 @@ import { IntervalComponent } from './pages/interval/interval.component';
     WoodworkingComponent,
     WoodProjectCardComponent,
     IntervalComponent,
+    FellowshipComponent,
+    GroupListComponent,
+    GroupDashboardComponent,
+    AuthLoginComponent,
+    AuthSignupComponent,
+    AccountEditComponent,
+    GroupSettingsComponent,
+    GetNameFromIdPipe,
   ],
   imports: [
     BrowserModule,

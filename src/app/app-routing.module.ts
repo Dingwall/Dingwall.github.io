@@ -7,6 +7,7 @@ import { RunningComponent } from './pages/running/running.component';
 import { WoodworkingComponent } from './pages/woodworking/woodworking.component';
 import { SkumpComponent } from './pages/skump/skump.component';
 import { IntervalComponent } from './pages/interval/interval.component';
+import { FellowshipComponent } from './pages/fellowship/fellowship.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,8 @@ const routes: Routes = [
   { path: 'woodworking', component: WoodworkingComponent },
   { path: 'projectwyvern', component: ProjectwyvernComponent },
   { path: 'interval', component: IntervalComponent },
+  { path: 'fellowship', component: FellowshipComponent },
+  { path: 'fellowship/:groupId', component: FellowshipComponent },
 ];
 
 @NgModule({

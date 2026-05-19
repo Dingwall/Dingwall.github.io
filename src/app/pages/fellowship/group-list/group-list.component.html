@@ -1,0 +1,173 @@
+<div class="group-list-container">
+  <div class="list-header">
+    <h2>{{ isMyGroups ? 'My Groups' : 'All Groups' }}</h2>
+    <div class="header-actions">
+      <input 
+        type="text" 
+        placeholder="Search groups..." 
+        class="search-box"
+        (input)="onSearchChange($any($event.target).value)"
+        [disabled]="isMyGroups === false">
+      <button class="btn btn-primary" (click)="openCreateModal()" *ngIf="isMyGroups">
+        + Create Group
+      </button>
+      <button class="btn btn-secondary" (click)="openJoinModal()" *ngIf="!isMyGroups">
+        + Join Group
+      </button>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    Loading groups...
+  </div>
+
+  <div class="groups-grid" *ngIf="!loading && filteredGroups.length > 0">
+    <div class="group-card" *ngFor="let group of filteredGroups">
+      <div class="group-image" *ngIf="group.group_image_base64">
+        <img [src]="group.group_image_base64" alt="{{ group.name }}">
+      </div>
+      <div class="group-image placeholder" *ngIf="!group.group_image_base64">
+        <span>{{ group.name.charAt(0).toUpperCase() }}</span>
+      </div>
+      
+      <div class="group-info">
+        <h3>{{ group.name }}</h3>
+        <p class="description" *ngIf="group.description">{{ group.description }}</p>
+        <p class="description empty" *ngIf="!group.description"><em>No description</em></p>
+      </div>
+
+      <div class="group-actions">
+        <button 
+          class="btn btn-primary" 
+          (click)="selectGroup(group.id)"
+          *ngIf="isMyGroups">
+          Open
+        </button>
+        <button 
+          class="btn btn-secondary" 
+          (click)="openJoinModal()"
+          *ngIf="!isMyGroups">
+          Join Group
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && filteredGroups.length === 0">
+    <p *ngIf="isMyGroups">
+      You haven't joined any groups yet. Create one or join an existing group!
+    </p>
+    <p *ngIf="!isMyGroups">
+      No groups found. Try a different search or create a new one!
+    </p>
+  </div>
+
+  <div class="pagination" *ngIf="!isMyGroups && totalPages > 1">
+    <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">← Previous</button>
+    <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+    <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Next →</button>
+  </div>
+
+  <!-- Create Group Modal -->
+  <div class="modal" *ngIf="showCreateModal">
+    <div class="modal-overlay" (click)="closeCreateModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create New Group</h2>
+        <button class="close-btn" (click)="closeCreateModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Group Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="createFormData.name"
+            placeholder="Enter group name">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea 
+            [(ngModel)]="createFormData.description"
+            placeholder="What's this group about?"
+            rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Group Image</label>
+          <input 
+            type="file" 
+            accept="image/*"
+            (change)="onImageSelect($event)">
+          <div class="image-preview" *ngIf="createFormData.imagePreview">
+            <img [src]="createFormData.imagePreview" alt="Preview">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password *</label>
+          <input 
+            type="password" 
+            [(ngModel)]="createFormData.password"
+            placeholder="Enter group password">
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password *</label>
+          <input 
+            type="password" 
+            [(ngModel)]="createFormData.passwordConfirm"
+            placeholder="Confirm password">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
+        <button 
+          class="btn btn-primary" 
+          (click)="createGroup()"
+          [disabled]="loading">
+          {{ loading ? 'Creating...' : 'Create Group' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join Group Modal -->
+  <div class="modal" *ngIf="showJoinModal">
+    <div class="modal-overlay" (click)="closeJoinModal()"></div>
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h2>Join Group</h2>
+        <button class="close-btn" (click)="closeJoinModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p>Enter the group password to join:</p>
+        <div class="form-group">
+          <input 
+            type="password" 
+            [(ngModel)]="joinFormData.password"
+            placeholder="Enter group password"
+            (keyup.enter)="joinGroup(groups[0]?.id || '')">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeJoinModal()">Cancel</button>
+        <button 
+          class="btn btn-primary" 
+          (click)="joinGroup(groups[0]?.id || '')"
+          [disabled]="loading">
+          {{ loading ? 'Joining...' : 'Join Group' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

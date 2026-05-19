@@ -1,0 +1,71 @@
+<div class="fellowship-container">
+  <div class="fellowship-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>✦ Fellowship</h1>
+        <p class="subtitle">Share items, track journeys, stay connected</p>
+      </div>
+      <div class="auth-section" *ngIf="!(currentUser$ | async)">
+        <button class="btn-auth" (click)="navigateTo('login')">Sign In</button>
+        <button class="btn-auth btn-primary" (click)="navigateTo('signup')">Join Fellowship</button>
+      </div>
+      <div class="auth-section" *ngIf="currentUser$ | async as user">
+        <span class="user-greeting">Welcome, {{ user.name }}</span>
+        <button class="btn-auth" (click)="logout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fellowship-nav" *ngIf="(currentUser$ | async) && currentTab != 'group-dashboard'">
+    <button 
+      class="nav-tab" 
+      [class.active]="currentTab === 'groups'"
+      (click)="setTab('groups')">
+      All Groups
+    </button>
+    <button 
+      class="nav-tab" 
+      [class.active]="currentTab === 'my-groups'"
+      (click)="setTab('my-groups')">
+      My Groups
+    </button>
+    <button 
+      class="nav-tab" 
+      [class.active]="currentTab === 'account'"
+      (click)="setTab('account')">
+      My Account
+    </button>
+  </div>
+
+  <div class="fellowship-content">
+    <!-- Group List Tab -->
+    <div class="tab-content" *ngIf="currentTab === 'groups'">
+      <app-group-list [isMyGroups]="false"></app-group-list>
+    </div>
+
+    <!-- My Groups Tab -->
+    <div class="tab-content" *ngIf="currentTab === 'my-groups'">
+      <app-group-list [isMyGroups]="true" (groupSelected)="enterGroup($event)"></app-group-list>
+    </div>
+
+    <!-- Account Tab -->
+    <div class="tab-content" *ngIf="currentTab === 'account'">
+      <app-account-edit (profileUpdated)="onProfileUpdated()"></app-account-edit>
+    </div>
+
+    <!-- Group Dashboard (shown when group is selected) -->
+    <div class="tab-content" *ngIf="currentTab === 'group-dashboard'">
+      <app-group-dashboard [groupId]="selectedGroupId" (back)="backFromGroup()"></app-group-dashboard>
+    </div>
+
+    <!-- Authentication views -->
+    <div class="tab-content" *ngIf="currentTab === 'login'">
+      <app-auth-login (loginSuccess)="onAuthSuccess()"></app-auth-login>
+    </div>
+
+    <div class="tab-content" *ngIf="currentTab === 'signup'">
+      <app-auth-signup (signupSuccess)="onAuthSuccess()"></app-auth-signup>
+    </div>
+  </div>
+</div>
+

@@ -1,23 +1,26 @@
 import { Injectable } from '@angular/core';
 import { createClient  } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class IntervalService {
-  private supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
-    db: {
-      schema: 'TimingApp'
-    },
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-    }
-  })
+  // private supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+  //   db: {
+  //     schema: 'TimingApp'
+  //   },
+  //   auth: {
+  //     persistSession: false,
+  //     autoRefreshToken: false,
+  //     detectSessionInUrl: false
+  //   }
+  // })
 
-  // constructor() {
-  //   this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
-  // }
+  private supabase;
+
+  constructor(private supabaseService: SupabaseService) {
+    this.supabase = this.supabaseService.client.schema('TimingApp');
+  }
 
   // Example: fetch data from a table
   async getData(table: string) {

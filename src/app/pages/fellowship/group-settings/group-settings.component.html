@@ -1,0 +1,77 @@
+<div class="settings-container">
+  <div class="messages">
+    <div class="success-message" *ngIf="success">✓ {{ success }}</div>
+    <div class="error-message" *ngIf="error">✗ {{ error }}</div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Group Information</h3>
+
+    <div class="form-group">
+      <label>Group Name *</label>
+      <input type="text" [(ngModel)]="formData.name" placeholder="Enter group name">
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea [(ngModel)]="formData.description" placeholder="Describe your group" rows="3"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Group Image</label>
+      <input type="file" accept="image/*" (change)="onImageSelect($event)">
+      <div class="image-preview" *ngIf="formData.imagePreview">
+        <img [src]="formData.imagePreview" alt="Group image">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>New Password (leave blank to keep current)</label>
+      <input type="password" [(ngModel)]="formData.newPassword" placeholder="Enter new password (optional)">
+    </div>
+
+    <div class="form-group" *ngIf="formData.newPassword">
+      <label>Confirm New Password</label>
+      <input type="password" [(ngModel)]="formData.newPasswordConfirm" placeholder="Confirm password">
+    </div>
+
+    <button class="btn btn-primary" (click)="saveGroupInfo()" [disabled]="loading">
+      {{ loading ? 'Saving...' : 'Save Settings' }}
+    </button>
+  </div>
+
+  <div class="settings-section">
+    <h3>Members</h3>
+    <div class="members-list">
+      <div class="member-item" *ngFor="let member of members">
+        <div class="member-info">
+          <strong>{{ (member.user)?.name || 'Unknown' }}</strong>
+          <p>{{ (member.user)?.email }}</p>
+          <span class="role">{{ member.role }}</span>
+        </div>
+        <div class="member-actions">
+          <button 
+            class="btn btn-sm btn-secondary" 
+            (click)="toggleMemberActive(member)"
+            [disabled]="loading">
+            {{ member.is_active ? 'Deactivate' : 'Activate' }}
+          </button>
+          <button 
+            class="btn btn-sm btn-danger" 
+            (click)="removeMember(member)"
+            [disabled]="loading">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-section danger-zone">
+    <h3>Danger Zone</h3>
+    <p>Deleting this group is permanent and cannot be undone.</p>
+    <button class="btn btn-danger" (click)="deleteGroup()" [disabled]="loading">
+      {{ loading ? 'Deleting...' : 'Delete Group' }}
+    </button>
+  </div>
+</div>
