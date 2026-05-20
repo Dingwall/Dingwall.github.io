@@ -290,9 +290,7 @@ export class FellowshipService {
             role: 'member',
             is_active: true,
           }
-        ])
-        .select()
-        .single();
+        ], { returning: 'representation' });
 
       if (error) {
         if (error.code === '23505') { // Unique constraint violation
@@ -302,7 +300,8 @@ export class FellowshipService {
         throw error;
       }
 
-      return data as GroupMember;
+      const inserted = Array.isArray(data) ? data[0] : data;
+      return inserted as GroupMember;
     } catch (error) {
       console.error('Error joining group:', error);
       throw error;

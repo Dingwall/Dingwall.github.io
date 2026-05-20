@@ -23,6 +23,7 @@ export class WoodworkingComponent implements OnInit {
   // What is a better datatype for this? Something would make it faster
 
   projects = [
+    "dtc.jpg",
     "beespoon.png",
     "treeman.png",
     "worldmug.png",
