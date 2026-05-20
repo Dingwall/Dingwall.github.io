@@ -12,6 +12,7 @@ import { takeUntil, debounceTime } from 'rxjs/operators';
 export class GroupListComponent implements OnInit, OnDestroy {
   @Input() isMyGroups: boolean = false;
   @Output() groupSelected = new EventEmitter<string>();
+  @Output() joinSuccess = new EventEmitter<void>();
 
   groups: Group[] = [];
   filteredGroups: Group[] = [];
@@ -202,9 +203,7 @@ export class GroupListComponent implements OnInit, OnDestroy {
       this.showJoinModal = false;
       this.joinFormData.password = '';
       this.selectedGroupForJoin = null;
-      
-      // Emit the group selection to navigate into it
-      this.groupSelected.emit(groupId);
+      this.joinSuccess.emit();
     } catch (err) {
       console.error('Error joining group:', err);
       const message = err instanceof Error ? err.message : 'Unknown error';

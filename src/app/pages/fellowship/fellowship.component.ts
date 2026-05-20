@@ -78,6 +78,11 @@ export class FellowshipComponent implements OnInit, OnDestroy {
     this.currentTab = 'groups';
   }
 
+  onJoinSuccess(): void {
+    this.router.navigate(['/fellowship']);
+    this.currentTab = 'groups';
+  }
+
   onProfileUpdated(): void {
     // Profile updated, can show a toast/message if needed
   }

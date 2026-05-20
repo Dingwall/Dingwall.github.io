@@ -40,7 +40,7 @@
   <div class="fellowship-content">
     <!-- Group List Tab -->
     <div class="tab-content" *ngIf="currentTab === 'groups'">
-      <app-group-list [isMyGroups]="false"></app-group-list>
+      <app-group-list [isMyGroups]="false" (joinSuccess)="onJoinSuccess()"></app-group-list>
     </div>
 
     <!-- My Groups Tab -->
