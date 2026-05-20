@@ -207,7 +207,8 @@ export class GroupListComponent implements OnInit, OnDestroy {
       this.groupSelected.emit(groupId);
     } catch (err) {
       console.error('Error joining group:', err);
-      this.error = 'Failed to join group. Check your password and try again.';
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      this.error = `Failed to join group: ${message}`;
     } finally {
       this.loading = false;
     }

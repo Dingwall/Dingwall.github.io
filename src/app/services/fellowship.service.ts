@@ -261,11 +261,20 @@ export class FellowshipService {
       const currentUser = this.getCurrentUserSync();
       if (!currentUser) throw new Error('No authenticated user');
 
+      const { data: { user: authUser }, error: authError } = await this.supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!authUser) throw new Error('No authenticated session');
+      if (authUser.id !== currentUser.id) {
+        throw new Error('Authenticated user mismatch');
+      }
+
       // Get group
       const group = await this.getGroupDetails(groupId);
 
       // Verify password if required
-      if (group.password_required) {
+      const requiresPassword = group.password_required !== false;
+      if (requiresPassword) {
+        if (!password) throw new Error('Password is required for this group');
         const passwordValid = await this.verifyPassword(password, group.password_hash);
         if (!passwordValid) throw new Error('Invalid group password');
       }
@@ -277,7 +286,7 @@ export class FellowshipService {
         .insert([
           {
             group_id: groupId,
-            user_id: currentUser.id,
+            user_id: authUser.id,
             role: 'member',
             is_active: true,
           }
