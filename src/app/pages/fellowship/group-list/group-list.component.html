@@ -50,7 +50,7 @@
         </button>
         <button 
           class="btn btn-secondary" 
-          (click)="openJoinModal()"
+          (click)="openJoinModal(group.id)"
           *ngIf="!isMyGroups">
           Join Group
         </button>
@@ -144,18 +144,24 @@
     <div class="modal-overlay" (click)="closeJoinModal()"></div>
     <div class="modal-content modal-small">
       <div class="modal-header">
-        <h2>Join Group</h2>
+        <h2>{{ selectedGroupForJoin?.name || 'Join Group' }}</h2>
         <button class="close-btn" (click)="closeJoinModal()">✕</button>
       </div>
 
       <div class="modal-body">
-        <p>Enter the group password to join:</p>
-        <div class="form-group">
+        <p *ngIf="selectedGroupForJoin?.password_required">
+          Enter the group password to join:
+        </p>
+        <p *ngIf="!selectedGroupForJoin?.password_required">
+          This group doesn't require a password. Click "Join" to become a member.
+        </p>
+        
+        <div class="form-group" *ngIf="selectedGroupForJoin?.password_required">
           <input 
             type="password" 
             [(ngModel)]="joinFormData.password"
             placeholder="Enter group password"
-            (keyup.enter)="joinGroup(groups[0]?.id || '')">
+            (keyup.enter)="joinGroup(selectedGroupForJoin?.id || '')">
         </div>
       </div>
 
@@ -163,7 +169,7 @@
         <button class="btn btn-secondary" (click)="closeJoinModal()">Cancel</button>
         <button 
           class="btn btn-primary" 
-          (click)="joinGroup(groups[0]?.id || '')"
+          (click)="joinGroup(selectedGroupForJoin?.id || '')"
           [disabled]="loading">
           {{ loading ? 'Joining...' : 'Join Group' }}
         </button>

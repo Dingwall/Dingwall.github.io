@@ -224,6 +224,7 @@ export class FellowshipService {
             name: request.name,
             description: request.description || null,
             password_hash: hashedPassword,
+            password_required: request.password_required !== false, // Default to true
             group_image_base64: request.group_image_base64 || null,
             created_by: currentUser.id,
           }
@@ -255,7 +256,7 @@ export class FellowshipService {
     }
   }
 
-  async joinGroup(groupId: string, password: string): Promise<GroupMember> {
+  async joinGroup(groupId: string, password: string = ''): Promise<GroupMember> {
     try {
       const currentUser = this.getCurrentUserSync();
       if (!currentUser) throw new Error('No authenticated user');
@@ -263,9 +264,11 @@ export class FellowshipService {
       // Get group
       const group = await this.getGroupDetails(groupId);
 
-      // Verify password
-      const passwordValid = await this.verifyPassword(password, group.password_hash);
-      if (!passwordValid) throw new Error('Invalid group password');
+      // Verify password if required
+      if (group.password_required) {
+        const passwordValid = await this.verifyPassword(password, group.password_hash);
+        if (!passwordValid) throw new Error('Invalid group password');
+      }
 
       // Add to group_members
       const { data, error } = await this.supabase
@@ -393,6 +396,7 @@ export class FellowshipService {
       if (request.password) {
         updateData.password_hash = await this.hashPassword(request.password);
       }
+      if (request.password_required !== undefined) updateData.password_required = request.password_required;
 
       const { data, error } = await this.supabase
         .schema('Fellowship')

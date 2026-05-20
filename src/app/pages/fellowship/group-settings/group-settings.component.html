@@ -26,11 +26,24 @@
     </div>
 
     <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="formData.passwordRequired">
+        <span>Require password to join group</span>
+      </label>
+      <p class="help-text" *ngIf="!formData.passwordRequired">
+        Anyone with the group link will be able to join without a password.
+      </p>
+      <p class="help-text" *ngIf="formData.passwordRequired">
+        Members must enter the group password to join.
+      </p>
+    </div>
+
+    <div class="form-group" *ngIf="formData.passwordRequired">
       <label>New Password (leave blank to keep current)</label>
       <input type="password" [(ngModel)]="formData.newPassword" placeholder="Enter new password (optional)">
     </div>
 
-    <div class="form-group" *ngIf="formData.newPassword">
+    <div class="form-group" *ngIf="formData.passwordRequired && formData.newPassword">
       <label>Confirm New Password</label>
       <input type="password" [(ngModel)]="formData.newPasswordConfirm" placeholder="Confirm password">
     </div>

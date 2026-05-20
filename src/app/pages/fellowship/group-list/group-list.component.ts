@@ -26,6 +26,8 @@ export class GroupListComponent implements OnInit, OnDestroy {
   showJoinModal: boolean = false;
   showFilterModal: boolean = false;
   
+  selectedGroupForJoin: Group | null = null;
+  
   createFormData = {
     name: '',
     description: '',
@@ -186,7 +188,8 @@ export class GroupListComponent implements OnInit, OnDestroy {
   }
 
   async joinGroup(groupId: string): Promise<void> {
-    if (!this.joinFormData.password) {
+    // Only check password if required
+    if (this.selectedGroupForJoin?.password_required && !this.joinFormData.password) {
       this.error = 'Password is required';
       return;
     }
@@ -198,6 +201,7 @@ export class GroupListComponent implements OnInit, OnDestroy {
       await this.fellowshipService.joinGroup(groupId, this.joinFormData.password);
       this.showJoinModal = false;
       this.joinFormData.password = '';
+      this.selectedGroupForJoin = null;
       
       // Emit the group selection to navigate into it
       this.groupSelected.emit(groupId);
@@ -220,14 +224,31 @@ export class GroupListComponent implements OnInit, OnDestroy {
     this.error = '';
   }
 
-  openJoinModal(): void {
+  openJoinModal(groupId?: string): void {
     this.showJoinModal = true;
     this.error = '';
+    this.joinFormData.password = '';
+    
+    // If groupId is provided, fetch the group details to check password requirement
+    if (groupId) {
+      this.loading = true;
+      this.fellowshipService.getGroupDetails(groupId)
+        .then(group => {
+          this.selectedGroupForJoin = group;
+          this.loading = false;
+        })
+        .catch(err => {
+          console.error('Error loading group details:', err);
+          this.error = 'Failed to load group details';
+          this.loading = false;
+        });
+    }
   }
 
   closeJoinModal(): void {
     this.showJoinModal = false;
     this.joinFormData.password = '';
+    this.selectedGroupForJoin = null;
     this.error = '';
   }
 

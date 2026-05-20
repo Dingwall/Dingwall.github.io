@@ -36,6 +36,7 @@ export interface Group {
   name: string;
   description?: string;
   password_hash: string;
+  password_required: boolean;
   group_image_base64?: string;
   created_by: string;
   created_at: string;
@@ -51,6 +52,7 @@ export interface CreateGroupRequest {
   name: string;
   description?: string;
   password: string;
+  password_required?: boolean;
   group_image_base64?: string;
 }
 
@@ -59,6 +61,7 @@ export interface UpdateGroupRequest {
   description?: string;
   group_image_base64?: string;
   password?: string;
+  password_required?: boolean;
 }
 
 export interface GroupMember {

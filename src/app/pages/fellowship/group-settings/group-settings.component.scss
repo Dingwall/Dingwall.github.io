@@ -104,6 +104,33 @@ $success-color: #2e7d32;
       object-fit: cover;
     }
   }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: normal;
+    margin-bottom: 0;
+
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 0.75rem;
+      cursor: pointer;
+      accent-color: $primary-green;
+    }
+
+    span {
+      color: $primary-green;
+      font-weight: 500;
+    }
+  }
+
+  .help-text {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+  }
 }
 
 .members-list {
