@@ -244,6 +244,7 @@ export interface ShippingOptions {
   allowRepeats: boolean;
   optimizeRoute: boolean;
   sendToOwner: boolean;
+  shuffle?: boolean;
 }
 
 export interface SuggestShippingResponse {

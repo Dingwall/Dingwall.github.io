@@ -505,6 +505,9 @@
       </div>
 
       <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="shuffleSuggestions()" [disabled]="loading">
+          Shuffle
+        </button>
         <button class="btn btn-secondary" (click)="closeShippingPlanner()">Cancel</button>
         <button 
           class="btn btn-primary" 

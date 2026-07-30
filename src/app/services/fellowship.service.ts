@@ -820,10 +820,38 @@ export class FellowshipService {
 
   async confirmShipped(assignmentId: string, trackingNumber?: string): Promise<ShippingAssignment> {
     try {
-      return await this.updateShippingAssignment(assignmentId, {
+      const { data: assignment, error: assignmentError } = await this.supabase
+        .schema('Fellowship')
+        .from('shipping_assignments')
+        .select('*')
+        .eq('id', assignmentId)
+        .single();
+
+      if (assignmentError) throw assignmentError;
+
+      const updatedAssignment = await this.updateShippingAssignment(assignmentId, {
         from_confirmed: true,
         tracking_number: trackingNumber,
       });
+
+      if (assignment?.item_id) {
+        await this.supabase
+          .schema('Fellowship')
+          .from('item_history')
+          .insert([
+            {
+              item_id: assignment.item_id,
+              from_user_id: assignment.from_user_id || null,
+              to_user_id: assignment.to_user_id || null,
+              sent_at: new Date().toISOString(),
+              received_at: null,
+              tracking_number: trackingNumber || null,
+              status: 'in_transit',
+            }
+          ]);
+      }
+
+      return updatedAssignment;
     } catch (error) {
       console.error('Error confirming shipped:', error);
       throw error;
@@ -832,9 +860,53 @@ export class FellowshipService {
 
   async confirmReceived(assignmentId: string): Promise<ShippingAssignment> {
     try {
-      return await this.updateShippingAssignment(assignmentId, {
+      const { data: assignment, error: assignmentError } = await this.supabase
+        .schema('Fellowship')
+        .from('shipping_assignments')
+        .select('*')
+        .eq('id', assignmentId)
+        .single();
+
+      if (assignmentError) throw assignmentError;
+
+      const updatedAssignment = await this.updateShippingAssignment(assignmentId, {
         to_confirmed: true,
       });
+
+      if (assignment?.item_id) {
+        const { data: pendingHistory, error: historyError } = await this.supabase
+          .schema('Fellowship')
+          .from('item_history')
+          .select('*')
+          .eq('item_id', assignment.item_id)
+          .eq('status', 'in_transit')
+          .order('sent_at', { ascending: false })
+          .limit(1);
+
+        if (historyError) throw historyError;
+
+        const latestHistoryItem = pendingHistory?.[0];
+        if (latestHistoryItem) {
+          await this.supabase
+            .schema('Fellowship')
+            .from('item_history')
+            .update({
+              received_at: new Date().toISOString(),
+              status: 'delivered',
+            })
+            .eq('id', latestHistoryItem.id);
+        }
+
+        if (assignment.to_user_id) {
+          await this.supabase
+            .schema('Fellowship')
+            .from('items')
+            .update({ current_holder_id: assignment.to_user_id })
+            .eq('id', assignment.item_id);
+        }
+      }
+
+      return updatedAssignment;
     } catch (error) {
       console.error('Error confirming received:', error);
       throw error;
@@ -994,15 +1066,71 @@ export class FellowshipService {
 
   // ============ SHIPPING SUGGESTIONS ============
 
+  private getOrderedEligibleReceivers(
+    item: Item,
+    activeMembers: GroupMember[],
+    history: ItemHistoryEntry[],
+    options: ShippingOptions,
+    usedRecipientIds: Set<string>
+  ): GroupMember[] {
+    const orderedMembers = activeMembers.filter(m => m.role === 'member' || m.role === 'owner');
+    const currentHolderIndex = orderedMembers.findIndex(m => m.user_id === item.current_holder_id);
+
+    if (currentHolderIndex === -1) {
+      return [];
+    }
+
+    const previousHolders = new Set<string>();
+    history.forEach(entry => {
+      if (entry.from_user_id) previousHolders.add(entry.from_user_id);
+      if (entry.to_user_id) previousHolders.add(entry.to_user_id);
+    });
+
+    const candidates: GroupMember[] = [];
+
+    for (let offset = 1; offset <= orderedMembers.length; offset++) {
+      const candidateIndex = (currentHolderIndex + offset) % orderedMembers.length;
+      const candidate = orderedMembers[candidateIndex];
+
+      if (!candidate || candidate.user_id === item.current_holder_id) {
+        continue;
+      }
+
+      if (!options.allowRepeats && previousHolders.has(candidate.user_id)) {
+        continue;
+      }
+
+      if (!options.allowRepeats && usedRecipientIds.has(candidate.user_id)) {
+        continue;
+      }
+
+      candidates.push(candidate);
+    }
+
+    return candidates;
+  }
+
   async suggestShippingAssignments(
     groupId: string,
     shippingDate: string,
-    options: ShippingOptions
+    options: ShippingOptions,
+    shuffle: boolean = false
   ): Promise<SuggestShippingResponse> {
     try {
       // Get all active members
       const members = await this.getGroupMembers(groupId);
-      const activeMembers = members.filter(m => m.is_active);
+      let activeMembers = members.filter(m => m.is_active);
+
+      if (shuffle) {
+        const shuffledMembers = [...activeMembers];
+        for (let index = shuffledMembers.length - 1; index > 0; index--) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          const temp = shuffledMembers[index];
+          shuffledMembers[index] = shuffledMembers[swapIndex];
+          shuffledMembers[swapIndex] = temp;
+        }
+        activeMembers = shuffledMembers;
+      }
 
       // Get all active items in group
       const items = await this.getGroupItems(groupId);
@@ -1010,21 +1138,19 @@ export class FellowshipService {
 
       const suggestions: ShippingSuggestion[] = [];
       const warnings: ShippingWarning[] = [];
+      const usedRecipientIds = new Set<string>();
 
       for (const item of activeItems) {
         // Get item history
         const history = await this.getItemHistory(item.id);
 
-        // Determine who can receive this item
-        let eligibleReceivers = activeMembers
-          .filter(m => m.user_id !== item.current_holder_id)
-          .filter(m => m.role === 'member' || m.role === 'owner');
-
-        // Filter based on allowRepeats option
-        if (!options.allowRepeats) {
-          const previousHolders = history.map(h => h.to_user_id).filter(uid => uid);
-          eligibleReceivers = eligibleReceivers.filter(m => !previousHolders.includes(m.user_id));
-        }
+        const eligibleReceivers = this.getOrderedEligibleReceivers(
+          item,
+          activeMembers,
+          history,
+          options,
+          usedRecipientIds
+        );
 
         if (eligibleReceivers.length === 0) {
           // If "send to owner" option, send back to owner
@@ -1042,20 +1168,20 @@ export class FellowshipService {
                   toUserName: (owner.user as any)?.name || 'Unknown',
                   reason: 'Sending back to owner',
                 });
+                usedRecipientIds.add(owner.user_id);
               }
             }
           } else {
             warnings.push({
               type: 'item_repeat',
               severity: 'warning',
-              message: `Item "${item.name}" has been to all active members. Reset rotation or disable "No Repeats".`,
+              message: `Item "${item.name}" has no eligible recipients left for this round. Reset rotation or disable "No Repeats".`,
               itemId: item.id,
             });
           }
           continue;
         }
 
-        // Simple round-robin: pick the first eligible receiver
         const receiver = eligibleReceivers[0];
         const currentHolder = activeMembers.find(m => m.user_id === item.current_holder_id);
 
@@ -1068,6 +1194,7 @@ export class FellowshipService {
             toUserId: receiver.user_id,
             toUserName: (receiver.user as any)?.name || 'Unknown',
           });
+          usedRecipientIds.add(receiver.user_id);
         }
       }
 

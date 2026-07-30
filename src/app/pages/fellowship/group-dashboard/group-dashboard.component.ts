@@ -365,7 +365,7 @@ export class GroupDashboardComponent implements OnInit, OnDestroy {
     this.shippingSuggestions = null;
   }
 
-  async generateSuggestions(): Promise<void> {
+  async generateSuggestions(shuffle: boolean = false): Promise<void> {
     if (!this.groupId) return;
 
     this.loading = true;
@@ -373,7 +373,8 @@ export class GroupDashboardComponent implements OnInit, OnDestroy {
       this.shippingSuggestions = await this.fellowshipService.suggestShippingAssignments(
         this.groupId,
         this.shippingDate,
-        this.shippingOptions
+        this.shippingOptions,
+        shuffle
       );
     } catch (err) {
       console.error('Error generating suggestions:', err);
@@ -381,6 +382,10 @@ export class GroupDashboardComponent implements OnInit, OnDestroy {
     } finally {
       this.loading = false;
     }
+  }
+
+  shuffleSuggestions(): void {
+    this.generateSuggestions(true);
   }
 
   async confirmShippingRound(): Promise<void> {
