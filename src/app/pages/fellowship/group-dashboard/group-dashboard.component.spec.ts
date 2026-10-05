@@ -6,12 +6,12 @@ describe('GroupDashboardComponent', () => {
   let component: GroupDashboardComponent;
   let fixture: ComponentFixture<GroupDashboardComponent>;
 
-  beforeEach(async) {
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ GroupDashboardComponent ]
     })
     .compileComponents();
-  }
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(GroupDashboardComponent);

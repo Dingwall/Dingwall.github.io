@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GroupListComponent } from './group-list.component';
+import { ChicagoMarathonComponent } from './chicago-marathon.component';
 
-describe('GroupListComponent', () => {
-  let component: GroupListComponent;
-  let fixture: ComponentFixture<GroupListComponent>;
+describe('ChicagoMarathonComponent', () => {
+  let component: ChicagoMarathonComponent;
+  let fixture: ComponentFixture<ChicagoMarathonComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GroupListComponent ]
+      declarations: [ ChicagoMarathonComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GroupListComponent);
+    fixture = TestBed.createComponent(ChicagoMarathonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

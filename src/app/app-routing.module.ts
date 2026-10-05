@@ -8,6 +8,7 @@ import { WoodworkingComponent } from './pages/woodworking/woodworking.component'
 import { SkumpComponent } from './pages/skump/skump.component';
 import { IntervalComponent } from './pages/interval/interval.component';
 import { FellowshipComponent } from './pages/fellowship/fellowship.component';
+import { ChicagoMarathonComponent } from './pages/chicago-marathon/chicago-marathon.component';
 
 
 const routes: Routes = [
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'interval', component: IntervalComponent },
   { path: 'fellowship', component: FellowshipComponent },
   { path: 'fellowship/:groupId', component: FellowshipComponent },
+  { path: 'chicagomarathon', component: ChicagoMarathonComponent }
 ];
 
 @NgModule({

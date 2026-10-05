@@ -30,6 +30,8 @@ import { AuthSignupComponent } from './pages/fellowship/auth/auth-signup.compone
 import { AccountEditComponent } from './pages/fellowship/account/account-edit.component';
 import { GroupSettingsComponent } from './pages/fellowship/group-settings/group-settings.component';
 import { GetNameFromIdPipe } from './pipes/get-name-from-id.pipe';
+import { ChicagoMarathonComponent } from './pages/chicago-marathon/chicago-marathon.component';
+import { RaceMapComponent } from './tools/race-map/race-map.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,8 @@ import { GetNameFromIdPipe } from './pipes/get-name-from-id.pipe';
     AccountEditComponent,
     GroupSettingsComponent,
     GetNameFromIdPipe,
+    ChicagoMarathonComponent,
+    RaceMapComponent,
   ],
   imports: [
     BrowserModule,
