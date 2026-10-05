@@ -23,6 +23,14 @@ describe('RaceMapComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should expose an explicit location request trigger', () => {
+    const spy = spyOn<any>(component, 'enableUserLocation');
+
+    component.requestLocationAccess();
+
+    expect(spy).toHaveBeenCalled();
+  });
+
   it('should calculate cumulative route miles', () => {
     const route = [
       [41.8800, -87.6200],

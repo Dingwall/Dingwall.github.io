@@ -54,7 +54,8 @@ export class RaceMapComponent implements AfterViewInit {
   private userAccuracyCircle: L.Circle | null = null;
   private userHeadingMarker: L.Marker | null = null;
   private userLocation: L.LatLng | null = null;
-  private geolocationStatus: 'unknown' | 'ready' | 'denied' | 'timeout' | 'unsupported' = 'unknown';
+  public geolocationStatus: 'unknown' | 'ready' | 'denied' | 'timeout' | 'unsupported' = 'unknown';
+  private hasRequestedLocation = false;
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -93,12 +94,36 @@ export class RaceMapComponent implements AfterViewInit {
     }
   }
 
-  private enableUserLocation(): void {
+  public requestLocationAccess(): void {
+    this.enableUserLocation();
+  }
+
+  private canUseGeolocation(): boolean {
     if (!('geolocation' in navigator)) {
       this.geolocationStatus = 'unsupported';
       console.warn('Geolocation is not supported on this browser.');
+      return false;
+    }
+
+    if (typeof window !== 'undefined' && !window.isSecureContext) {
+      this.geolocationStatus = 'unsupported';
+      console.warn('Geolocation requires a secure context (HTTPS). This site must be served over HTTPS on iPhone/Safari.');
+      return false;
+    }
+
+    return true;
+  }
+
+  private enableUserLocation(): void {
+    if (!this.canUseGeolocation()) {
       return;
     }
+
+    if (this.hasRequestedLocation) {
+      return;
+    }
+
+    this.hasRequestedLocation = true;
 
     const geolocationOptions: PositionOptions = {
       enableHighAccuracy: true,
