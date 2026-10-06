@@ -56,6 +56,7 @@ export class RaceMapComponent implements AfterViewInit {
   private userLocation: L.LatLng | null = null;
   public geolocationStatus: 'unknown' | 'ready' | 'denied' | 'timeout' | 'unsupported' = 'unknown';
   private hasRequestedLocation = false;
+  private geolocationWatchId: number | null = null;
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -88,13 +89,14 @@ export class RaceMapComponent implements AfterViewInit {
       this.placeMileMarkers();
       this.addCourseClickHandler(routeLine);
       await this.loadStationsWithinOneMile();
-      this.enableUserLocation();
+      setTimeout(() => this.requestLocationAccess(), 250);
     } catch (error) {
       console.error('Unable to initialize the Chicago Marathon map.', error);
     }
   }
 
   public requestLocationAccess(): void {
+    this.hasRequestedLocation = false;
     this.enableUserLocation();
   }
 
@@ -119,7 +121,7 @@ export class RaceMapComponent implements AfterViewInit {
       return;
     }
 
-    if (this.hasRequestedLocation) {
+    if (this.hasRequestedLocation && this.userLocation) {
       return;
     }
 
@@ -133,6 +135,7 @@ export class RaceMapComponent implements AfterViewInit {
 
     const handleLocationError = (error: GeolocationPositionError, label: string): void => {
       this.userLocation = null;
+      this.hasRequestedLocation = false;
 
       if (error.code === 1) {
         this.geolocationStatus = 'denied';
@@ -224,7 +227,11 @@ export class RaceMapComponent implements AfterViewInit {
       geolocationOptions
     );
 
-    navigator.geolocation.watchPosition(
+    if (this.geolocationWatchId !== null) {
+      navigator.geolocation.clearWatch(this.geolocationWatchId);
+    }
+
+    this.geolocationWatchId = navigator.geolocation.watchPosition(
       (position) => {
         updateUserLocation(
           position.coords.latitude,
