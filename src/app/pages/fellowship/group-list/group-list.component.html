@@ -149,14 +149,17 @@
       </div>
 
       <div class="modal-body">
-        <p *ngIf="selectedGroupForJoin?.password_required">
+        <p *ngIf="selectedGroupForJoin?.is_locked" class="error-message">
+          This group is locked and not accepting new members.
+        </p>
+        <p *ngIf="selectedGroupForJoin?.password_required && !selectedGroupForJoin?.is_locked">
           Enter the group password to join:
         </p>
-        <p *ngIf="!selectedGroupForJoin?.password_required">
+        <p *ngIf="!selectedGroupForJoin?.password_required && !selectedGroupForJoin?.is_locked">
           This group doesn't require a password. Click "Join" to become a member.
         </p>
         
-        <div class="form-group" *ngIf="selectedGroupForJoin?.password_required">
+        <div class="form-group" *ngIf="selectedGroupForJoin?.password_required && !selectedGroupForJoin?.is_locked">
           <input 
             type="password" 
             [(ngModel)]="joinFormData.password"
@@ -170,7 +173,7 @@
         <button 
           class="btn btn-primary" 
           (click)="joinGroup(selectedGroupForJoin?.id || '')"
-          [disabled]="loading">
+          [disabled]="loading || !!selectedGroupForJoin?.is_locked">
           {{ loading ? 'Joining...' : 'Join Group' }}
         </button>
       </div>

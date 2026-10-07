@@ -42,8 +42,12 @@
     </button>
   </div>
 
+  <div class="member-only-message" *ngIf="!isCurrentUserGroupMember() && currentUser && currentTab !== 'settings'">
+    <p>This group is members-only. Join the group to access member contact details and group activity.</p>
+  </div>
+
   <!-- TAB: DASHBOARD -->
-  <div class="tab-content" *ngIf="currentTab === 'dashboard' && !loading">
+  <div class="tab-content" *ngIf="currentTab === 'dashboard' && !loading && isCurrentUserGroupMember()">
     <div class="dashboard-section">
       <div class="section-header">
         <h3>Your Tasks</h3>
@@ -145,7 +149,7 @@
   </div>
 
   <!-- TAB: ITEMS -->
-  <div class="tab-content" *ngIf="currentTab === 'items'">
+  <div class="tab-content" *ngIf="currentTab === 'items' && isCurrentUserGroupMember()">
     <div class="section-header">
       <h3>Group Items ({{ items.length }})</h3>
       <button class="btn btn-primary btn-sm" (click)="openAddItemModal()">+ Add Item</button>
@@ -294,7 +298,7 @@
   </div>
 
   <!-- TAB: MEMBERS -->
-  <div class="tab-content" *ngIf="currentTab === 'members'">
+  <div class="tab-content" *ngIf="currentTab === 'members' && isCurrentUserGroupMember()">
     <h3>Group Members ({{ members.length }})</h3>
     
     <div class="members-list">
@@ -302,8 +306,8 @@
         <div class="member-info">
           <h4>{{ (member.user)?.name || 'Unknown' }}</h4>
           <p class="email">{{ (member.user)?.email }}</p>
-          <p class="phone" *ngIf="(member.user)?.phone">{{ (member.user)?.phone }}</p>
-          <p class="address" *ngIf="(member.user)?.address">📍 {{ (member.user)?.address }}</p>
+          <p class="phone" *ngIf="(member.user)?.phone && canViewMemberContactInfo(member)">{{ (member.user)?.phone }}</p>
+          <p class="address" *ngIf="(member.user)?.address && canViewMemberContactInfo(member)">📍 {{ (member.user)?.address }}</p>
         </div>
 
         <div class="member-meta">

@@ -19,7 +19,46 @@ export class ProjectsComponent implements OnInit {
 
   projects = [
     {
-      title: "Wild West Beans: Refried and Reloaded",
+      title: "Chicago Marathon Map Assistant",
+      subtitle: "Help spectators get around on marathon day",
+      type: "code", // game, code
+      img: "./assets/images/chicagomarathonmapsc.png",
+      imgAlt: "",
+      description: [
+        `A simple map to help users view the route of the Chicago Marathon course and nearby CTA train train stations. This map loads the route from a GPX file and draws it on a map with mile markers along the course. Nearby station data is loaded and filtered to stops within one mile of the route, and each station can show the lines that serve it and the nearest race points.`,
+        `The app can also track runner profiles and estimate when a runner will reach a point on the course based on saved split data and start times. It requests the user location and updates the map with nearby station and route information while the page is open.`,
+      ],
+      link: "https://adingwall.com/#/chicagomarathon",
+    },
+    {
+      title: "Fellowship",
+      subtitle: "Share with friends over long distances",
+      type: "code", // game, code
+      img: "./assets/images/fellowshipsc.png",
+      imgAlt: "",
+      description: [
+        `Fellowship is a social app for share games, puzzles, movies, books, or any other physical item with friends over a long distance. Create a group, have friends join, and it helps assist you in tracking who owns what items, where they currently are, and who you are shipping your item to next.`,
+        `Based off the concept of me and some friends wanting to share Lego sets, it is meant to make it easier for the organizer to assign who hasn't had each set yet, and who to send it to next.`,
+        `The app lets signed-in users create groups, join groups, and manage shared item ownership across a network of friends. The group dashboard loads members, item records, and ownership history so it can show who currently has an item and who it needs to go to next.`,
+        `The code also includes group settings for passwords, locking a group to new members, and hiding member contact details unless the viewer is already part of that group. On the item side, the app supports shipping confirmation and receipt confirmation flows for group assignments.`,
+      ],
+      link: "https://adingwall.com/#/fellowship",
+    },
+    {
+      title: "Interval",
+      subtitle: "Track athletes splits across multiple locations with precision",
+      type: "code", // game, code
+      img: "./assets/images/intervalsc.png",
+      imgAlt: "",
+      description: [
+        `Timing app to help track athletes across multiple locations on a course. When 1 coach starts an event, another coach can lap the shared timer from a totally different location.`,
+        `Interval manages a shared timing event by event code and keeps the timer state in the database so multiple coaches can act from different locations. It loads public events, can start and stop the timer, and exposes athlete split records that update as new split data arrives.`,
+        `The interface includes athlete tracking, event search, and per-athlete elapsed time calculations based on the shared start time. The app is built around realtime split updates rather than only a local clock.`,
+        ],
+      link: "https://adingwall.com/#/interval",
+    },
+    {
+      title: "College Capstone: Wild West Beans: Refried and Reloaded",
       subtitle: "First Person Shooter",
       type: "game", // game, code
       img: "./assets/images/wildwestbean.png",
@@ -31,7 +70,7 @@ export class ProjectsComponent implements OnInit {
       link: "https://winter-interactive.itch.io/wild-west-beans-refried-reloaded",
     },
     {
-      title: "Project Wyvern",
+      title: "College Research Project: Project Wyvern",
       subtitle: "Accessible VR",
       type: "game", // game, code
       img: "./assets/images/maze.gif",

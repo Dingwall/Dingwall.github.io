@@ -86,4 +86,37 @@ describe('FellowshipService', () => {
 
     expect(result.suggestions[0].toUserId).toBe('u2');
   });
+
+  it('should reject joining a locked group', async () => {
+    spyOn(service as any, 'getCurrentUserSync').and.returnValue({ id: 'user-1', name: 'Test User' });
+    spyOn(service as any, 'getGroupDetails').and.resolveTo({
+      id: 'group-1',
+      name: 'Locked Group',
+      password_hash: 'hash',
+      password_required: false,
+      created_by: 'owner-1',
+      created_at: '2024-01-01',
+      updated_at: '2024-01-01',
+      is_locked: true,
+    });
+
+    (service as any).supabase = {
+      auth: {
+        getUser: jasmine.createSpy('getUser').and.resolveTo({ data: { user: { id: 'user-1' } } }),
+      },
+      schema: jasmine.createSpy('schema').and.returnValue({
+        from: jasmine.createSpy('from').and.returnValue({
+          insert: jasmine.createSpy('insert').and.callFake(() => Promise.resolve({ data: null, error: null })),
+        }),
+      }),
+    };
+
+    await expectAsync(service.joinGroup('group-1', '')).toBeRejectedWithError('This group is locked and not accepting new members.');
+  });
+
+  it('should hide member contact details from non-members', () => {
+    const groupMember = { user_id: 'u2', role: 'member', user: { name: 'Bob', address: '123 Main St' } } as any;
+    expect(service.canViewMemberContactInfo(groupMember, 'u1', ['u1', 'u2'])).toBeTrue();
+    expect(service.canViewMemberContactInfo(groupMember, 'u3', ['u1', 'u2'])).toBeFalse();
+  });
 });

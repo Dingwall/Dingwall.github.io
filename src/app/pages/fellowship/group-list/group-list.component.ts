@@ -189,6 +189,11 @@ export class GroupListComponent implements OnInit, OnDestroy {
   }
 
   async joinGroup(groupId: string): Promise<void> {
+    if (this.selectedGroupForJoin?.is_locked) {
+      this.error = 'This group is locked and not accepting new members.';
+      return;
+    }
+
     // Only check password if required
     if (this.selectedGroupForJoin?.password_required && !this.joinFormData.password) {
       this.error = 'Password is required';

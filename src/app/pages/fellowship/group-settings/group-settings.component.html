@@ -38,6 +38,19 @@
       </p>
     </div>
 
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="formData.isLocked">
+        <span>Lock group</span>
+      </label>
+      <p class="help-text" *ngIf="formData.isLocked">
+        No one else can join this group until it is unlocked.
+      </p>
+      <p class="help-text" *ngIf="!formData.isLocked">
+        New members can still request to join this group.
+      </p>
+    </div>
+
     <div class="form-group" *ngIf="formData.passwordRequired">
       <label>New Password (leave blank to keep current)</label>
       <input type="password" [(ngModel)]="formData.newPassword" placeholder="Enter new password (optional)">

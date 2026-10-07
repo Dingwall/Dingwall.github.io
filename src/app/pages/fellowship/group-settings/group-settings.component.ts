@@ -20,6 +20,7 @@ export class GroupSettingsComponent implements OnInit, OnDestroy {
     name: '',
     description: '',
     passwordRequired: true,
+    isLocked: false,
     newPassword: '',
     newPasswordConfirm: '',
     image: null as File | null,
@@ -57,6 +58,7 @@ export class GroupSettingsComponent implements OnInit, OnDestroy {
           name: g.name,
           description: g.description || '',
           passwordRequired: g.password_required,
+          isLocked: !!g.is_locked,
           image: null,
           imagePreview: g.group_image_base64 || ''
         };
@@ -102,6 +104,7 @@ export class GroupSettingsComponent implements OnInit, OnDestroy {
         description: this.formData.description,
         group_image_base64: this.formData.imagePreview,
         password_required: this.formData.passwordRequired,
+        is_locked: this.formData.isLocked,
       };
 
       if (this.formData.newPassword) {

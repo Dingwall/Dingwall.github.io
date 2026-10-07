@@ -19,6 +19,8 @@ CREATE TABLE "Fellowship".groups (
   name TEXT NOT NULL,
   description TEXT,
   password_hash TEXT NOT NULL,
+  password_required BOOLEAN DEFAULT TRUE,
+  is_locked BOOLEAN DEFAULT FALSE,
   group_image_base64 TEXT,
   created_by UUID NOT NULL REFERENCES "Fellowship".users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -163,8 +165,15 @@ CREATE POLICY "Group members can view members" ON "Fellowship".group_members
     )
   );
 
-CREATE POLICY "Users can join groups" ON "Fellowship".group_members
-  FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Users can join unlocked groups" ON "Fellowship".group_members
+  FOR INSERT WITH CHECK (
+    user_id = auth.uid()
+    AND NOT EXISTS (
+      SELECT 1 FROM "Fellowship".groups g
+      WHERE g.id = group_id
+        AND g.is_locked = TRUE
+    )
+  );
 
 CREATE POLICY "Owner can manage members" ON "Fellowship".group_members
   FOR UPDATE USING (

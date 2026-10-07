@@ -112,6 +112,9 @@ export class GroupDashboardComponent implements OnInit, OnDestroy {
       this.fellowshipService.getGroupMembers(this.groupId).then(m => this.members = m)
     ])
       .then(() => {
+        if (!this.isCurrentUserGroupMember()) {
+          this.error = 'You must be a member to view this group\'s contact details.';
+        }
         this.loading = false;
       })
       .catch(err => {
@@ -414,6 +417,26 @@ export class GroupDashboardComponent implements OnInit, OnDestroy {
     } finally {
       this.loading = false;
     }
+  }
+
+  isCurrentUserGroupMember(): boolean {
+    if (!this.currentUser || !this.members) {
+      return false;
+    }
+
+    return this.members.some(m => m.user_id === this.currentUser!.id);
+  }
+
+  canViewMemberContactInfo(member: GroupMember): boolean {
+    if (!this.currentUser) {
+      return false;
+    }
+
+    if (member.user_id === this.currentUser.id) {
+      return true;
+    }
+
+    return this.isCurrentUserGroupMember();
   }
 
   isGroupOwner(): boolean {

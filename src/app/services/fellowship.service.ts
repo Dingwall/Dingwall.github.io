@@ -225,6 +225,7 @@ export class FellowshipService {
             description: request.description || null,
             password_hash: hashedPassword,
             password_required: request.password_required !== false, // Default to true
+            is_locked: !!request.is_locked,
             group_image_base64: request.group_image_base64 || null,
             created_by: currentUser.id,
           }
@@ -270,6 +271,11 @@ export class FellowshipService {
 
       // Get group
       const group = await this.getGroupDetails(groupId);
+
+      const existingMembership = await this.getGroupMembership(groupId, authUser.id).catch(() => null);
+      if (group.is_locked && !existingMembership) {
+        throw new Error('This group is locked and not accepting new members.');
+      }
 
       // Verify password if required
       const requiresPassword = group.password_required !== false;
@@ -405,6 +411,7 @@ export class FellowshipService {
         updateData.password_hash = await this.hashPassword(request.password);
       }
       if (request.password_required !== undefined) updateData.password_required = request.password_required;
+      if (request.is_locked !== undefined) updateData.is_locked = request.is_locked;
 
       const { data, error } = await this.supabase
         .schema('Fellowship')
@@ -475,6 +482,18 @@ export class FellowshipService {
       console.error('Error getting group membership:', error);
       throw error;
     }
+  }
+
+  canViewMemberContactInfo(member: GroupMember | null | undefined, currentUserId: string | null, members: GroupMember[] = []): boolean {
+    if (!member || !currentUserId) {
+      return false;
+    }
+
+    if (member.user_id === currentUserId) {
+      return true;
+    }
+
+    return members.some(m => m.user_id === currentUserId);
   }
 
   async toggleMemberActive(groupId: string, userId: string, isActive: boolean): Promise<GroupMember> {

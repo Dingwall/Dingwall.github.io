@@ -1,7 +1,7 @@
 <mat-card class="project-card">
   <mat-card-header>
-    <div *ngIf="project.type == 'game'" mat-card-avatar class="game-header-image"></div>
-    <div *ngIf="project.type == 'code'" mat-card-avatar class="code-header-image"></div>
+    <div *ngIf="project.type === 'game'" mat-card-avatar class="game-header-image"></div>
+    <div *ngIf="project.type === 'code'" mat-card-avatar class="code-header-image"></div>
     <mat-card-title>{{ project.title }}</mat-card-title>
     <mat-card-subtitle>{{ project.subtitle }}</mat-card-subtitle>
   </mat-card-header>
