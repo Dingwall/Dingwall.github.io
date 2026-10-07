@@ -189,6 +189,19 @@ describe('RaceMapComponent', () => {
     expect((component as any).formatDurationMinutes(65.75)).toBe('01:05:45');
   });
 
+  it('should reject conflicting pace and total time values beyond a 30-second tolerance', () => {
+    component.runnerForm = {
+      ...component.createEmptyRunnerForm(),
+      name: 'Alice',
+      startTime: '07:00',
+      paceMinutesPerMile: 6.0,
+      totalMinutes: 180
+    };
+
+    expect((component as any).getRunnerTimeConsistencyError(component.runnerForm)).toContain('Enter just one');
+    expect(component.canSaveRunnerForm()).toBeFalse();
+  });
+
   it('should widen the ETA window as runners go farther into the race', () => {
     component.runnerProfiles = [
       { id: 'steady', name: 'Steady', startTime: '07:00', paceMinutesPerMile: 6.0, totalMinutes: null, splits: [] }

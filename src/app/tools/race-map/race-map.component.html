@@ -65,7 +65,7 @@
           <input
             type="text"
             [ngModel]="runnerPaceInput || formatPaceMinutesPerMile(runnerForm.paceMinutesPerMile)"
-            (ngModelChange)="runnerPaceInput = $event; runnerForm.paceMinutesPerMile = parsePaceInput($event)"
+            (ngModelChange)="onRunnerPaceInputChange($event)"
             name="runnerPace"
             placeholder="08:00"
           />
@@ -76,7 +76,7 @@
           <input
             type="text"
             [ngModel]="runnerTotalInput || formatDurationMinutes(runnerForm.totalMinutes)"
-            (ngModelChange)="runnerTotalInput = $event; runnerForm.totalMinutes = parseDurationInput($event)"
+            (ngModelChange)="onRunnerTotalInputChange($event)"
             name="runnerTotal"
             placeholder="03:29:45"
           />

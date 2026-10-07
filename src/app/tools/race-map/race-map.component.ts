@@ -238,11 +238,51 @@ export class RaceMapComponent implements AfterViewInit {
   }
 
   public canSaveRunnerForm(): boolean {
-    return this.isRunnerProfileValid(this.runnerForm);
+    return this.isRunnerProfileValid(this.runnerForm) && !this.getRunnerTimeConsistencyError(this.runnerForm);
+  }
+
+  public getRunnerTimeConsistencyError(profile: RunnerProfile): string | null {
+    const hasPace = typeof profile.paceMinutesPerMile === 'number' && Number.isFinite(profile.paceMinutesPerMile) && profile.paceMinutesPerMile > 0;
+    const hasTotal = typeof profile.totalMinutes === 'number' && Number.isFinite(profile.totalMinutes) && profile.totalMinutes > 0;
+
+    if (!hasPace || !hasTotal) {
+      return null;
+    }
+
+    const expectedTotalMinutes = this.computeTotalMinutesFromPace(profile.paceMinutesPerMile);
+    if (expectedTotalMinutes === null) {
+      return null;
+    }
+
+    const totalDifferenceMinutes = Math.abs(expectedTotalMinutes - profile.totalMinutes!);
+    if (totalDifferenceMinutes <= 0.5) {
+      return null;
+    }
+
+    return 'These values conflict. Enter just one: pace or total time, and we will calculate the other.';
+  }
+
+  private syncRunnerConflictMessage(): void {
+    const consistencyError = this.getRunnerTimeConsistencyError(this.runnerForm);
+    if (consistencyError) {
+      this.runnerFormError = consistencyError;
+      return;
+    }
+
+    if (this.runnerFormError === 'These values conflict. Enter just one: pace or total time, and we will calculate the other.') {
+      this.runnerFormError = '';
+    }
   }
 
   public saveRunnerProfile(): void {
     this.runnerFormError = '';
+
+    const consistencyError = this.getRunnerTimeConsistencyError(this.runnerForm);
+    if (consistencyError) {
+      window.alert(consistencyError);
+      this.runnerFormError = consistencyError;
+      return;
+    }
 
     if (!this.canSaveRunnerForm()) {
       this.runnerFormError = 'Please complete the runner name, start time, and either pace or total time.';
@@ -480,11 +520,13 @@ export class RaceMapComponent implements AfterViewInit {
     if (parsed !== null) {
       this.runnerForm.totalMinutes = this.computeTotalMinutesFromPace(parsed) ?? null;
       this.runnerTotalInput = this.runnerForm.totalMinutes === null ? '' : this.formatDurationMinutes(this.runnerForm.totalMinutes);
+      this.syncRunnerConflictMessage();
       return;
     }
 
     this.runnerForm.totalMinutes = null;
     this.runnerTotalInput = '';
+    this.syncRunnerConflictMessage();
   }
 
   public onRunnerTotalInputChange(value: string): void {
@@ -495,11 +537,13 @@ export class RaceMapComponent implements AfterViewInit {
     if (parsed !== null) {
       this.runnerForm.paceMinutesPerMile = this.computePaceFromTotalMinutes(parsed) ?? null;
       this.runnerPaceInput = this.runnerForm.paceMinutesPerMile === null ? '' : this.formatPaceMinutesPerMile(this.runnerForm.paceMinutesPerMile);
+      this.syncRunnerConflictMessage();
       return;
     }
 
     this.runnerForm.paceMinutesPerMile = null;
     this.runnerPaceInput = '';
+    this.syncRunnerConflictMessage();
   }
 
   public addRunnerSplitDraft(): void {
