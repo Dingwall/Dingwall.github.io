@@ -30,12 +30,41 @@ interface StationAccessPoint {
   point: RacePoint;
 }
 
+interface StationLineInfo {
+  code: string;
+  label: string;
+  color: string;
+}
+
 interface StationProximitySummary {
   station: StationRecord;
   closestDistanceMiles: number;
   raceMiles: number[];
   nearestPoint: RacePoint;
   accessPoints: StationAccessPoint[];
+}
+
+interface RunnerSplit {
+  id: string;
+  distanceMiles: number;
+  elapsedMinutes: number;
+}
+
+interface RunnerProfile {
+  id: string;
+  name: string;
+  startTime: string;
+  paceMinutesPerMile?: number | null;
+  totalMinutes?: number | null;
+  splits?: RunnerSplit[];
+}
+
+interface RunnerForecast {
+  runner: RunnerProfile;
+  predictedDate: Date;
+  windowStart: Date;
+  windowEnd: Date;
+  toleranceMinutes: number;
 }
 
 @Component({
@@ -57,9 +86,25 @@ export class RaceMapComponent implements AfterViewInit {
   public geolocationStatus: 'unknown' | 'ready' | 'denied' | 'timeout' | 'unsupported' = 'unknown';
   private hasRequestedLocation = false;
   private geolocationWatchId: number | null = null;
+  private deviceHeadingDegrees: number | null = null;
+  private deviceOrientationListenerAttached = false;
+  private static readonly RUNNER_STORAGE_KEY = 'race-map-runner-profiles';
+  private static readonly MAX_RUNNERS = 5;
+
+  public runnerProfiles: RunnerProfile[] = [];
+  public runnerModalOpen = false;
+  public runnerForm: RunnerProfile = this.createEmptyRunnerForm();
+  public runnerSplitDraft = {
+    distanceMiles: null as number | null,
+    elapsedMinutes: null as number | null,
+    elapsedInput: ''
+  };
+  public editingRunnerId: string | null = null;
+  public runnerFormError = '';
 
   ngAfterViewInit(): void {
     this.initMap();
+    this.loadRunnerProfiles();
   }
 
   private async initMap(): Promise<void> {
@@ -100,6 +145,393 @@ export class RaceMapComponent implements AfterViewInit {
     this.enableUserLocation();
   }
 
+  public toggleRunnerModal(): void {
+    this.runnerModalOpen = !this.runnerModalOpen;
+    if (!this.runnerModalOpen) {
+      this.cancelRunnerEdit();
+    }
+  }
+
+  public openRunnerModal(): void {
+    this.runnerModalOpen = true;
+  }
+
+  public closeRunnerModal(): void {
+    this.runnerModalOpen = false;
+    this.cancelRunnerEdit();
+  }
+
+  public createEmptyRunnerForm(): RunnerProfile {
+    return {
+      id: '',
+      name: '',
+      startTime: '',
+      paceMinutesPerMile: null,
+      totalMinutes: null,
+      splits: []
+    };
+  }
+
+  private loadRunnerProfiles(): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+
+    try {
+      const rawProfiles = localStorage.getItem(RaceMapComponent.RUNNER_STORAGE_KEY);
+      this.runnerProfiles = rawProfiles ? JSON.parse(rawProfiles) : [];
+    } catch (error) {
+      this.runnerProfiles = [];
+    }
+  }
+
+  private persistRunnerProfiles(): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+
+    localStorage.setItem(RaceMapComponent.RUNNER_STORAGE_KEY, JSON.stringify(this.runnerProfiles));
+  }
+
+  public canSaveRunnerForm(): boolean {
+    return this.isRunnerProfileValid(this.runnerForm);
+  }
+
+  public saveRunnerProfile(): void {
+    this.runnerFormError = '';
+
+    if (!this.canSaveRunnerForm()) {
+      this.runnerFormError = 'Please complete the runner name, start time, and either pace or total time.';
+      return;
+    }
+
+    if (this.runnerProfiles.length >= RaceMapComponent.MAX_RUNNERS && !this.editingRunnerId) {
+      this.runnerFormError = `You can save up to ${RaceMapComponent.MAX_RUNNERS} runners.`;
+      return;
+    }
+
+    const normalized = {
+      ...this.runnerForm,
+      name: this.runnerForm.name.trim(),
+      startTime: this.runnerForm.startTime,
+      paceMinutesPerMile: this.runnerForm.paceMinutesPerMile !== null && this.runnerForm.paceMinutesPerMile !== undefined
+        ? Number(this.runnerForm.paceMinutesPerMile)
+        : null,
+      totalMinutes: this.runnerForm.totalMinutes !== null && this.runnerForm.totalMinutes !== undefined
+        ? Number(this.runnerForm.totalMinutes)
+        : null,
+      splits: (this.runnerForm.splits ?? []).map((split) => ({
+        ...split,
+        distanceMiles: Number(split.distanceMiles),
+        elapsedMinutes: Number(split.elapsedMinutes)
+      })).sort((a, b) => a.distanceMiles - b.distanceMiles)
+    };
+
+    if (this.editingRunnerId) {
+      this.runnerProfiles = this.runnerProfiles.map((runner) => runner.id === this.editingRunnerId ? { ...normalized, id: this.editingRunnerId } : runner);
+    } else {
+      this.runnerProfiles = [
+        ...this.runnerProfiles,
+        { ...normalized, id: `runner-${Date.now()}` }
+      ];
+    }
+
+    this.persistRunnerProfiles();
+    this.cancelRunnerEdit();
+  }
+
+  public editRunner(runner: RunnerProfile): void {
+    this.editingRunnerId = runner.id;
+    this.runnerForm = {
+      ...runner,
+      name: runner.name || '',
+      startTime: runner.startTime || '',
+      paceMinutesPerMile: runner.paceMinutesPerMile ?? null,
+      totalMinutes: runner.totalMinutes ?? null,
+      splits: Array.isArray(runner.splits) ? [...runner.splits].sort((a, b) => a.distanceMiles - b.distanceMiles) : []
+    };
+    this.runnerFormError = '';
+    this.runnerSplitDraft = { distanceMiles: null, elapsedMinutes: null, elapsedInput: '' };
+  }
+
+  public deleteRunner(runnerId: string): void {
+    this.runnerProfiles = this.runnerProfiles.filter((runner) => runner.id !== runnerId);
+    if (this.editingRunnerId === runnerId) {
+      this.cancelRunnerEdit();
+    }
+    this.persistRunnerProfiles();
+  }
+
+  public cancelRunnerEdit(): void {
+    this.editingRunnerId = null;
+    this.runnerForm = this.createEmptyRunnerForm();
+    this.runnerSplitDraft = { distanceMiles: null, elapsedMinutes: null, elapsedInput: '' };
+    this.runnerFormError = '';
+  }
+
+  public formatDurationMinutes(totalMinutes: number | null | undefined): string {
+    if (totalMinutes === null || totalMinutes === undefined || !Number.isFinite(totalMinutes)) {
+      return '';
+    }
+
+    const totalSeconds = Math.max(0, Math.round(totalMinutes * 60));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  public parseDurationInput(input: string | number | null | undefined): number | null {
+    if (input === null || input === undefined || input === '') {
+      return null;
+    }
+
+    const normalized = String(input).trim();
+    if (!normalized) {
+      return null;
+    }
+
+    if (/^\d+$/.test(normalized)) {
+      const seconds = Number(normalized);
+      return Number.isFinite(seconds) && seconds >= 0 ? seconds / 60 : null;
+    }
+
+    const parts = normalized.split(':').map((part) => part.trim());
+    if (parts.length === 2 && parts.every((part) => /^\d+$/.test(part))) {
+      const minutes = Number(parts[0]);
+      const seconds = Number(parts[1]);
+      if (!Number.isFinite(minutes) || !Number.isFinite(seconds) || seconds >= 60) {
+        return null;
+      }
+      return minutes + (seconds / 60);
+    }
+
+    if (parts.length === 3 && parts.every((part) => /^\d+$/.test(part))) {
+      const hours = Number(parts[0]);
+      const minutes = Number(parts[1]);
+      const seconds = Number(parts[2]);
+      if (!Number.isFinite(hours) || !Number.isFinite(minutes) || !Number.isFinite(seconds) || minutes >= 60 || seconds >= 60) {
+        return null;
+      }
+      return (hours * 60) + minutes + (seconds / 60);
+    }
+
+    return null;
+  }
+
+  public addRunnerSplitDraft(): void {
+    if (this.runnerSplitDraft.distanceMiles === null || this.runnerSplitDraft.elapsedMinutes === null) {
+      this.runnerFormError = 'Please enter both a split distance and split time.';
+      return;
+    }
+
+    const distanceMiles = Number(this.runnerSplitDraft.distanceMiles);
+    const elapsedMinutes = Number(this.runnerSplitDraft.elapsedMinutes);
+
+    if (!Number.isFinite(distanceMiles) || distanceMiles <= 0 || !Number.isFinite(elapsedMinutes) || elapsedMinutes <= 0) {
+      this.runnerFormError = 'Use a valid split distance and elapsed time.';
+      return;
+    }
+
+    const nextSplit: RunnerSplit = {
+      id: `split-${Date.now()}-${Math.random().toString(16).slice(2, 7)}`,
+      distanceMiles,
+      elapsedMinutes
+    };
+
+    const existingSplits = this.runnerForm.splits ?? [];
+    this.runnerForm = {
+      ...this.runnerForm,
+      splits: [...existingSplits, nextSplit].sort((a, b) => a.distanceMiles - b.distanceMiles)
+    };
+    this.runnerSplitDraft = { distanceMiles: null, elapsedMinutes: null, elapsedInput: '' };
+    this.runnerFormError = '';
+  }
+
+  public removeRunnerSplit(splitId: string): void {
+    this.runnerForm = {
+      ...this.runnerForm,
+      splits: (this.runnerForm.splits ?? []).filter((split) => split.id !== splitId)
+    };
+  }
+
+  private isRunnerProfileValid(profile: RunnerProfile): boolean {
+    if (!profile.name || !profile.name.trim()) {
+      return false;
+    }
+
+    if (!profile.startTime || !/^\d{2}:\d{2}$/.test(profile.startTime)) {
+      return false;
+    }
+
+    const paceValid = typeof profile.paceMinutesPerMile === 'number' && Number.isFinite(profile.paceMinutesPerMile) && profile.paceMinutesPerMile > 0;
+    const totalValid = typeof profile.totalMinutes === 'number' && Number.isFinite(profile.totalMinutes) && profile.totalMinutes > 0;
+
+    return paceValid || totalValid;
+  }
+
+  private getRunnerDurationMinutes(profile: RunnerProfile): number | null {
+    if (typeof profile.paceMinutesPerMile === 'number' && Number.isFinite(profile.paceMinutesPerMile) && profile.paceMinutesPerMile > 0) {
+      return profile.paceMinutesPerMile * 26.2;
+    }
+
+    if (typeof profile.totalMinutes === 'number' && Number.isFinite(profile.totalMinutes) && profile.totalMinutes > 0) {
+      return profile.totalMinutes;
+    }
+
+    return null;
+  }
+
+  private getRunnerGoalMinutes(profile: RunnerProfile): number | null {
+    return this.getRunnerDurationMinutes(profile);
+  }
+
+  private getSmoothStepFactor(distanceMiles: number): number {
+    if (distanceMiles <= 18) {
+      return 0;
+    }
+
+    const clamped = Math.min(1, Math.max(0, (distanceMiles - 18) / 8.2));
+    return (3 * clamped * clamped) - (2 * clamped * clamped * clamped);
+  }
+
+  private getCourseElapsedMinutesForGoal(goalMinutes: number, routeMile: number): number {
+    const courseLength = 26.2188;
+    const clampedMile = Math.min(courseLength, Math.max(0, routeMile));
+    const sampleCount = 1000;
+    const stepMiles = courseLength / sampleCount;
+    let rawElapsedMinutes = 0;
+    let rawElapsedAtTarget = 0;
+
+    for (let step = 0; step <= sampleCount; step += 1) {
+      const distance = Math.min(courseLength, step * stepMiles);
+      const slowdownFactor = 1 + (0.04 * Math.exp(-distance / 2.5)) + (0.07 * this.getSmoothStepFactor(distance));
+      rawElapsedMinutes += slowdownFactor * (stepMiles / 26.2188);
+
+      if (distance <= clampedMile) {
+        rawElapsedAtTarget += slowdownFactor * (stepMiles / 26.2188);
+      }
+    }
+
+    const totalRawTime = rawElapsedMinutes * goalMinutes;
+    return rawElapsedAtTarget * goalMinutes * (1 / Math.max(rawElapsedMinutes, 0.0001));
+  }
+
+  private getRunnerSplitAdjustment(profile: RunnerProfile, goalMinutes: number, routeMile: number): number {
+    const splits = (profile.splits ?? []).filter((split) => split.distanceMiles > 0).sort((a, b) => a.distanceMiles - b.distanceMiles);
+    if (!splits.length) {
+      return 0;
+    }
+
+    const relevantSplits = splits.filter((split) => split.distanceMiles <= routeMile);
+    if (!relevantSplits.length) {
+      return 0;
+    }
+
+    let totalWeight = 0;
+    let weightedAdjustment = 0;
+
+    relevantSplits.forEach((split, index) => {
+      const expectedMinutes = this.getCourseElapsedMinutesForGoal(goalMinutes, split.distanceMiles);
+      const deltaMinutes = split.elapsedMinutes - expectedMinutes;
+      const weight = 1 + (index * 0.5) + (split.distanceMiles / 26.2188);
+      weightedAdjustment += deltaMinutes * weight;
+      totalWeight += weight;
+    });
+
+    return totalWeight > 0 ? weightedAdjustment / totalWeight : 0;
+  }
+
+  private parseRunnerStartTime(startTime: string): Date | null {
+    if (!startTime || !/^\d{2}:\d{2}$/.test(startTime)) {
+      return null;
+    }
+
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  }
+
+  private calculateRunnerWindowFraction(routeMile: number): number {
+    return 0.025 + (0.025 * (Math.min(26.2188, Math.max(0, routeMile)) / 26.2188));
+  }
+
+  public getRunnerForecastsForDistance(routeMile: number): RunnerForecast[] {
+    return this.runnerProfiles
+      .map((profile) => this.getRunnerForecastForDistance(profile, routeMile))
+      .filter((forecast): forecast is RunnerForecast => forecast !== null)
+      .sort((a, b) => a.predictedDate.getTime() - b.predictedDate.getTime());
+  }
+
+  public getRunnerForecastForDistance(profile: RunnerProfile, routeMile: number): RunnerForecast | null {
+    if (!this.isRunnerProfileValid(profile)) {
+      return null;
+    }
+
+    const goalMinutes = this.getRunnerGoalMinutes(profile);
+    const startTimeDate = this.parseRunnerStartTime(profile.startTime);
+
+    if (goalMinutes === null || startTimeDate === null) {
+      return null;
+    }
+
+    const elapsedMinutes = this.getCourseElapsedMinutesForGoal(goalMinutes, routeMile) + this.getRunnerSplitAdjustment(profile, goalMinutes, routeMile);
+    const raceFraction = Math.min(1, Math.max(0, routeMile / 26.2));
+    const predictedDate = new Date(startTimeDate.getTime() + (elapsedMinutes * 60 * 1000));
+    const windowFraction = this.calculateRunnerWindowFraction(routeMile);
+    const windowStart = new Date(startTimeDate.getTime() + ((elapsedMinutes * (1 - windowFraction)) * 60 * 1000));
+    const windowEnd = new Date(startTimeDate.getTime() + ((elapsedMinutes * (1 + windowFraction)) * 60 * 1000));
+
+    return {
+      runner: profile,
+      predictedDate,
+      windowStart,
+      windowEnd,
+      toleranceMinutes: (windowEnd.getTime() - windowStart.getTime()) / 60000 / 2
+    };
+  }
+
+  private formatClockValue(date: Date): string {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  private getSplitElapsedDisplay(split: RunnerSplit): string {
+    return this.formatDurationMinutes(split.elapsedMinutes);
+  }
+
+  private formatRunnerForecastHtml(routeMile: number): string {
+    const forecasts = this.getRunnerForecastsForDistance(routeMile);
+    if (!forecasts.length) {
+      return '';
+    }
+
+    const rows = forecasts.map((forecast) => {
+      const runnerLabel = forecast.runner.name || 'Runner';
+      const predictedTime = this.formatClockValue(forecast.predictedDate);
+      const windowStart = this.formatClockValue(forecast.windowStart);
+      const windowEnd = this.formatClockValue(forecast.windowEnd);
+
+      return `
+        <div style="margin-top: 8px;">
+          <div><strong>${runnerLabel}:</strong> ${predictedTime}</div>
+          <div style="font-size: 0.72rem; color: #475569;">Window: ${windowStart} – ${windowEnd}</div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(148, 163, 184, 0.4);">
+        <div style="font-weight:700; margin-bottom: 4px;">Runner ETA</div>
+        ${rows}
+      </div>
+    `;
+  }
+
   private canUseGeolocation(): boolean {
     if (!('geolocation' in navigator)) {
       this.geolocationStatus = 'unsupported';
@@ -126,6 +558,7 @@ export class RaceMapComponent implements AfterViewInit {
     }
 
     this.hasRequestedLocation = true;
+    this.requestDeviceHeadingPermission();
 
     const geolocationOptions: PositionOptions = {
       enableHighAccuracy: true,
@@ -178,8 +611,8 @@ export class RaceMapComponent implements AfterViewInit {
         this.userAccuracyCircle.setRadius(Math.max(accuracy, 25));
       }
 
-      const headingDegrees = Number.isFinite(heading) ? heading! : undefined;
-      if (headingDegrees !== undefined) {
+      const headingDegrees = this.resolveHeadingDegrees(heading);
+      if (headingDegrees !== null) {
         const headingPoint = this.getHeadingPoint(latLng, headingDegrees);
         if (!this.userHeadingMarker) {
           this.userHeadingMarker = L.marker(headingPoint, {
@@ -282,12 +715,14 @@ export class RaceMapComponent implements AfterViewInit {
 
   private getCoursePopupContent(point: RacePoint, routeMile: number): string {
     const distanceText = this.getDistanceFromUserText(point);
+    const runnerForecastHtml = this.formatRunnerForecastHtml(routeMile);
 
     return `
       <div style="min-width: 220px; font-family: Arial, sans-serif;">
         <div><strong>Course point</strong></div>
         <div style="margin-top: 6px;"><strong>Race mile:</strong> ${routeMile.toFixed(1)} mi</div>
         <div style="margin-top: 4px;"><strong>Distance from you:</strong> ${distanceText}</div>
+        ${runnerForecastHtml}
         ${this.getMapActionButtons(point, 'Course point')}
       </div>
     `;
@@ -379,41 +814,72 @@ export class RaceMapComponent implements AfterViewInit {
       const response = await fetch('/assets/gpx/LStations.json');
       const stations: StationRecord[] = await response.json();
 
-      const results = stations
-        .map((station) => RaceMapComponent.getStationCourseProximity(station, this.routePoints, this.routeDistances))
-        .filter((station) => station.closestDistanceMiles <= this.stationDistanceLimitMiles)
-        .sort((a, b) => a.closestDistanceMiles - b.closestDistanceMiles);
+      const groupedStations = RaceMapComponent.groupStationsByLocation(stations);
+      const groupedResults = new Map<string, { stations: StationRecord[]; accessPoints: StationAccessPoint[]; closestDistanceMiles: number; raceMiles: number[] }>();
 
-      results.forEach(({ station, closestDistanceMiles, raceMiles, accessPoints }) => {
-        const lineColor = RaceMapComponent.getStationColor(station);
-        const lineName = RaceMapComponent.getStationLineName(station);
-        const location: RacePoint = [Number(station.location.latitude), Number(station.location.longitude)];
+      groupedStations.forEach((stationGroup) => {
+        const groupResults = stationGroup
+          .map((station) => RaceMapComponent.getStationCourseProximity(station, this.routePoints, this.routeDistances))
+          .filter((summary) => summary.closestDistanceMiles <= this.stationDistanceLimitMiles)
+          .sort((a, b) => a.closestDistanceMiles - b.closestDistanceMiles);
 
-        const stationMarker = L.circleMarker(location, {
-          radius: 7,
-          color: lineColor,
-          weight: 2,
-          fillColor: lineColor,
-          fillOpacity: 0.9
-        });
+        if (groupResults.length === 0) {
+          return;
+        }
 
-        const accessPointHtml = accessPoints.length > 0
-          ? accessPoints
+        const key = RaceMapComponent.getStationLocationKey(stationGroup[0]);
+        const current = groupedResults.get(key) ?? {
+          stations: [],
+          accessPoints: [],
+          closestDistanceMiles: Number.POSITIVE_INFINITY,
+          raceMiles: []
+        };
+
+        current.stations.push(...stationGroup);
+        current.accessPoints.push(...groupResults.flatMap((result) => result.accessPoints));
+        current.closestDistanceMiles = Math.min(current.closestDistanceMiles, ...groupResults.map((result) => result.closestDistanceMiles));
+        current.raceMiles.push(...groupResults.flatMap((result) => result.raceMiles));
+
+        groupedResults.set(key, current);
+      });
+
+      groupedResults.forEach(({ stations, accessPoints, closestDistanceMiles, raceMiles }) => {
+        const uniqueStations = RaceMapComponent.deduplicateStationsByStopId(stations);
+
+        const location: RacePoint = [Number(uniqueStations[0].location.latitude), Number(uniqueStations[0].location.longitude)];
+        const markerHtml = RaceMapComponent.getCombinedStationMarkerHtml(uniqueStations);
+
+        const dedupedAccessPoints = RaceMapComponent.deduplicateAccessPoints(accessPoints)
+          .sort((a, b) => a.walkDistanceMiles - b.walkDistanceMiles || a.routeMile - b.routeMile)
+          .slice(0, 2);
+
+        const accessPointHtml = dedupedAccessPoints.length > 0
+          ? dedupedAccessPoints
               .map((entry) => `<li><strong>${entry.routeMile.toFixed(1)} mi</strong> — ${entry.walkDistanceMiles.toFixed(2)} mi</li>`)
               .join('')
-          : `<li><strong>${raceMiles[0]?.toFixed(1) ?? '0.0'} mi</strong> — ${closestDistanceMiles.toFixed(2)} mi</li>`;
+          : `<li><strong>${(raceMiles[0] ?? 0)?.toFixed(1) ?? '0.0'} mi</strong> — ${closestDistanceMiles.toFixed(2)} mi</li>`;
+
+        const stationMarker = L.marker(location, {
+          icon: L.divIcon({
+            className: 'station-marker pie-station-marker',
+            html: markerHtml,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          })
+        });
 
         const getStationPopupHtml = (): string => {
           const currentUserDistanceText = this.getDistanceFromUserText(location);
-          const currentMapButtons = this.getMapActionButtons(location, `${station.station_name || station.stop_name || 'L Station'} (${lineName})`);
+          const popupHeader = RaceMapComponent.buildStationPopupHeader(uniqueStations);
+          const popupTitle = uniqueStations.length === 1
+            ? `${uniqueStations[0].station_name || uniqueStations[0].stop_name || 'L Station'}`
+            : `${uniqueStations.length} nearby stations`;
+          const currentMapButtons = this.getMapActionButtons(location, popupTitle);
 
           return `
             <div style="min-width: 240px; font-family: Arial, sans-serif;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
-                <strong style="font-size: 1.1rem;">${station.station_name || station.stop_name || 'L Station'}</strong>
-                <span style="display:inline-block; background:${lineColor}; color:white; border-radius: 999px; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;">${lineName}</span>
-              </div>
-              <div>
+              ${popupHeader}
+              <div style="margin-top: 10px;">
                 <div><strong>Distance from you:</strong> ${currentUserDistanceText}</div>
                 <div><strong>Distance to course locations:</strong></div>
                 <ul style="margin: 8px 0 0 18px; padding: 0;">
@@ -582,6 +1048,121 @@ export class RaceMapComponent implements AfterViewInit {
     return selected.slice(0, 2);
   }
 
+  private resolveHeadingDegrees(heading?: number): number | null {
+    if (typeof heading === 'number' && Number.isFinite(heading)) {
+      return heading;
+    }
+
+    if (typeof this.deviceHeadingDegrees === 'number' && Number.isFinite(this.deviceHeadingDegrees)) {
+      return this.deviceHeadingDegrees;
+    }
+
+    return null;
+  }
+
+  private requestDeviceHeadingPermission(): void {
+    if (typeof window === 'undefined' || this.deviceOrientationListenerAttached) {
+      return;
+    }
+
+    const orientationApi = (window as any).DeviceOrientationEvent;
+    if (!orientationApi) {
+      return;
+    }
+
+    this.deviceOrientationListenerAttached = true;
+
+    const requestPermission = orientationApi.requestPermission;
+    if (typeof requestPermission === 'function') {
+      requestPermission.call(orientationApi)
+        .then((status: string) => {
+          if (status === 'granted') {
+            window.addEventListener('deviceorientation', (event: DeviceOrientationEvent) => {
+              const compassHeading = (event as any).webkitCompassHeading;
+              const heading = typeof compassHeading === 'number'
+                ? compassHeading
+                : typeof (event as any).alpha === 'number'
+                  ? (event as any).alpha
+                  : null;
+
+              if (heading !== null && Number.isFinite(heading)) {
+                this.deviceHeadingDegrees = heading;
+                if (this.userLocation) {
+                  const headingPoint = this.getHeadingPoint(this.userLocation, heading);
+                  if (!this.userHeadingMarker) {
+                    this.userHeadingMarker = L.marker(headingPoint, {
+                      icon: L.divIcon({
+                        className: 'user-heading-marker',
+                        html: '<div style="width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 18px solid #0f172a; transform: rotate(0deg);"></div>',
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                      })
+                    }).addTo(this.map);
+                  } else {
+                    this.userHeadingMarker.setLatLng(headingPoint);
+                    const icon = this.userHeadingMarker.getIcon() as L.DivIcon;
+                    const arrow = icon?.options?.html as string | undefined;
+                    if (arrow) {
+                      const updatedHtml = arrow.replace('transform: rotate(0deg)', `transform: rotate(${heading}deg)`);
+                      this.userHeadingMarker.setIcon(L.divIcon({
+                        className: 'user-heading-marker',
+                        html: updatedHtml,
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                      }));
+                    }
+                  }
+                }
+              }
+            }, true);
+          }
+        })
+        .catch(() => {
+          this.deviceHeadingDegrees = null;
+        });
+      return;
+    }
+
+    window.addEventListener('deviceorientation', (event: DeviceOrientationEvent) => {
+      const compassHeading = (event as any).webkitCompassHeading;
+      const heading = typeof compassHeading === 'number'
+        ? compassHeading
+        : typeof (event as any).alpha === 'number'
+          ? (event as any).alpha
+          : null;
+
+      if (heading !== null && Number.isFinite(heading)) {
+        this.deviceHeadingDegrees = heading;
+        if (this.userLocation) {
+          const headingPoint = this.getHeadingPoint(this.userLocation, heading);
+          if (!this.userHeadingMarker) {
+            this.userHeadingMarker = L.marker(headingPoint, {
+              icon: L.divIcon({
+                className: 'user-heading-marker',
+                html: '<div style="width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 18px solid #0f172a; transform: rotate(0deg);"></div>',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+              })
+            }).addTo(this.map);
+          } else {
+            this.userHeadingMarker.setLatLng(headingPoint);
+            const icon = this.userHeadingMarker.getIcon() as L.DivIcon;
+            const arrow = icon?.options?.html as string | undefined;
+            if (arrow) {
+              const updatedHtml = arrow.replace('transform: rotate(0deg)', `transform: rotate(${heading}deg)`);
+              this.userHeadingMarker.setIcon(L.divIcon({
+                className: 'user-heading-marker',
+                html: updatedHtml,
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+              }));
+            }
+          }
+        }
+      }
+    }, true);
+  }
+
   private getHeadingPoint(latLng: L.LatLng, headingDegrees: number): L.LatLng {
     const distanceMeters = 30;
     const radians = RaceMapComponent.toRadians(headingDegrees);
@@ -675,55 +1256,120 @@ export class RaceMapComponent implements AfterViewInit {
     return (degrees * Math.PI) / 180;
   }
 
+  static groupStationsByLocation(stations: StationRecord[]): Map<string, StationRecord[]> {
+    const grouped = new Map<string, StationRecord[]>();
+
+    stations.forEach((station) => {
+      const key = RaceMapComponent.getStationLocationKey(station);
+      const current = grouped.get(key) ?? [];
+      current.push(station);
+      grouped.set(key, current);
+    });
+
+    return grouped;
+  }
+
+  static deduplicateStationsByStopId(stations: StationRecord[]): StationRecord[] {
+    const byStopId = new Map<string, StationRecord>();
+
+    stations.forEach((station) => {
+      const key = station.stop_id ?? RaceMapComponent.getStationLocationKey(station);
+      if (!byStopId.has(key)) {
+        byStopId.set(key, station);
+      }
+    });
+
+    return Array.from(byStopId.values());
+  }
+
+  static getStationLocationKey(station: StationRecord): string {
+    const stationName = station.station_name || station.stop_name || 'L Station';
+    const latitude = Number(station.location.latitude);
+    const longitude = Number(station.location.longitude);
+    return `${stationName}|${latitude.toFixed(6)}|${longitude.toFixed(6)}`;
+  }
+
+  static getStationLineEntries(station: StationRecord): StationLineInfo[] {
+    const lineEntries: Array<{ code: string; enabled?: boolean; label: string; color: string }> = [
+      { code: 'red', enabled: station.red, label: 'Red Line', color: '#d62828' },
+      { code: 'blue', enabled: station.blue, label: 'Blue Line', color: '#1d4ed8' },
+      { code: 'g', enabled: station.g, label: 'Green Line', color: '#2e7d32' },
+      { code: 'brn', enabled: station.brn, label: 'Brown Line', color: '#8d6e63' },
+      { code: 'p', enabled: station.p, label: 'Purple Line', color: '#8e24aa' },
+      { code: 'y', enabled: station.y, label: 'Yellow Line', color: '#f9a825' },
+      { code: 'pnk', enabled: station.pnk, label: 'Pink Line', color: '#ec4899' },
+      { code: 'o', enabled: station.o, label: 'Orange Line', color: '#f97316' }
+    ];
+
+    return lineEntries
+      .filter((line) => Boolean(line.enabled))
+      .map(({ code, label, color }) => ({ code, label, color }));
+  }
+
+  static getDistinctStationLineEntries(stations: StationRecord[]): StationLineInfo[] {
+    const linesByCode = new Map<string, StationLineInfo>();
+
+    stations.forEach((station) => {
+      RaceMapComponent.getStationLineEntries(station).forEach((line) => {
+        if (!linesByCode.has(line.code)) {
+          linesByCode.set(line.code, line);
+        }
+      });
+    });
+
+    return Array.from(linesByCode.values());
+  }
+
+  static getStationPieMarkerHtml(stations: StationRecord[]): string {
+    const colors = RaceMapComponent.getDistinctStationLineEntries(stations).map((line) => line.color);
+    const safeColors = colors.length > 0 ? colors : ['#64748b'];
+    const sliceSize = 100 / safeColors.length;
+    const gradient = safeColors.map((color, index) => `${color} ${index * sliceSize}% ${(index + 1) * sliceSize}%`).join(', ');
+
+    return `
+      <div style="
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: conic-gradient(${gradient});
+        border: 2px solid rgba(255,255,255,0.9);
+        box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "></div>
+    `;
+  }
+
+  static buildStationPopupHeader(stations: StationRecord[]): string {
+    const uniqueStationNames = Array.from(new Set(stations.map((station) => station.station_name || station.stop_name || 'L Station')));
+    const lineEntries = RaceMapComponent.getDistinctStationLineEntries(stations);
+    const stationNamesHtml = uniqueStationNames.map((name) => `
+      <div style="font-size: 1rem; font-weight: 700; margin-bottom: 4px;">${name}</div>
+    `).join('');
+    const lineBadges = lineEntries.map((line) => `
+      <span style="display:inline-block; background:${line.color}; color:white; border-radius: 999px; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;">${line.label}</span>
+    `).join('');
+
+    return `
+      <div style="display: flex; flex-direction: column; margin-bottom: 8px;">
+        ${stationNamesHtml}
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top: 4px;">
+          ${lineBadges}
+        </div>
+      </div>
+    `;
+  }
+
+  static getCombinedStationMarkerHtml(stations: StationRecord[]): string {
+    return RaceMapComponent.getStationPieMarkerHtml(stations);
+  }
+
   static getStationLineName(station: StationRecord): string {
-    const lineName = Object.entries({
-      red: station.red,
-      blue: station.blue,
-      g: station.g,
-      brn: station.brn,
-      p: station.p,
-      y: station.y,
-      pnk: station.pnk,
-      o: station.o
-    }).find(([, enabled]) => Boolean(enabled))?.[0];
-
-    const lineLabels: Record<string, string> = {
-      red: 'Red Line',
-      blue: 'Blue Line',
-      g: 'Green Line',
-      brn: 'Brown Line',
-      p: 'Purple Line',
-      y: 'Yellow Line',
-      pnk: 'Pink Line',
-      o: 'Orange Line'
-    };
-
-    return lineLabels[lineName ?? 'red'];
+    return RaceMapComponent.getStationLineEntries(station)[0]?.label ?? 'Red Line';
   }
 
   static getStationColor(station: StationRecord): string {
-    const lineName = Object.entries({
-      red: station.red,
-      blue: station.blue,
-      g: station.g,
-      brn: station.brn,
-      p: station.p,
-      y: station.y,
-      pnk: station.pnk,
-      o: station.o
-    }).find(([, enabled]) => Boolean(enabled))?.[0];
-
-    const colors: Record<string, string> = {
-      red: '#d62828',
-      blue: '#1d4ed8',
-      g: '#2e7d32',
-      brn: '#8d6e63',
-      p: '#8e24aa',
-      y: '#f9a825',
-      pnk: '#ec4899',
-      o: '#f97316'
-    };
-
-    return colors[lineName ?? 'red'];
+    return RaceMapComponent.getStationLineEntries(station)[0]?.color ?? '#d62828';
   }
 }

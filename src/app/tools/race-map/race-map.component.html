@@ -1,6 +1,122 @@
 <div #mapContainer style="width: 100%; height: 100vh;"></div>
 
 <button
+  type="button"
+  (click)="toggleRunnerModal()"
+  class="runner-modal-toggle"
+  aria-label="Open runner tracking">
+  <span class="runner-toggle-label">Runners</span>
+</button>
+
+<div *ngIf="runnerModalOpen" class="runner-modal-backdrop" (click)="closeRunnerModal()">
+  <div class="runner-modal" (click)="$event.stopPropagation()">
+    <div class="runner-modal-header">
+      <h3>Runner tracking</h3>
+      <button type="button" class="runner-close-button" (click)="closeRunnerModal()" aria-label="Close runner tracking">×</button>
+    </div>
+
+    <div class="runner-list" *ngIf="runnerProfiles.length > 0; else emptyRunnerList">
+      <div class="runner-item" *ngFor="let runner of runnerProfiles">
+        <div class="runner-item-main">
+          <div class="runner-name">{{ runner.name || 'Runner' }}</div>
+          <div class="runner-meta">
+            {{ runner.startTime }}
+            <span *ngIf="runner.paceMinutesPerMile">• {{ runner.paceMinutesPerMile }} min/mi</span>
+            <span *ngIf="runner.totalMinutes !== null && runner.totalMinutes !== undefined">• {{ formatDurationMinutes(runner.totalMinutes) }}</span>
+          </div>
+        </div>
+        <div class="runner-item-actions">
+          <button type="button" class="runner-edit-button" (click)="editRunner(runner)">Edit</button>
+          <button type="button" class="runner-delete-button" (click)="deleteRunner(runner.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyRunnerList>
+      <div class="runner-empty-state">No saved runners yet.</div>
+    </ng-template>
+
+    <form class="runner-form" (ngSubmit)="saveRunnerProfile()">
+      <label>
+        Runner name
+        <input type="text" [(ngModel)]="runnerForm.name" name="runnerName" placeholder="Runner 1" maxlength="40" />
+      </label>
+
+      <label>
+        Start time
+        <input type="time" [(ngModel)]="runnerForm.startTime" name="runnerStartTime" />
+      </label>
+
+      <div class="runner-form-row">
+        <label>
+          Pace (min/mi)
+          <input type="number" min="2" max="30" step="0.1" [(ngModel)]="runnerForm.paceMinutesPerMile" name="runnerPace" placeholder="4.5" />
+        </label>
+
+        <label>
+          Total time
+          <input
+            type="text"
+            [ngModel]="formatDurationMinutes(runnerForm.totalMinutes)"
+            (ngModelChange)="runnerForm.totalMinutes = parseDurationInput($event)"
+            name="runnerTotal"
+            placeholder="01:05:45"
+          />
+        </label>
+      </div>
+
+      <div class="runner-split-section">
+        <div class="runner-split-header">
+          <span>Known splits</span>
+        </div>
+
+        <div class="runner-split-list" *ngIf="(runnerForm.splits ?? []).length; else noSplitsTemplate">
+          <div class="runner-split-item" *ngFor="let split of runnerForm.splits ?? []">
+            <span>{{ split.distanceMiles.toFixed(1) }} mi</span>
+            <span>{{ formatDurationMinutes(split.elapsedMinutes) }}</span>
+            <button type="button" class="runner-delete-button" (click)="removeRunnerSplit(split.id)">Remove</button>
+          </div>
+        </div>
+
+        <ng-template #noSplitsTemplate>
+          <div class="runner-empty-state">No known splits added yet.</div>
+        </ng-template>
+
+        <div class="runner-split-draft">
+          <label>
+            Split distance (mi)
+            <input type="number" min="0.1" max="26.2" step="0.1" [(ngModel)]="runnerSplitDraft.distanceMiles" name="splitDistance" placeholder="5.0" />
+          </label>
+
+          <label>
+            Split time
+            <input
+              type="text"
+              [(ngModel)]="runnerSplitDraft.elapsedInput"
+              (ngModelChange)="runnerSplitDraft.elapsedMinutes = parseDurationInput($event)"
+              name="splitTime"
+              placeholder="00:32:30"
+            />
+          </label>
+
+          <button type="button" class="runner-split-add-button" (click)="addRunnerSplitDraft()">Add split</button>
+        </div>
+      </div>
+
+      <div class="runner-form-actions">
+        <button type="submit" class="runner-save-button" [disabled]="!canSaveRunnerForm() || runnerProfiles.length >= 5 && !editingRunnerId">
+          {{ editingRunnerId ? 'Save changes' : 'Add runner' }}
+        </button>
+        <button *ngIf="editingRunnerId" type="button" class="runner-cancel-button" (click)="cancelRunnerEdit()">Cancel</button>
+      </div>
+
+      <div *ngIf="runnerFormError" class="runner-form-error">{{ runnerFormError }}</div>
+      <div *ngIf="runnerProfiles.length >= 5 && !editingRunnerId" class="runner-form-note">You can save up to 5 runners.</div>
+    </form>
+  </div>
+</div>
+
+<button
   *ngIf="geolocationStatus !== 'ready'"
   type="button"
   (click)="requestLocationAccess()"

@@ -31,6 +31,13 @@ describe('RaceMapComponent', () => {
     expect(spy).toHaveBeenCalled();
   });
 
+  it('should prefer a device heading fallback when GPS heading is unavailable', () => {
+    component['deviceHeadingDegrees'] = 135;
+
+    expect(component['resolveHeadingDegrees']()).toBe(135);
+    expect(component['resolveHeadingDegrees'](undefined)).toBe(135);
+  });
+
   it('should calculate cumulative route miles', () => {
     const route = [
       [41.8800, -87.6200],
@@ -96,5 +103,135 @@ describe('RaceMapComponent', () => {
     expect(html).toContain('Course point');
     expect(html).toContain('Race mile:');
     expect(html).toContain('Open in Apple Maps');
+  });
+
+  it('should merge all active line colors for same-location stations without duplicates', () => {
+    const stations = [
+      {
+        station_name: 'Washington/Wabash',
+        stop_name: 'Washington/Wabash (Inner Loop)',
+        location: { latitude: '41.88322', longitude: '-87.626189' },
+        g: true,
+        brn: false,
+        p: true,
+        y: false,
+        pnk: true,
+        o: true,
+        red: false,
+        blue: false
+      },
+      {
+        station_name: 'Washington/Wabash',
+        stop_name: 'Washington/Wabash (Outer Loop)',
+        location: { latitude: '41.88322', longitude: '-87.626189' },
+        g: true,
+        brn: true,
+        p: false,
+        y: false,
+        pnk: false,
+        o: false,
+        red: false,
+        blue: false
+      }
+    ] as any;
+
+    const lines = RaceMapComponent.getDistinctStationLineEntries(stations);
+
+    expect(lines.map((line) => line.code).sort()).toEqual(['brn', 'g', 'o', 'p', 'pnk']);
+    expect(RaceMapComponent.buildStationPopupHeader(stations)).toContain('Washington/Wabash');
+    expect(RaceMapComponent.buildStationPopupHeader(stations).match(/Green Line/g)?.length).toBe(1);
+  });
+
+  it('should preserve loop-direction line sets when the same station has different inner/outer variants', () => {
+    const stations = [
+      {
+        stop_id: '30141',
+        station_name: 'Washington/Wells',
+        stop_name: 'Washington/Wells (Inner Loop)',
+        location: { latitude: '41.882695', longitude: '-87.63378' },
+        brn: false,
+        p: true,
+        pnk: true,
+        o: true,
+        g: false,
+        red: false,
+        blue: false,
+        y: false
+      },
+      {
+        stop_id: '30142',
+        station_name: 'Washington/Wells',
+        stop_name: 'Washington/Wells (Outer Loop)',
+        location: { latitude: '41.882695', longitude: '-87.63378' },
+        brn: true,
+        p: false,
+        pnk: false,
+        o: false,
+        g: false,
+        red: false,
+        blue: false,
+        y: false
+      }
+    ] as any;
+
+    const grouped = RaceMapComponent.groupStationsByLocation(stations);
+    const mergedStations = RaceMapComponent.deduplicateStationsByStopId(Array.from(grouped.values()).flat());
+    const lines = RaceMapComponent.getDistinctStationLineEntries(mergedStations);
+
+    expect(lines.map((line) => line.code).sort()).toEqual(['brn', 'o', 'p', 'pnk']);
+    expect(RaceMapComponent.buildStationPopupHeader(mergedStations)).toContain('Brown Line');
+  });
+
+  it('should parse duration text in seconds, m:ss, and h:mm:ss formats', () => {
+    expect((component as any).parseDurationInput('45')).toBe(0.75);
+    expect((component as any).parseDurationInput('5:45')).toBe(5.75);
+    expect((component as any).parseDurationInput('1:05:45')).toBe(65.75);
+    expect((component as any).formatDurationMinutes(65.75)).toBe('01:05:45');
+  });
+
+  it('should widen the ETA window as runners go farther into the race', () => {
+    component.runnerProfiles = [
+      { id: 'steady', name: 'Steady', startTime: '07:00', paceMinutesPerMile: 6.0, totalMinutes: null, splits: [] }
+    ];
+
+    const earlyForecast = component.getRunnerForecastForDistance(component.runnerProfiles[0], 5);
+    const halfwayForecast = component.getRunnerForecastForDistance(component.runnerProfiles[0], 13.1);
+    const lateForecast = component.getRunnerForecastForDistance(component.runnerProfiles[0], 26.2);
+
+    expect(earlyForecast).not.toBeNull();
+    expect(halfwayForecast).not.toBeNull();
+    expect(lateForecast).not.toBeNull();
+    expect((halfwayForecast!.windowEnd.getTime() - halfwayForecast!.windowStart.getTime())
+      > (earlyForecast!.windowEnd.getTime() - earlyForecast!.windowStart.getTime())).toBeTrue();
+    expect((lateForecast!.windowEnd.getTime() - lateForecast!.windowStart.getTime())
+      > (halfwayForecast!.windowEnd.getTime() - halfwayForecast!.windowStart.getTime())).toBeTrue();
+  });
+
+  it('should apply actual split data to shift the predicted ETA while preserving the pace model', () => {
+    const profile = {
+      id: 'split-runner',
+      name: 'Split Runner',
+      startTime: '07:00',
+      paceMinutesPerMile: 6.0,
+      totalMinutes: null,
+      splits: [
+        { id: 's-5k', distanceMiles: 3.1, elapsedMinutes: 21.0 },
+        { id: 's-half', distanceMiles: 13.1, elapsedMinutes: 78.0 }
+      ]
+    };
+
+    const fromModel = component.getRunnerForecastForDistance(profile, 20);
+    const profileWithEarlierSplit = {
+      ...profile,
+      splits: [
+        { id: 's-5k', distanceMiles: 3.1, elapsedMinutes: 18.0 },
+        { id: 's-half', distanceMiles: 13.1, elapsedMinutes: 74.0 }
+      ]
+    };
+    const adjustedForecast = component.getRunnerForecastForDistance(profileWithEarlierSplit, 20);
+
+    expect(fromModel).not.toBeNull();
+    expect(adjustedForecast).not.toBeNull();
+    expect(adjustedForecast!.predictedDate.getTime()).toBeLessThan(fromModel!.predictedDate.getTime());
   });
 });
