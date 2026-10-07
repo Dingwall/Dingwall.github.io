@@ -75,6 +75,7 @@ interface RunnerForecast {
 export class RaceMapComponent implements AfterViewInit {
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
+  private readonly defaultTopNavHeight = 56;
   private map!: L.Map;
   private routePoints: RacePoint[] = [];
   private routeDistances: number[] = [];
@@ -106,8 +107,36 @@ export class RaceMapComponent implements AfterViewInit {
   public runnerFormError = '';
 
   ngAfterViewInit(): void {
+    this.syncMapViewport();
     this.initMap();
     this.loadRunnerProfiles();
+    window.addEventListener('resize', () => this.syncMapViewport());
+  }
+
+  private syncMapViewport(): void {
+    if (!this.mapContainer?.nativeElement) {
+      return;
+    }
+
+    const nav = document.querySelector('.navbar') as HTMLElement | null;
+    const navHeight = nav ? nav.getBoundingClientRect().height : this.defaultTopNavHeight;
+    const heightPx = Math.max(window.innerHeight - navHeight, 320);
+
+    this.mapContainer.nativeElement.style.height = `${heightPx}px`;
+    this.mapContainer.nativeElement.style.maxHeight = `${heightPx}px`;
+
+    if (this.map) {
+      this.map.invalidateSize();
+    }
+  }
+
+  private setBodyScrollLock(locked: boolean): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    document.body.style.overflow = locked ? 'hidden' : '';
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
   }
 
   private async initMap(): Promise<void> {
@@ -159,6 +188,7 @@ export class RaceMapComponent implements AfterViewInit {
 
   public toggleRunnerModal(): void {
     this.runnerModalOpen = !this.runnerModalOpen;
+    this.setBodyScrollLock(this.runnerModalOpen);
     if (!this.runnerModalOpen) {
       this.cancelRunnerEdit();
     }
@@ -166,10 +196,12 @@ export class RaceMapComponent implements AfterViewInit {
 
   public openRunnerModal(): void {
     this.runnerModalOpen = true;
+    this.setBodyScrollLock(true);
   }
 
   public closeRunnerModal(): void {
     this.runnerModalOpen = false;
+    this.setBodyScrollLock(false);
     this.cancelRunnerEdit();
   }
 
@@ -434,6 +466,40 @@ export class RaceMapComponent implements AfterViewInit {
       this.runnerTotalInput = '';
       this.runnerPaceInput = '';
     }
+  }
+
+  public onRunnerStartTimeChange(value: string): void {
+    this.runnerForm.startTime = value && /^\d{2}:\d{2}$/.test(value) ? value : '';
+  }
+
+  public onRunnerPaceInputChange(value: string): void {
+    this.runnerPaceInput = value;
+    const parsed = this.parsePaceInput(value);
+    this.runnerForm.paceMinutesPerMile = parsed;
+
+    if (parsed !== null) {
+      this.runnerForm.totalMinutes = this.computeTotalMinutesFromPace(parsed) ?? null;
+      this.runnerTotalInput = this.runnerForm.totalMinutes === null ? '' : this.formatDurationMinutes(this.runnerForm.totalMinutes);
+      return;
+    }
+
+    this.runnerForm.totalMinutes = null;
+    this.runnerTotalInput = '';
+  }
+
+  public onRunnerTotalInputChange(value: string): void {
+    this.runnerTotalInput = value;
+    const parsed = this.parseDurationInput(value);
+    this.runnerForm.totalMinutes = parsed;
+
+    if (parsed !== null) {
+      this.runnerForm.paceMinutesPerMile = this.computePaceFromTotalMinutes(parsed) ?? null;
+      this.runnerPaceInput = this.runnerForm.paceMinutesPerMile === null ? '' : this.formatPaceMinutesPerMile(this.runnerForm.paceMinutesPerMile);
+      return;
+    }
+
+    this.runnerForm.paceMinutesPerMile = null;
+    this.runnerPaceInput = '';
   }
 
   public addRunnerSplitDraft(): void {

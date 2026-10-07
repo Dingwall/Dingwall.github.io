@@ -1,4 +1,4 @@
-<div #mapContainer style="width: 100%; height: 100vh;"></div>
+<div #mapContainer style="width: 100%; height: 100%;"></div>
 
 <button
   type="button"
@@ -55,7 +55,7 @@
 
         <label>
           <span>Start time</span>
-          <input type="time" [(ngModel)]="runnerForm.startTime" name="runnerStartTime" />
+          <input type="time" [ngModel]="runnerForm.startTime" (ngModelChange)="onRunnerStartTimeChange($event)" name="runnerStartTime" />
         </label>
       </div>
 

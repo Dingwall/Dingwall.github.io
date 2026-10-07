@@ -55,6 +55,11 @@
   cursor: pointer;
 }
 
+.map-location-button span {
+  display: block;
+  transform: translateY(-1px);
+}
+
 .runner-toggle-label {
   display: inline-block;
   font-size: 0.72rem;
@@ -254,6 +259,12 @@
   padding: 10px 12px;
   font-size: 0.9rem;
   min-width: 0;
+  width: 100%;
+}
+
+.runner-form input[type='time'] {
+  width: 100%;
+  max-width: 100%;
 }
 
 .runner-form-row {
@@ -272,7 +283,7 @@
   min-width: 0;
 }
 
-.runner-form-row label:last-child input,
+.runner-form-row label:last-child input:not([type='time']),
 .runner-split-draft label:nth-child(2) input {
   width: 100%;
   max-width: 170px;
