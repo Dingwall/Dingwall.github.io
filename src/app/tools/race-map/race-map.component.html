@@ -16,18 +16,24 @@
     </div>
 
     <div class="runner-list" *ngIf="runnerProfiles.length > 0; else emptyRunnerList">
-      <div class="runner-item" *ngFor="let runner of runnerProfiles">
+      <div
+        class="runner-item"
+        *ngFor="let runner of runnerProfiles"
+        role="button"
+        tabindex="0"
+        (click)="editRunner(runner)"
+        (keydown.enter)="editRunner(runner)"
+        (keydown.space)="editRunner(runner)">
         <div class="runner-item-main">
           <div class="runner-name">{{ runner.name || 'Runner' }}</div>
           <div class="runner-meta">
             {{ runner.startTime }}
-            <span *ngIf="runner.paceMinutesPerMile">• {{ runner.paceMinutesPerMile }} min/mi</span>
+            <span *ngIf="runner.paceMinutesPerMile">• {{ formatPaceMinutesPerMile(runner.paceMinutesPerMile) }}</span>
             <span *ngIf="runner.totalMinutes !== null && runner.totalMinutes !== undefined">• {{ formatDurationMinutes(runner.totalMinutes) }}</span>
           </div>
         </div>
         <div class="runner-item-actions">
-          <button type="button" class="runner-edit-button" (click)="editRunner(runner)">Edit</button>
-          <button type="button" class="runner-delete-button" (click)="deleteRunner(runner.id)">Delete</button>
+          <button type="button" class="runner-delete-button" (click)="$event.stopPropagation(); deleteRunner(runner.id)">Delete</button>
         </div>
       </div>
     </div>
@@ -36,31 +42,43 @@
       <div class="runner-empty-state">No saved runners yet.</div>
     </ng-template>
 
-    <form class="runner-form" (ngSubmit)="saveRunnerProfile()">
-      <label>
-        Runner name
-        <input type="text" [(ngModel)]="runnerForm.name" name="runnerName" placeholder="Runner 1" maxlength="40" />
-      </label>
+    <div *ngIf="!runnerFormExpanded" class="runner-add-trigger">
+      <button type="button" class="runner-add-button" (click)="openRunnerForm()">Add runner</button>
+    </div>
 
-      <label>
-        Start time
-        <input type="time" [(ngModel)]="runnerForm.startTime" name="runnerStartTime" />
-      </label>
-
-      <div class="runner-form-row">
+    <form *ngIf="runnerFormExpanded" class="runner-form" (ngSubmit)="saveRunnerProfile()">
+      <div class="runner-form-row runner-form-row-pair">
         <label>
-          Pace (min/mi)
-          <input type="number" min="2" max="30" step="0.1" [(ngModel)]="runnerForm.paceMinutesPerMile" name="runnerPace" placeholder="4.5" />
+          <span>Runner</span>
+          <input type="text" [(ngModel)]="runnerForm.name" name="runnerName" placeholder="Robert" maxlength="40" />
         </label>
 
         <label>
-          Total time
+          <span>Start time</span>
+          <input type="time" [(ngModel)]="runnerForm.startTime" name="runnerStartTime" />
+        </label>
+      </div>
+
+      <div class="runner-form-row runner-form-row-pair">
+        <label>
+          <span>Pace</span>
           <input
             type="text"
-            [ngModel]="formatDurationMinutes(runnerForm.totalMinutes)"
-            (ngModelChange)="runnerForm.totalMinutes = parseDurationInput($event)"
+            [ngModel]="runnerPaceInput || formatPaceMinutesPerMile(runnerForm.paceMinutesPerMile)"
+            (ngModelChange)="runnerPaceInput = $event; runnerForm.paceMinutesPerMile = parsePaceInput($event)"
+            name="runnerPace"
+            placeholder="08:00"
+          />
+        </label>
+
+        <label>
+          <span>Total time</span>
+          <input
+            type="text"
+            [ngModel]="runnerTotalInput || formatDurationMinutes(runnerForm.totalMinutes)"
+            (ngModelChange)="runnerTotalInput = $event; runnerForm.totalMinutes = parseDurationInput($event)"
             name="runnerTotal"
-            placeholder="01:05:45"
+            placeholder="03:29:45"
           />
         </label>
       </div>
@@ -120,6 +138,15 @@
   *ngIf="geolocationStatus !== 'ready'"
   type="button"
   (click)="requestLocationAccess()"
-  style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: #0f172a; color: white; border: none; border-radius: 999px; padding: 12px 18px; font-weight: 700; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);">
+  style="position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 1000; background: #0f172a; color: white; border: none; border-radius: 999px; padding: 12px 18px; font-weight: 700; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);">
   Use my location
+</button>
+
+<button
+  *ngIf="geolocationStatus === 'ready'"
+  type="button"
+  class="map-location-button"
+  (click)="focusOnUserLocation()"
+  aria-label="Center map on my location">
+  <span aria-hidden="true">⌖</span>
 </button>

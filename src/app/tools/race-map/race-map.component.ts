@@ -94,6 +94,9 @@ export class RaceMapComponent implements AfterViewInit {
   public runnerProfiles: RunnerProfile[] = [];
   public runnerModalOpen = false;
   public runnerForm: RunnerProfile = this.createEmptyRunnerForm();
+  public runnerFormExpanded = false;
+  public runnerTotalInput = '';
+  public runnerPaceInput = '';
   public runnerSplitDraft = {
     distanceMiles: null as number | null,
     elapsedMinutes: null as number | null,
@@ -143,6 +146,15 @@ export class RaceMapComponent implements AfterViewInit {
   public requestLocationAccess(): void {
     this.hasRequestedLocation = false;
     this.enableUserLocation();
+  }
+
+  public focusOnUserLocation(): void {
+    if (this.userLocation) {
+      this.map.setView(this.userLocation, 13);
+      return;
+    }
+
+    this.requestLocationAccess();
   }
 
   public toggleRunnerModal(): void {
@@ -210,6 +222,8 @@ export class RaceMapComponent implements AfterViewInit {
       return;
     }
 
+    this.syncRunnerFormDerivedValues();
+
     const normalized = {
       ...this.runnerForm,
       name: this.runnerForm.name.trim(),
@@ -250,11 +264,25 @@ export class RaceMapComponent implements AfterViewInit {
       totalMinutes: runner.totalMinutes ?? null,
       splits: Array.isArray(runner.splits) ? [...runner.splits].sort((a, b) => a.distanceMiles - b.distanceMiles) : []
     };
+    this.runnerFormExpanded = true;
+    this.runnerPaceInput = this.formatPaceMinutesPerMile(this.runnerForm.paceMinutesPerMile);
+    this.runnerTotalInput = this.runnerForm.totalMinutes === null ? '' : this.formatDurationMinutes(this.runnerForm.totalMinutes);
     this.runnerFormError = '';
     this.runnerSplitDraft = { distanceMiles: null, elapsedMinutes: null, elapsedInput: '' };
   }
 
   public deleteRunner(runnerId: string): void {
+    const target = this.runnerProfiles.find((runner) => runner.id === runnerId);
+    const runnerName = target?.name?.trim() || 'this runner';
+
+    const confirmed = typeof window !== 'undefined'
+      ? window.confirm(`Are you sure you want to delete ${runnerName}?`)
+      : true;
+
+    if (!confirmed) {
+      return;
+    }
+
     this.runnerProfiles = this.runnerProfiles.filter((runner) => runner.id !== runnerId);
     if (this.editingRunnerId === runnerId) {
       this.cancelRunnerEdit();
@@ -265,8 +293,48 @@ export class RaceMapComponent implements AfterViewInit {
   public cancelRunnerEdit(): void {
     this.editingRunnerId = null;
     this.runnerForm = this.createEmptyRunnerForm();
+    this.runnerFormExpanded = false;
+    this.runnerTotalInput = '';
+    this.runnerPaceInput = '';
     this.runnerSplitDraft = { distanceMiles: null, elapsedMinutes: null, elapsedInput: '' };
     this.runnerFormError = '';
+  }
+
+  public openRunnerForm(): void {
+    this.runnerFormExpanded = true;
+    this.runnerFormError = '';
+    if (!this.editingRunnerId) {
+      this.runnerForm = this.createEmptyRunnerForm();
+      this.runnerTotalInput = '';
+      this.runnerPaceInput = '';
+    }
+  }
+
+  public computePaceFromTotalMinutes(totalMinutes: number | null | undefined): number | null {
+    if (totalMinutes === null || totalMinutes === undefined || !Number.isFinite(totalMinutes) || totalMinutes <= 0) {
+      return null;
+    }
+
+    return totalMinutes / 26.2;
+  }
+
+  public computeTotalMinutesFromPace(paceMinutesPerMile: number | null | undefined): number | null {
+    if (paceMinutesPerMile === null || paceMinutesPerMile === undefined || !Number.isFinite(paceMinutesPerMile) || paceMinutesPerMile <= 0) {
+      return null;
+    }
+
+    return paceMinutesPerMile * 26.2;
+  }
+
+  public formatPaceMinutesPerMile(paceMinutesPerMile: number | null | undefined): string {
+    if (paceMinutesPerMile === null || paceMinutesPerMile === undefined || !Number.isFinite(paceMinutesPerMile) || paceMinutesPerMile <= 0) {
+      return '';
+    }
+
+    const totalSeconds = Math.round(paceMinutesPerMile * 60);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
   public formatDurationMinutes(totalMinutes: number | null | undefined): string {
@@ -318,6 +386,54 @@ export class RaceMapComponent implements AfterViewInit {
     }
 
     return null;
+  }
+
+  public parsePaceInput(input: string | number | null | undefined): number | null {
+    if (input === null || input === undefined || input === '') {
+      return null;
+    }
+
+    const normalized = String(input).trim();
+    if (!normalized) {
+      return null;
+    }
+
+    const parts = normalized.split(':').map((part) => part.trim());
+    if (parts.length === 2 && parts.every((part) => /^\d+$/.test(part))) {
+      const minutes = Number(parts[0]);
+      const seconds = Number(parts[1]);
+      if (!Number.isFinite(minutes) || !Number.isFinite(seconds) || seconds >= 60) {
+        return null;
+      }
+      return minutes + (seconds / 60);
+    }
+
+    if (/^\d+(?:\.\d+)?$/.test(normalized)) {
+      const minutes = Number(normalized);
+      return Number.isFinite(minutes) && minutes > 0 ? minutes : null;
+    }
+
+    return null;
+  }
+
+  public syncRunnerFormDerivedValues(): void {
+    const hasPace = this.runnerForm.paceMinutesPerMile !== null && this.runnerForm.paceMinutesPerMile !== undefined && Number.isFinite(this.runnerForm.paceMinutesPerMile);
+    const hasTotal = this.runnerForm.totalMinutes !== null && this.runnerForm.totalMinutes !== undefined && Number.isFinite(this.runnerForm.totalMinutes);
+
+    if (hasPace && !hasTotal) {
+      this.runnerForm.totalMinutes = this.computeTotalMinutesFromPace(this.runnerForm.paceMinutesPerMile) ?? null;
+      this.runnerTotalInput = this.runnerForm.totalMinutes === null ? '' : this.formatDurationMinutes(this.runnerForm.totalMinutes);
+    }
+
+    if (hasTotal && !hasPace) {
+      this.runnerForm.paceMinutesPerMile = this.computePaceFromTotalMinutes(this.runnerForm.totalMinutes) ?? null;
+      this.runnerPaceInput = this.runnerForm.paceMinutesPerMile === null ? '' : this.formatPaceMinutesPerMile(this.runnerForm.paceMinutesPerMile);
+    }
+
+    if (!hasTotal && !hasPace) {
+      this.runnerTotalInput = '';
+      this.runnerPaceInput = '';
+    }
   }
 
   public addRunnerSplitDraft(): void {
@@ -652,7 +768,6 @@ export class RaceMapComponent implements AfterViewInit {
           position.coords.accuracy || 25,
           position.coords.heading ?? undefined
         );
-        this.map.setView([position.coords.latitude, position.coords.longitude], 13);
       },
       (error) => {
         handleLocationError(error, 'lookup');
